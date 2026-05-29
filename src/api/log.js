@@ -55,6 +55,87 @@ export function getBusinessLogs(params) {
   })
 }
 
+// 用户操作日志
+export function getUserLogs(params) {
+  return request({
+    url: '/Log/getUserLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 商品操作日志
+export function getProductLogs(params) {
+  return request({
+    url: '/Log/getProductLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 商品基础资料操作日志
+export function getProductBasicLogs(params) {
+  return request({
+    url: '/Log/getProductBasicLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 内容操作日志
+export function getContentLogs(params) {
+  return request({
+    url: '/Log/getContentLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 店铺操作日志
+export function getShopLogs(params) {
+  return request({
+    url: '/Log/getShopLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 优惠券操作日志
+export function getCouponLogs(params) {
+  return request({
+    url: '/Log/getCouponLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 配送操作日志
+export function getDeliveryLogs(params) {
+  return request({
+    url: '/Log/getDeliveryLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 订单操作日志
+export function getOrderLogs(params) {
+  return request({
+    url: '/Log/getOrderLogs',
+    method: 'get',
+    params
+  })
+}
+
+// 运单日志
+export function getWaybillLogs(params) {
+  return request({
+    url: '/Log/getWaybillLogs',
+    method: 'get',
+    params
+  })
+}
+
 // 获取消息队列消费日志
 export function getQueuingConsumerLogs(params) {
   return request({

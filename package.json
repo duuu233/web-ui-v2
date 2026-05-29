@@ -1,0 +1,38 @@
+{
+  "name": "web-ui-v2",
+  "version": "1.0.0",
+  "description": "后台管理系统 - Vue3 升级版",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
+    "element-plus": "^2.8.4",
+    "js-cookie": "^3.0.5",
+    "js-md5": "^0.8.3",
+    "lodash-es": "^4.17.21",
+    "nprogress": "^0.2.0",
+    "pinia": "^2.2.4",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5",
+    "vxe-table": "~4.5.0",
+    "xe-utils": "^3.5.30"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.4",
+    "fast-glob": "^3.3.3",
+    "sass": "^1.79.4",
+    "unplugin-vue-setup-extend-plus": "^1.0.1",
+    "vite": "^5.4.8",
+    "vite-plugin-svg-icons": "^2.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

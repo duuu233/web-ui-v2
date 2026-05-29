@@ -1,0 +1,263 @@
+@use './variables' as *;
+@use './mixin' as *;
+@use './transition';
+@use './element-plus';
+@use './sidebar';
+
+html,
+body,
+div,
+ul,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+dl,
+dt,
+dd,
+ol,
+form,
+input,
+textarea,
+th,
+td,
+select,
+label,
+span {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+    Microsoft YaHei, Arial, sans-serif;
+  background-color: #e7eff8;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+div:focus {
+  outline: none;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: ' ';
+    clear: both;
+    height: 0;
+  }
+}
+
+s,
+i,
+em {
+  font-style: normal;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: 400;
+}
+
+.fr {
+  float: right;
+}
+
+li,
+ol,
+ul {
+  list-style: none;
+}
+
+// 文字颜色
+.enable_txt {
+  color: #67c23a;
+}
+.disable_txt {
+  color: #f56c6c;
+}
+.info_txt {
+  color: #919399;
+}
+.click_txt {
+  color: #3382f0;
+}
+
+// main-container 全局样式
+.app-main {
+  min-height: 100%;
+}
+
+.app-container {
+  margin: 0 20px 15px;
+}
+
+// 搜索栏样式
+.filter-container {
+}
+
+// 操作栏样式
+.operate-container {
+  margin-top: 10px;
+}
+.operate-container .el-card__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// 表格栏样式
+.table-container {
+  margin-top: 10px;
+}
+
+// 批量操作栏样式
+.batch-operate-container {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.el-card__body {
+  line-height: 28px;
+}
+
+// 分页栏样式
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px;
+  border-radius: 0 0 5px 5px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+  box-shadow: 0px 0px 33px 0px rgba(223, 224, 228, 0.6);
+}
+
+// 添加、更新表单样式
+.form-container {
+  position: relative;
+  width: 720px;
+  padding: 35px 35px 15px 35px;
+  margin: 20px auto;
+}
+
+// 字体
+.font-extra-large {
+  font-size: 20px;
+  color: #303133;
+}
+.font-title-large {
+  font-size: 18px;
+  color: #303133;
+}
+.font-title-medium {
+  font-size: 16px;
+  color: #303133;
+}
+.font-medium {
+  font-size: 16px;
+  color: #606266;
+}
+.font-small {
+  font-size: 14px;
+  color: #606266;
+}
+.font-extra-small {
+  font-size: 13px;
+  color: #606266;
+}
+
+.color-main {
+  color: #409eff;
+}
+.color-success {
+  color: #67c23a;
+}
+.color-warning {
+  color: #e6a23c;
+}
+.color-danger {
+  color: #f56c6c;
+}
+.color-info {
+  color: #909399;
+}
+
+// 表单操作列表 按钮样式
+.handle-table-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .el-button {
+    margin: 6px 6px 6px 0;
+  }
+}
+
+.input-width {
+  width: 217px !important;
+}
+
+.el-card {
+  border: none;
+}
+.el-card,
+.el-message {
+  border-radius: 5px;
+}
+.el-card.is-always-shadow,
+.el-card.is-hover-shadow:focus,
+.el-card.is-hover-shadow:hover {
+  box-shadow: none;
+}
+
+// vxe-table 列表统一外观
+.vxe-table {
+  border-radius: 5px;
+  .vxe-header--column {
+    background: #f2f6fa;
+    color: #555;
+  }
+}
+.table-container .vxe-table--render-default {
+  border-radius: 5px;
+}

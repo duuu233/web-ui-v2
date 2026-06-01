@@ -36,9 +36,10 @@ yarn preview      # 预览生产构建
 
 ```
 src/
-├─ api/                # 所有接口模块（与原项目一一对应，已全部迁移）
+├─ api/                # 接口模块（与原项目一一对应；配送员/配送点/取货点模块不迁移，未含）
 ├─ assets/images/      # 图片
 ├─ components/SvgIcon/ # svg 图标组件
+├─ components/Upload/  # 图片/文件上传组件（multiUpload / fileUpload，基于 ali-oss STS）
 ├─ directive/          # v-permission 权限指令
 ├─ icons/svg/          # svg 雪碧图源文件（vite-plugin-svg-icons）
 ├─ layout/             # 布局外壳：TopNav / Sidebar / TagsView / AppMain
@@ -59,13 +60,42 @@ src/
 
 ## 已完成 / 待迁移
 
-**已完成（可运行基座 + 样板模块）：**
+**已完成：**
 
-- 全部基础设施：请求层、Pinia、路由、权限指令、路由守卫、布局、SvgIcon、全局样式
-- 全部 20 个 `api/*.js` 接口模块
-- 样板页面：登录、首页、404、用户列表（vxe-table）+ 编辑 + 详情、产品列表（vxe-table）
+- 全部基础设施：请求层、Pinia、路由、权限指令、路由守卫、布局、SvgIcon、上传组件、全局样式
+- 17 个 `api/*.js` 接口模块（不含配送员 / 配送点 / 取货点；`dispatchWork` 仅保留运单列表用到的 `getQueryDcName`）
+- `sms`：用户列表（+编辑/详情）、产品列表（+新增/编辑/详情）、常见问题（+新增/编辑/详情）、版本管理（+版本详情）、应用市场、消息推送、用户消息
+- `ums`：员工列表、角色列表（+绑定权限）、菜单列表（+设置权限）、部门列表、系统配置、地区设置
+- `oms`：运单列表（+运单详情）
+- `log`：全部 21 个日志页面（handle 操作日志 10 个、business 业务日志 7 个、res 接口日志 2 个、error 异常日志 2 个），统一复用 `views/log/components/LogList.vue` 基础组件
 
-**待迁移：** `ums`（员工/角色/菜单/部门/系统配置/地区）、`oms`（运单）、`log`（各类日志）、`sms` 其余页面（配送员/配送点/取货点/调度/版本/应用市场/消息/常见问题等）。按下方模式逐个补充即可。
+**不迁移（按需求约定）：**
+
+- `sms` 配送员 / 配送点 / 取货点 / 调度（`deliveryGuy` / `deliveryDc` / `deliveryShop` / `dispatchWork`）—— 管理页面与接口均不迁移（`deliveryGuy/Dc/Shop` 接口模块已删除）；对应只读日志页 `log/business/*` 仍保留，运单列表仍依赖 `dispatchWork.getQueryDcName`。
+- 首页统计图表（订单/销售/分类）—— 当前 `home` 为占位页，未迁移仪表盘。
+- 原 mall-admin 体系的 `ums/resource` 资源列表、`role` 分配资源、`area` 绑定区域 —— 新后端已改用「菜单按钮权限」模型，无对应接口，不再迁移。
+
+## 日志页面（LogList 复用模式）
+
+各日志页结构高度一致（搜索关键词 + 时间区间 + vxe-table 列表 + 分页），统一抽到 `views/log/components/LogList.vue`：
+
+```vue
+<template>
+  <log-list title="用户操作日志" :fetch="getUserLogs" :columns="columns" />
+</template>
+<script setup name="userLogs">
+import LogList from '../components/LogList.vue'
+import { getUserLogs } from '@/api/log'
+const columns = [
+  { prop: 'adminName', label: '操作人' },
+  { prop: 'account', label: '操作账号' },
+  { prop: 'content', label: '操作内容' },
+  { prop: 'joinTime', label: '操作时间' }
+]
+</script>
+```
+
+`LogList` 支持 `title` / `fetch`(列表接口) / `columns` / `searchLabel` / `searchPlaceholder` / `dateLabel`，以及可选 `exportFn`（传入即显示「导出」按钮，如骑手派单日志）。新增日志页只需写一个薄封装（`<script setup name="...">` 的 name 需与路由 name 一致以支持 keep-alive）并在 `router/routes.js` 的 `/log` 下补一条路由。
 
 ## 如何新增一个列表页（vxe-table 模式）
 

@@ -1,0 +1,36 @@
+﻿yarn run v1.22.19
+$ vite build
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+node.exe : node_modules/@vueuse/core/dist/index.js (3362:0): A comment
+At C:\Users\Administrator\AppData\Roaming\npm\yarn.ps1:24 char:5
++     & "node$exe"  "$basedir/node_modules/yarn/bin/yarn.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (node_modules/@v...2:0): A comment:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+"/* #__PURE__ */"
+
+in "node_modules/@vueuse/core/dist/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be r
+emoved to avoid issues.
+node_modules/@vueuse/core/dist/index.js (5780:22): A comment
+
+"/* #__PURE__ */"
+
+in "node_modules/@vueuse/core/dist/index.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be r
+emoved to avoid issues.
+[32m✓[39m 2047 modules transformed.
+[31mx[39m Build failed in 6.26s
+[31merror during build:
+[31m[vite:load-fallback] Could not load D:\work\web-ui-v2\src/utils/ali-oss (imported by src/components/Upload/fileUpload.vue): ENOENT: no such file or d
+irectory, open 'D:\work\web-ui-v2\src\utils\ali-oss'[31m
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.readFile (node:internal/fs/promises:1249:14)
+    at async Object.load (file:///D:/work/web-ui-v2/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65357:25)
+    at async PluginDriver.hookFirstAndGetPlugin (file:///D:/work/web-ui-v2/node_modules/rollup/dist/es/shared/node-entry.js:22870:28)
+    at async file:///D:/work/web-ui-v2/node_modules/rollup/dist/es/shared/node-entry.js:21854:33
+    at async Queue.work (file:///D:/work/web-ui-v2/node_modules/rollup/dist/es/shared/node-entry.js:23098:32)[39m
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+

@@ -102,6 +102,36 @@ export const asyncRouterMap = [
         }
       },
       {
+        path: 'productListAdd',
+        name: 'productListAdd',
+        component: () => import('@/views/sms/productList/add.vue'),
+        meta: {
+          title: '产品新增',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'productListEdit',
+        name: 'productListEdit',
+        component: () => import('@/views/sms/productList/edit.vue'),
+        meta: {
+          title: '产品编辑',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'productListDetail',
+        name: 'productListDetail',
+        component: () => import('@/views/sms/productList/detail.vue'),
+        meta: {
+          title: '产品详情',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
         path: 'productFaqList',
         name: 'productFaqList',
         component: () => import('@/views/sms/productFaqList/index.vue'),
@@ -306,7 +336,144 @@ export const asyncRouterMap = [
     ]
   }
 
-  // 待迁移模块（log 等）按上方结构在此补充对应 children 与视图组件
+  ,
+  {
+    path: '/log',
+    component: Layout,
+    redirect: '/log/handle/user',
+    name: 'log',
+    meta: {
+      title: '日志'
+    },
+    children: [
+      {
+        path: 'handle/user',
+        name: 'userLogs',
+        component: () => import('@/views/log/handle/user.vue'),
+        meta: { title: '用户操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/product',
+        name: 'productLogs',
+        component: () => import('@/views/log/handle/product.vue'),
+        meta: { title: '商品操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/order',
+        name: 'orderLogs',
+        component: () => import('@/views/log/handle/order.vue'),
+        meta: { title: '订单操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/productbasic',
+        name: 'productbasicLogs',
+        component: () => import('@/views/log/handle/productbasic.vue'),
+        meta: { title: '基础资料操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/shopdata',
+        name: 'shopdataLogs',
+        component: () => import('@/views/log/handle/shopdata.vue'),
+        meta: { title: '店铺管理操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/jurisdiction',
+        name: 'jurisdictionLogs',
+        component: () => import('@/views/log/handle/jurisdiction.vue'),
+        meta: { title: '权限系统操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/content',
+        name: 'contentLogs',
+        component: () => import('@/views/log/handle/content.vue'),
+        meta: { title: '内容操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/common',
+        name: 'commonLogs',
+        component: () => import('@/views/log/handle/common.vue'),
+        meta: { title: '公共操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/delivery',
+        name: 'deliveryLogs',
+        component: () => import('@/views/log/handle/delivery.vue'),
+        meta: { title: '后台配送取货', icon: 'ums-admin' }
+      },
+      {
+        path: 'handle/saleCoupon',
+        name: 'saleCouponLogs',
+        component: () => import('@/views/log/handle/saleCoupon.vue'),
+        meta: { title: '优惠券操作日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'res/request',
+        name: 'requestLogs',
+        component: () => import('@/views/log/res/request.vue'),
+        meta: { title: '接口请求日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'res/res',
+        name: 'resLogs',
+        component: () => import('@/views/log/res/res.vue'),
+        meta: { title: '接口返回日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'error/err',
+        name: 'errLogs',
+        component: () => import('@/views/log/error/err.vue'),
+        meta: { title: '异常日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'error/Jurisdiction',
+        name: 'notJurisdictionLogs',
+        component: () => import('@/views/log/error/Jurisdiction.vue'),
+        meta: { title: '无权限日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'business/order',
+        name: 'businessOrderLogs',
+        component: () => import('@/views/log/business/order.vue'),
+        meta: { title: '订单日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'business/send',
+        name: 'sendLogs',
+        component: () => import('@/views/log/business/send.vue'),
+        meta: { title: '发送日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'business/sendOrdersLogs',
+        name: 'sendOrdersLogs',
+        component: () => import('@/views/log/business/sendOrdersLogs.vue'),
+        meta: { title: '骑手派单日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'business/clockLogs',
+        name: 'clockLogs',
+        component: () => import('@/views/log/business/clockLogs.vue'),
+        meta: { title: '骑手打卡日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'business/waybillLogs',
+        name: 'waybillLogs',
+        component: () => import('@/views/log/business/waybillLogs.vue'),
+        meta: { title: '调度日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'business/queuingConsumer',
+        name: 'queuingConsumerLogs',
+        component: () => import('@/views/log/business/queuingConsumer.vue'),
+        meta: { title: '消息队列消费日志', icon: 'ums-admin' }
+      },
+      {
+        path: 'business/queuingReceive',
+        name: 'queuingReceiveLogs',
+        component: () => import('@/views/log/business/queuingReceive.vue'),
+        meta: { title: '消息队列接收日志', icon: 'ums-admin' }
+      }
+    ]
+  }
 ]
 
 export const routerMap = constantRouterMap.concat(asyncRouterMap)

@@ -1,46 +1,31 @@
 <template>
   <div class="app-container">
-    <!-- 搜索 -->
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <el-icon><Search /></el-icon>
-        <span>筛选搜索</span>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form ref="searchFormRef" :inline="true" :model="listQuery" size="small">
-          <el-form-item label="用户关键词">
-            <el-input
-              v-model="listQuery.keyword"
-              placeholder="请输入用户昵称、邮箱"
-              clearable
-              maxlength="20"
-              class="input-width"
-              show-word-limit
-            />
-          </el-form-item>
-          <el-form-item label="创建时间">
-            <el-date-picker
-              v-model="dateList"
-              style="width: 300px"
-              type="daterange"
-              unlink-panels
-              value-format="YYYY-MM-DD"
-              format="YYYY-MM-DD"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :shortcuts="dateShortcuts"
-            />
-          </el-form-item>
-          <el-form-item class="fr">
-            <el-button type="primary" icon="Search" @click="handleSearchList">
-              查询
-            </el-button>
-            <el-button icon="Refresh" @click="handleResetSearch">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
+    <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
+      <el-form-item label="用户关键词">
+        <el-input
+          v-model="listQuery.keyword"
+          placeholder="请输入用户昵称、邮箱"
+          clearable
+          maxlength="20"
+          class="input-width"
+          show-word-limit
+        />
+      </el-form-item>
+      <el-form-item label="创建时间">
+        <el-date-picker
+          v-model="dateList"
+          style="width: 300px"
+          type="daterange"
+          unlink-panels
+          value-format="YYYY-MM-DD"
+          format="YYYY-MM-DD"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :shortcuts="dateShortcuts"
+        />
+      </el-form-item>
+    </SearchPanel>
 
     <!-- 操作 -->
     <el-card class="operate-container" shadow="never">
@@ -140,6 +125,7 @@
 import { ref, reactive, onMounted, onActivated, onDeactivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
 import { getUsers, getUserListExcel, setUserVerify } from '@/api/userList'
 
 const router = useRouter()
@@ -156,7 +142,6 @@ const list = ref([])
 const total = ref(0)
 const listLoading = ref(false)
 const tableRef = ref(null)
-const searchFormRef = ref(null)
 let isCreated = false
 
 const dateShortcuts = [
@@ -301,7 +286,6 @@ onDeactivated(() => {
 </script>
 
 <style lang="scss" scoped>
-.filter-container > div:first-child,
 .operate-container > div:first-child {
   display: flex;
   align-items: center;

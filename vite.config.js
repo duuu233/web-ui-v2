@@ -8,7 +8,8 @@ import path from 'node:path'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
-  const proxyTarget = env.VITE_APP_PROXY_TARGET
+  const apiPrefix = env.VITE_APP_API_PREFIX || '/ZoneAdmin'
+  const proxyTarget = env.VITE_APP_PROXY_TARGET || env.VITE_APP_API_ORIGIN
 
   return {
     plugins: [
@@ -40,11 +41,10 @@ export default defineConfig(({ mode }) => {
       open: false,
       proxy: proxyTarget
         ? {
-            // 开发环境通过代理转发，规避跨域；axios baseURL = /api
-            '/api': {
+            // 开发环境通过代理转发，规避跨域；axios baseURL = VITE_APP_API_PREFIX
+            [apiPrefix]: {
               target: proxyTarget,
-              changeOrigin: true,
-              rewrite: (p) => p.replace(/^\/api/, '')
+              changeOrigin: true
             }
           }
         : undefined

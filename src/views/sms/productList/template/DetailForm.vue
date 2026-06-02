@@ -37,8 +37,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 import { addProduct, editProduct, getProductDetail } from '@/api/productList'
-import MultiUpload from '@/components/Upload/multiUpload.vue'
-import FileUpload from '@/components/Upload/fileUpload.vue'
+import MultiUpload from '@/components/Upload/MultiUpload.vue'
+import FileUpload from '@/components/Upload/FileUpload.vue'
 
 const props = defineProps({
   pageType: {

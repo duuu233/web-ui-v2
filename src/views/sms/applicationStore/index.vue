@@ -1,42 +1,29 @@
 <template>
   <div class="app-container">
-    <!-- 搜索 -->
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <el-icon><Search /></el-icon>
-        <span>筛选搜索</span>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small">
-          <el-form-item label="客户端">
-            <el-select v-model="listQuery.terminal" clearable placeholder="请选择客户端" style="width: 160px">
-              <el-option
-                v-for="item in clientList"
-                v-show="item.value < 3 && item.value > 0"
-                :key="item.value"
-                :label="item.text"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="APP">
-            <el-select v-model="listQuery.appTypeId" clearable placeholder="请选择APP" style="width: 160px">
-              <el-option
-                v-for="item in appTypeList"
-                v-show="item.text !== '全部'"
-                :key="item.value"
-                :label="item.text"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item class="fr">
-            <el-button type="primary" icon="Search" @click="handleSearchList">查询</el-button>
-            <el-button icon="Refresh" @click="handleResetSearch">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
+    <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
+      <el-form-item label="客户端">
+        <el-select v-model="listQuery.terminal" clearable placeholder="请选择客户端" style="width: 160px">
+          <el-option
+            v-for="item in clientList"
+            v-show="item.value < 3 && item.value > 0"
+            :key="item.value"
+            :label="item.text"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="APP">
+        <el-select v-model="listQuery.appTypeId" clearable placeholder="请选择APP" style="width: 160px">
+          <el-option
+            v-for="item in appTypeList"
+            v-show="item.text !== '全部'"
+            :key="item.value"
+            :label="item.text"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+    </SearchPanel>
 
     <!-- 操作 -->
     <el-card class="operate-container" shadow="never">
@@ -190,6 +177,7 @@
 <script setup name="applicationStore">
 import { ref, reactive, onMounted, onActivated } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
 import {
   getAppMarketList,
   setAppMarketEdit,
@@ -330,7 +318,6 @@ onActivated(getList)
 </script>
 
 <style lang="scss" scoped>
-.filter-container > div:first-child,
 .operate-container > div:first-child {
   display: flex;
   align-items: center;

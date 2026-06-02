@@ -367,13 +367,13 @@ export const asyncRouterMap = [
       {
         path: 'handle/productbasic',
         name: 'productbasicLogs',
-        component: () => import('@/views/log/handle/productbasic.vue'),
+        component: () => import('@/views/log/handle/productBasic.vue'),
         meta: { title: '基础资料操作日志', icon: 'ums-admin' }
       },
       {
         path: 'handle/shopdata',
         name: 'shopdataLogs',
-        component: () => import('@/views/log/handle/shopdata.vue'),
+        component: () => import('@/views/log/handle/shopData.vue'),
         meta: { title: '店铺管理操作日志', icon: 'ums-admin' }
       },
       {
@@ -415,19 +415,19 @@ export const asyncRouterMap = [
       {
         path: 'res/res',
         name: 'resLogs',
-        component: () => import('@/views/log/res/res.vue'),
+        component: () => import('@/views/log/res/response.vue'),
         meta: { title: '接口返回日志', icon: 'ums-admin' }
       },
       {
         path: 'error/err',
         name: 'errLogs',
-        component: () => import('@/views/log/error/err.vue'),
+        component: () => import('@/views/log/error/error.vue'),
         meta: { title: '异常日志', icon: 'ums-admin' }
       },
       {
         path: 'error/Jurisdiction',
         name: 'notJurisdictionLogs',
-        component: () => import('@/views/log/error/Jurisdiction.vue'),
+        component: () => import('@/views/log/error/noPermission.vue'),
         meta: { title: '无权限日志', icon: 'ums-admin' }
       },
       {
@@ -445,19 +445,19 @@ export const asyncRouterMap = [
       {
         path: 'business/sendOrdersLogs',
         name: 'sendOrdersLogs',
-        component: () => import('@/views/log/business/sendOrdersLogs.vue'),
+        component: () => import('@/views/log/business/sendOrders.vue'),
         meta: { title: '骑手派单日志', icon: 'ums-admin' }
       },
       {
         path: 'business/clockLogs',
         name: 'clockLogs',
-        component: () => import('@/views/log/business/clockLogs.vue'),
+        component: () => import('@/views/log/business/clock.vue'),
         meta: { title: '骑手打卡日志', icon: 'ums-admin' }
       },
       {
         path: 'business/waybillLogs',
         name: 'waybillLogs',
-        component: () => import('@/views/log/business/waybillLogs.vue'),
+        component: () => import('@/views/log/business/waybill.vue'),
         meta: { title: '调度日志', icon: 'ums-admin' }
       },
       {

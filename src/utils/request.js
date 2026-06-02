@@ -3,9 +3,15 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import md5 from 'js-md5'
 import { getToken, removeToken } from '@/utils/auth'
 
+const apiPrefix = import.meta.env.VITE_APP_API_PREFIX || ''
+const apiOrigin = import.meta.env.VITE_APP_API_ORIGIN || ''
+const apiBaseURL = import.meta.env.DEV
+  ? apiPrefix
+  : `${apiOrigin.replace(/\/$/, '')}${apiPrefix}`
+
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_API, // api 的 base_url
+  baseURL: apiBaseURL, // api 的 base_url
   timeout: 60000 // 请求超时时间
 })
 

@@ -1,54 +1,41 @@
 <template>
   <div class="app-container">
-    <!-- 搜索 -->
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <el-icon><Search /></el-icon>
-        <span>筛选搜索</span>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small">
-          <el-form-item label="常见问题关键词">
-            <el-input
-              v-model="listQuery.keyword"
-              placeholder="请输入常见问题关键词"
-              clearable
-              maxlength="40"
-              class="input-width"
-              show-word-limit
-            />
-          </el-form-item>
-          <el-form-item label="语种">
-            <el-select v-model="listQuery.language" clearable placeholder="请选择语种" style="width: 160px">
-              <el-option label="英语" :value="1" />
-              <el-option label="德语" :value="2" />
-              <el-option label="西班牙语" :value="3" />
-              <el-option label="法语" :value="4" />
-              <el-option label="意大利语" :value="5" />
-              <el-option label="葡萄牙语" :value="6" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间">
-            <el-date-picker
-              v-model="dateList"
-              style="width: 300px"
-              type="daterange"
-              unlink-panels
-              value-format="YYYY-MM-DD"
-              format="YYYY-MM-DD"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :shortcuts="dateShortcuts"
-            />
-          </el-form-item>
-          <el-form-item class="fr">
-            <el-button type="primary" icon="Search" @click="handleSearchList">查询</el-button>
-            <el-button icon="Refresh" @click="handleResetSearch">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
+    <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
+      <el-form-item label="常见问题关键词">
+        <el-input
+          v-model="listQuery.keyword"
+          placeholder="请输入常见问题关键词"
+          clearable
+          maxlength="40"
+          class="input-width"
+          show-word-limit
+        />
+      </el-form-item>
+      <el-form-item label="语种">
+        <el-select v-model="listQuery.language" clearable placeholder="请选择语种" style="width: 160px">
+          <el-option label="英语" :value="1" />
+          <el-option label="德语" :value="2" />
+          <el-option label="西班牙语" :value="3" />
+          <el-option label="法语" :value="4" />
+          <el-option label="意大利语" :value="5" />
+          <el-option label="葡萄牙语" :value="6" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="创建时间">
+        <el-date-picker
+          v-model="dateList"
+          style="width: 300px"
+          type="daterange"
+          unlink-panels
+          value-format="YYYY-MM-DD"
+          format="YYYY-MM-DD"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :shortcuts="dateShortcuts"
+        />
+      </el-form-item>
+    </SearchPanel>
 
     <!-- 操作 -->
     <el-card class="operate-container" shadow="never">
@@ -143,6 +130,7 @@
 import { ref, reactive, onMounted, onActivated, onDeactivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
 import { getProductFaqList, setProductFaqVerify } from '@/api/productList'
 
 const router = useRouter()
@@ -283,7 +271,6 @@ onDeactivated(() => {
 </script>
 
 <style lang="scss" scoped>
-.filter-container > div:first-child,
 .operate-container > div:first-child {
   display: flex;
   align-items: center;

@@ -1,95 +1,82 @@
 <template>
   <div class="app-container">
-    <!-- 搜索 -->
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <el-icon><Search /></el-icon>
-        <span>筛选搜索</span>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small">
-          <el-form-item label="收货人信息">
-            <el-input
-              v-model="listQuery.receive"
-              style="width: 311px"
-              placeholder="请输入收货人信息"
-              maxlength="20"
-              show-word-limit
-              clearable
-            />
-          </el-form-item>
-          <el-form-item label="流水号">
-            <el-input
-              v-model="listQuery.shopSequence"
-              class="input-width"
-              placeholder="请输入流水号"
-              maxlength="10"
-              show-word-limit
-              clearable
-            />
-          </el-form-item>
-          <el-form-item label="运单来源">
-            <el-select v-model="listQuery.terminal" clearable placeholder="请选择运单来源">
-              <el-option
-                v-for="(item, index) in terminalList"
-                v-show="item !== 'IOS' && item !== '支付宝'"
-                :key="index"
-                :label="item"
-                :value="index + 1"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="订单类型">
-            <el-select v-model="listQuery.orderType" clearable placeholder="请选择订单类型">
-              <el-option
-                v-for="(item, index) in orderTypeList"
-                :key="index"
-                :label="item"
-                :value="index + 1"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="所属区域">
-            <el-select v-model="listQuery.regionalId" clearable placeholder="请选择所属区域">
-              <el-option
-                v-for="(item, index) in regionalIdList"
-                :key="index"
-                :label="item.keyText"
-                :value="item.keyId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="排序方式">
-            <el-select v-model="listQuery.orderByType" clearable placeholder="请选择排序方式">
-              <el-option
-                v-for="(item, index) in sortOrderList"
-                :key="index"
-                :label="item"
-                :value="index + 1"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="运单建议送达时间">
-            <el-date-picker
-              v-model="dateList"
-              style="width: 311px"
-              type="daterange"
-              unlink-panels
-              value-format="YYYY-MM-DD"
-              format="YYYY-MM-DD"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :shortcuts="dateShortcuts"
-            />
-          </el-form-item>
-          <el-form-item class="fr">
-            <el-button type="primary" icon="Search" @click="handleSearchList">查询</el-button>
-            <el-button icon="Refresh" @click="handleResetSearch">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
+    <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
+      <el-form-item label="收货人信息">
+        <el-input
+          v-model="listQuery.receive"
+          style="width: 311px"
+          placeholder="请输入收货人信息"
+          maxlength="20"
+          show-word-limit
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="流水号">
+        <el-input
+          v-model="listQuery.shopSequence"
+          class="input-width"
+          placeholder="请输入流水号"
+          maxlength="10"
+          show-word-limit
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="运单来源">
+        <el-select v-model="listQuery.terminal" clearable placeholder="请选择运单来源">
+          <el-option
+            v-for="(item, index) in terminalList"
+            v-show="item !== 'IOS' && item !== '支付宝'"
+            :key="index"
+            :label="item"
+            :value="index + 1"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="订单类型">
+        <el-select v-model="listQuery.orderType" clearable placeholder="请选择订单类型">
+          <el-option
+            v-for="(item, index) in orderTypeList"
+            :key="index"
+            :label="item"
+            :value="index + 1"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="所属区域">
+        <el-select v-model="listQuery.regionalId" clearable placeholder="请选择所属区域">
+          <el-option
+            v-for="(item, index) in regionalIdList"
+            :key="index"
+            :label="item.keyText"
+            :value="item.keyId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="排序方式">
+        <el-select v-model="listQuery.orderByType" clearable placeholder="请选择排序方式">
+          <el-option
+            v-for="(item, index) in sortOrderList"
+            :key="index"
+            :label="item"
+            :value="index + 1"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="运单建议送达时间">
+        <el-date-picker
+          v-model="dateList"
+          style="width: 311px"
+          type="daterange"
+          unlink-panels
+          value-format="YYYY-MM-DD"
+          format="YYYY-MM-DD"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :shortcuts="dateShortcuts"
+        />
+      </el-form-item>
+    </SearchPanel>
 
     <div class="table-container">
       <div class="table-btns-box">
@@ -175,6 +162,7 @@
 import { ref, reactive, onMounted, onActivated } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
 import { getWayBillList, getWayBillListExcel } from '@/api/waybill'
 import { getQueryDcName } from '@/api/dispatchWork'
 import { formatDate } from '@/utils/date'
@@ -320,11 +308,6 @@ onActivated(init)
 </script>
 
 <style lang="scss" scoped>
-.filter-container > div:first-child {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
 .table-btns-box {
   display: flex;
   align-items: center;

@@ -1,30 +1,17 @@
 <template>
   <div class="app-container">
-    <!-- 搜索 -->
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <el-icon><Search /></el-icon>
-        <span>筛选搜索</span>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small">
-          <el-form-item label="输入搜索">
-            <el-input
-              v-model="listQuery.keyword"
-              style="width: 350px"
-              placeholder="输入关键词"
-              clearable
-              maxlength="20"
-              show-word-limit
-            />
-          </el-form-item>
-          <el-form-item class="fr">
-            <el-button type="primary" icon="Search" @click="handleSearchList">查询</el-button>
-            <el-button icon="Refresh" @click="handleResetSearch">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
+    <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
+      <el-form-item label="输入搜索">
+        <el-input
+          v-model="listQuery.keyword"
+          style="width: 350px"
+          placeholder="输入关键词"
+          clearable
+          maxlength="20"
+          show-word-limit
+        />
+      </el-form-item>
+    </SearchPanel>
 
     <div class="table-container">
       <div class="table-btns-box">
@@ -87,6 +74,7 @@
 
 <script setup name="messageUser">
 import { ref, reactive, onMounted, onActivated } from 'vue'
+import SearchPanel from '@/components/SearchPanel/index.vue'
 import { getUserMessageList } from '@/api/messageUser'
 
 const defaultListQuery = () => ({ pageIndex: 1, pageSize: 10, keyword: null, pushType: 2 })
@@ -139,11 +127,6 @@ onActivated(getList)
 </script>
 
 <style lang="scss" scoped>
-.filter-container > div:first-child {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
 .table-btns-box {
   display: flex;
   align-items: center;

@@ -3,5 +3,5 @@
 </template>
 
 <script setup name="productFaqListAdd">
-import HandleDetail from './template/handleDetail.vue'
+import HandleDetail from './template/DetailForm.vue'
 </script>

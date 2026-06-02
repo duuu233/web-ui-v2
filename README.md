@@ -26,10 +26,11 @@ yarn preview      # 预览生产构建
 
 ## 环境变量
 
-见 `.env.development` / `.env.production`：
+见 `.env` / `.env.development` / `.env.production`：
 
-- `VITE_APP_BASE_API`：axios 的 baseURL。开发用 `/api`，由 Vite 代理转发到 `VITE_APP_PROXY_TARGET`（规避跨域）；生产为后端完整地址。
-- `VITE_APP_PROXY_TARGET`：开发代理目标（对应原项目 `BASE_API`）。
+- `VITE_APP_API_ORIGIN`：后端接口域名，例如 `https://api.fce-inno.com`。
+- `VITE_APP_API_PREFIX`：后端接口前缀，例如 `/ZoneAdmin`。开发环境 axios 使用此前缀走 Vite 代理；生产环境拼成完整地址。
+- `VITE_APP_PROXY_TARGET`：可选，开发代理目标域名；未设置时默认使用 `VITE_APP_API_ORIGIN`。
 - `VITE_APP_BASE_PAY` / `VITE_APP_BASE_UPLOAD` / `VITE_APP_BASE_BIGUPLOAD`：支付 / 上传接口地址。
 
 ## 目录结构
@@ -39,7 +40,7 @@ src/
 ├─ api/                # 接口模块（与原项目一一对应；配送员/配送点/取货点模块不迁移，未含）
 ├─ assets/images/      # 图片
 ├─ components/SvgIcon/ # svg 图标组件
-├─ components/Upload/  # 图片/文件上传组件（multiUpload / fileUpload，基于 ali-oss STS）
+├─ components/Upload/  # 图片/文件上传组件（MultiUpload / FileUpload，基于 ali-oss STS）
 ├─ directive/          # v-permission 权限指令
 ├─ icons/svg/          # svg 雪碧图源文件（vite-plugin-svg-icons）
 ├─ layout/             # 布局外壳：TopNav / Sidebar / TagsView / AppMain

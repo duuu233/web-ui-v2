@@ -1,28 +1,15 @@
 <template>
   <div class="app-container">
-    <!-- 搜索 -->
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <el-icon><Search /></el-icon>
-        <span>筛选搜索</span>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small">
-          <el-form-item label="菜单名称">
-            <el-input
-              v-model="listQuery.keyword"
-              class="input-width"
-              placeholder="请输入菜单名称"
-              clearable
-            />
-          </el-form-item>
-          <el-form-item class="fr">
-            <el-button type="primary" icon="Search" @click="handleSearchList">查询</el-button>
-            <el-button icon="Refresh" @click="handleResetSearch">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
+    <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
+      <el-form-item label="菜单名称">
+        <el-input
+          v-model="listQuery.keyword"
+          class="input-width"
+          placeholder="请输入菜单名称"
+          clearable
+        />
+      </el-form-item>
+    </SearchPanel>
 
     <!-- 操作 -->
     <el-card class="operate-container" shadow="never">
@@ -266,6 +253,7 @@
 import { ref, reactive, onMounted, onActivated, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
 import {
   fetchList,
   setAdminSystemsVerify,
@@ -487,7 +475,6 @@ onActivated(getList)
 </script>
 
 <style lang="scss" scoped>
-.filter-container > div:first-child,
 .operate-container > div:first-child {
   display: flex;
   align-items: center;

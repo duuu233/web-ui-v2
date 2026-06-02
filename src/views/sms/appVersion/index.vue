@@ -1,29 +1,16 @@
 <template>
   <div class="app-container">
-    <!-- 搜索 -->
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <el-icon><Search /></el-icon>
-        <span>筛选搜索</span>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small">
-          <el-form-item label="客户端">
-            <el-select v-model="listQuery.terminal" clearable placeholder="请选择客户端" style="width: 160px">
-              <el-option :value="1" label="Android" />
-              <el-option :value="2" label="IOS" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="关键词">
-            <el-input v-model="listQuery.keyword" clearable placeholder="请输入关键词" />
-          </el-form-item>
-          <el-form-item class="fr">
-            <el-button type="primary" icon="Search" @click="handleSearchList">查询</el-button>
-            <el-button icon="Refresh" @click="handleResetSearch">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
+    <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
+      <el-form-item label="客户端">
+        <el-select v-model="listQuery.terminal" clearable placeholder="请选择客户端" style="width: 160px">
+          <el-option :value="1" label="Android" />
+          <el-option :value="2" label="IOS" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="关键词">
+        <el-input v-model="listQuery.keyword" clearable placeholder="请输入关键词" />
+      </el-form-item>
+    </SearchPanel>
 
     <!-- 操作 -->
     <el-card class="operate-container" shadow="never">
@@ -124,6 +111,7 @@
 import { ref, reactive, onMounted, onActivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
 import { getAppVersionList, setAppVersionVerify } from '@/api/appVersion'
 import { formatDate } from '@/utils/date'
 
@@ -203,7 +191,6 @@ onActivated(getList)
 </script>
 
 <style lang="scss" scoped>
-.filter-container > div:first-child,
 .operate-container > div:first-child {
   display: flex;
   align-items: center;

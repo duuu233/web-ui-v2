@@ -132,6 +132,43 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'userProductList',
+        name: 'userProductList',
+        component: () => import('@/views/sms/userProductList/index.vue'),
+        meta: {
+          title: '用户产品列表',
+          icon: 'sms-flash'
+        }
+      },
+      {
+        path: 'userProductImage',
+        name: 'userProductImage',
+        component: () => import('@/views/sms/userProductImage/index.vue'),
+        meta: {
+          title: '用户产品图片',
+          icon: 'sms-flash'
+        }
+      },
+      {
+        path: 'productVersion',
+        name: 'productVersion',
+        component: () => import('@/views/sms/productVersion/index.vue'),
+        meta: {
+          title: '产品版本',
+          icon: 'sms-flash'
+        }
+      },
+      {
+        path: 'productVersionDetail',
+        name: 'productVersionDetail',
+        component: () => import('@/views/sms/productVersion/detail.vue'),
+        meta: {
+          title: '产品版本详情',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
         path: 'productFaqList',
         name: 'productFaqList',
         component: () => import('@/views/sms/productFaqList/index.vue'),
@@ -290,15 +327,6 @@ export const asyncRouterMap = [
         meta: {
           title: '系统配置',
           icon: 'ums-config'
-        }
-      },
-      {
-        path: 'area',
-        name: 'area',
-        component: () => import('@/views/ums/area/index.vue'),
-        meta: {
-          title: '地区设置',
-          icon: 'ums-area'
         }
       }
     ]

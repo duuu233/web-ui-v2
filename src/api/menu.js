@@ -9,6 +9,14 @@ export function fetchList(params) {
   })
 }
 
+export function getAdminSystemsDetails(params) {
+  return request({
+    url: '/Jurisdiction/getAdminSystemsDetails',
+    method: 'get',
+    params
+  })
+}
+
 // 系统管理启/禁用
 export function setAdminSystemsVerify(data) {
   return request({
@@ -100,7 +108,7 @@ export function getDepartments(params) {
 }
 
 // 新增/编辑--部门
-export function setFetchTreeList(data) {
+export function setDepartment(data) {
   return request({
     url: '/Jurisdiction/setDepartment',
     method: 'post',

@@ -20,7 +20,7 @@
       </div>
       <div>
         <el-button
-          v-permission="['Post_Content_SetAppVersionEdit']"
+          v-permission="['Post_AppVersion_SetAppVersionEdit']"
           size="small"
           type="primary"
           icon="Plus"
@@ -59,7 +59,7 @@
           </template>
         </vxe-column>
         <vxe-column
-          v-permission="['Post_Content_SetAppVersionVerify']"
+          v-permission="['Post_AppVersion_SetAppVersionVerify']"
           title="是否显示"
           width="120"
           align="center"
@@ -79,7 +79,7 @@
         <vxe-column title="操作" width="120" align="center" fixed="right">
           <template #default="{ row }">
             <el-button
-              v-permission="['Post_Content_SetAppVersionEdit']"
+              v-permission="['Post_AppVersion_SetAppVersionEdit']"
               size="small"
               type="primary"
               @click="addVersion('edit', row)"

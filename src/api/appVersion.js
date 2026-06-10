@@ -36,6 +36,14 @@ export function setAppVersionEdit(data) {
   })
 }
 
+export function setAppVersionGrade(data) {
+  return request({
+    url: '/AppVersion/setAppVersionGrade',
+    method: 'post',
+    data
+  })
+}
+
 // 禁用启用版本管理
 export function setAppVersionVerify(data) {
   return request({

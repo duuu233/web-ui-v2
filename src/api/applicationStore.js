@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取应用市场详情
 export function getAppMarketDetail(params) {
   return request({
-    url: '/Content/getAppMarketDetail',
+    url: '/AppVersion/getAppMarketDetail',
     method: 'get',
     params
   })
@@ -12,7 +12,7 @@ export function getAppMarketDetail(params) {
 // 获取应用市场列表
 export function getAppMarketList(params) {
   return request({
-    url: '/Content/getAppMarketList',
+    url: '/AppVersion/getAppMarketList',
     method: 'get',
     params
   })
@@ -21,7 +21,15 @@ export function getAppMarketList(params) {
 // 添加编辑应用市场列表
 export function setAppMarketEdit(data) {
   return request({
-    url: '/Content/setAppMarketEdit',
+    url: '/AppVersion/setAppMarketEdit',
+    method: 'post',
+    data
+  })
+}
+
+export function setAppMarketGrade(data) {
+  return request({
+    url: '/AppVersion/setAppMarketGrade',
     method: 'post',
     data
   })
@@ -30,7 +38,7 @@ export function setAppMarketEdit(data) {
 // 禁用启用应用市场列表
 export function setAppMarketVerify(data) {
   return request({
-    url: '/Content/setAppMarketVerify',
+    url: '/AppVersion/setAppMarketVerify',
     method: 'post',
     data
   })
@@ -39,7 +47,7 @@ export function setAppMarketVerify(data) {
 // 删除应用市场
 export function setAppMarketDelete(data) {
   return request({
-    url: '/Content/setAppMarketDelete',
+    url: '/AppVersion/setAppMarketDelete',
     method: 'post',
     data
   })

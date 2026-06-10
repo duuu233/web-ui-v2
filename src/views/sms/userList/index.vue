@@ -1,3 +1,126 @@
+<script setup name="userList">
+import { shallowRef } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
+import ListToolbar from '@/components/ListToolbar/index.vue'
+import PaginationBar from '@/components/PaginationBar/index.vue'
+import { usePagedList, cleanQuery } from '@/composables/usePagedList'
+import { formatDate } from '@/utils/date'
+import { getUserList, getUserListExcel, setUserVerify } from '@/api/userList'
+
+const router = useRouter()
+
+const languageOptions = [
+  { value: 0, label: '英语' },
+  { value: 1, label: '英语' },
+  { value: 2, label: '德语' },
+  { value: 3, label: '西班牙语' },
+  { value: 4, label: '法语' },
+  { value: 5, label: '意大利语' },
+  { value: 6, label: '葡萄牙语' }
+]
+
+const terminalOptions = [
+  { value: 1, label: 'Android' },
+  { value: 2, label: 'iOS' }
+]
+
+const verifyOptions = [
+  { value: 1, label: '有效' },
+  { value: 0, label: '无效' }
+]
+
+const defaultListQuery = () => ({
+  pageIndex: 1,
+  pageSize: 10,
+  keyword: null,
+  language: null,
+  terminal: null,
+  verify: null
+})
+
+const dateList = shallowRef([])
+
+const {
+  listQuery,
+  list,
+  total,
+  listLoading,
+  getList,
+  handleSearchList: searchList,
+  handleResetSearch: resetSearch,
+  handleSizeChange,
+  handleCurrentChange
+} = usePagedList({
+  fetchList: getUserList,
+  defaultQuery: defaultListQuery,
+  buildParams: cleanQuery
+})
+
+function formatDateTime(time) {
+  if (time == null || time === '') return 'N/A'
+  return formatDate(new Date(time), 'yyyy-MM-dd hh:mm:ss')
+}
+
+function applyDateRange() {
+  if (dateList.value?.length) {
+    listQuery.startDate = dateList.value[0]
+    listQuery.endDate = dateList.value[1]
+    return
+  }
+  delete listQuery.startDate
+  delete listQuery.endDate
+}
+
+function handleSearchList() {
+  applyDateRange()
+  searchList()
+}
+
+function handleResetSearch() {
+  dateList.value = []
+  resetSearch()
+}
+
+function handleStatusChange(status, row) {
+  ElMessageBox.confirm('是否修改该用户状态?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      setUserVerify({ verify: status, id: row.userId }).then(() => {
+        ElMessage.success('修改成功')
+        row.verify = status
+      })
+    })
+    .catch(() => {
+      ElMessage.info('取消修改')
+    })
+}
+
+function handleExport() {
+  applyDateRange()
+  const query = cleanQuery({ ...listQuery, pageIndex: 1 })
+  getUserListExcel(query).then((res) => {
+    if (res.retData) {
+      window.location.href = res.retData
+      return
+    }
+    ElMessage.warning('数据为空，无法导出')
+  })
+}
+
+function handleEdit(row) {
+  router.push({ name: 'userListEdit', query: { id: row.userId } })
+}
+
+function handleDetail(row) {
+  router.push({ name: 'userListDetail', query: { id: row.userId } })
+}
+</script>
+
 <template>
   <div class="app-container">
     <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
@@ -6,12 +129,46 @@
           v-model="listQuery.keyword"
           placeholder="请输入用户昵称、邮箱"
           clearable
-          maxlength="20"
+          maxlength="40"
           class="input-width"
           show-word-limit
         />
       </el-form-item>
-      <el-form-item label="创建时间">
+
+      <el-form-item label="语言">
+        <el-select v-model="listQuery.language" clearable placeholder="请选择语言" style="width: 140px">
+          <el-option
+            v-for="item in languageOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="终端">
+        <el-select v-model="listQuery.terminal" clearable placeholder="请选择终端" style="width: 140px">
+          <el-option
+            v-for="item in terminalOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="状态">
+        <el-select v-model="listQuery.verify" clearable placeholder="请选择状态" style="width: 120px">
+          <el-option
+            v-for="item in verifyOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="注册时间">
         <el-date-picker
           v-model="dateList"
           style="width: 300px"
@@ -22,34 +179,24 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          :shortcuts="dateShortcuts"
         />
       </el-form-item>
     </SearchPanel>
 
-    <!-- 操作 -->
-    <el-card class="operate-container" shadow="never">
-      <div>
-        <el-icon><Tickets /></el-icon>
-        <span>用户列表</span>
-      </div>
-      <div>
-        <el-button
-          v-permission="['get_User_getUserListExcel']"
-          size="small"
-          icon="Document"
-          type="primary"
-          @click="handleExport"
-        >
-          导出用户
-        </el-button>
-      </div>
-    </el-card>
+    <ListToolbar title="用户列表">
+      <el-button
+        v-permission="['Get_User_GetUserListExcel']"
+        size="small"
+        icon="Document"
+        type="primary"
+        @click="handleExport"
+      >
+        导出用户
+      </el-button>
+    </ListToolbar>
 
-    <!-- 列表 -->
     <div class="table-container">
       <vxe-table
-        ref="tableRef"
         :data="list"
         :loading="listLoading"
         border
@@ -57,22 +204,20 @@
         stripe
         :row-config="{ isHover: true }"
         :column-config="{ resizable: true }"
-        height="auto"
         max-height="560"
       >
         <vxe-column type="seq" title="编号" width="70" align="center" />
-        <vxe-column field="userId" title="用户ID" align="center" show-overflow />
-        <vxe-column field="userNo" title="用户编号" align="center" show-overflow />
-        <vxe-column field="nickName" title="用户昵称" align="center" show-overflow />
-        <vxe-column field="userEmail" title="用户邮箱" align="center" show-overflow />
-        <vxe-column field="joinTime" title="注册时间" align="center" width="160" />
-        <vxe-column field="terminalMsg" title="注册渠道" align="center" show-overflow />
-        <vxe-column field="countryName" title="国家" align="center" show-overflow />
-        <vxe-column field="countryCode" title="国家编号" align="center" show-overflow />
-        <vxe-column title="是否启用" width="120" align="center">
+        <vxe-column field="userId" title="用户ID" width="90" align="center" />
+        <vxe-column field="userNo" title="用户编号" min-width="130" align="center" show-overflow />
+        <vxe-column field="nickName" title="用户昵称" min-width="120" align="center" show-overflow />
+        <vxe-column field="userEmail" title="用户邮箱" min-width="170" align="center" show-overflow />
+        <vxe-column field="terminalMsg" title="终端" width="110" align="center" show-overflow />
+        <vxe-column field="countryName" title="国家" min-width="120" align="center" show-overflow />
+        <vxe-column field="countryCode" title="国家编号" width="100" align="center" show-overflow />
+        <vxe-column title="状态" width="120" align="center">
           <template #default="{ row }">
             <el-switch
-              v-permission="['post_User_setUserVerify']"
+              v-permission="['Post_User_SetUserVerify']"
               :model-value="row.verify"
               :active-value="1"
               :inactive-value="0"
@@ -80,11 +225,14 @@
             />
           </template>
         </vxe-column>
+        <vxe-column title="注册时间" width="170" align="center">
+          <template #default="{ row }">{{ formatDateTime(row.joinTime) }}</template>
+        </vxe-column>
         <vxe-column title="操作" width="170" align="center" fixed="right">
           <template #default="{ row }">
             <div class="handle-table-box">
               <el-button
-                v-permission="['POST_User_SetUserInfo']"
+                v-permission="['Post_User_SetUserInfo']"
                 size="small"
                 type="primary"
                 @click="handleEdit(row)"
@@ -92,7 +240,7 @@
                 编辑
               </el-button>
               <el-button
-                v-permission="['Get_User_getUserDetails']"
+                v-permission="['Get_User_GetUserDetail']"
                 size="small"
                 type="primary"
                 @click="handleDetail(row)"
@@ -105,190 +253,12 @@
       </vxe-table>
     </div>
 
-    <!-- 分页 -->
-    <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="listQuery.pageIndex"
-        v-model:page-size="listQuery.pageSize"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :page-sizes="[10, 20, 30]"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <PaginationBar
+      v-model:current-page="listQuery.pageIndex"
+      v-model:page-size="listQuery.pageSize"
+      :total="total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
-
-<script setup name="userList">
-import { ref, reactive, onMounted, onActivated, onDeactivated } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import SearchPanel from '@/components/SearchPanel/index.vue'
-import { getUsers, getUserListExcel, setUserVerify } from '@/api/userList'
-
-const router = useRouter()
-
-const defaultListQuery = () => ({
-  pageIndex: 1,
-  pageSize: 10,
-  keyword: null
-})
-
-const listQuery = reactive(defaultListQuery())
-const dateList = ref([])
-const list = ref([])
-const total = ref(0)
-const listLoading = ref(false)
-const tableRef = ref(null)
-let isCreated = false
-
-const dateShortcuts = [
-  {
-    text: '最近一周',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
-    }
-  },
-  {
-    text: '最近一个月',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
-    }
-  },
-  {
-    text: '最近三个月',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      return [start, end]
-    }
-  }
-]
-
-function getList() {
-  listLoading.value = true
-  getUsers(listQuery)
-    .then((response) => {
-      listLoading.value = false
-      list.value = response.retData.pageData || []
-      total.value = response.retData.recordCount || 0
-    })
-    .catch(() => {
-      listLoading.value = false
-    })
-}
-
-function handleSearchList() {
-  listQuery.pageIndex = 1
-  if (dateList.value && dateList.value.length) {
-    listQuery.startDate = dateList.value[0]
-    listQuery.endDate = dateList.value[1]
-  } else {
-    delete listQuery.startDate
-    delete listQuery.endDate
-  }
-  getList()
-}
-
-function handleResetSearch() {
-  Object.assign(listQuery, defaultListQuery())
-  dateList.value = []
-  delete listQuery.startDate
-  delete listQuery.endDate
-  getList()
-}
-
-function handleSizeChange(val) {
-  listQuery.pageIndex = 1
-  listQuery.pageSize = val
-  getList()
-}
-function handleCurrentChange(val) {
-  listQuery.pageIndex = val
-  getList()
-}
-
-function handleStatusChange(status, row) {
-  ElMessageBox.confirm('是否要修改该状态?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  })
-    .then(() => {
-      setUserVerify({ verify: status, id: row.userId }).then((response) => {
-        if (response.retCode === 200) {
-          ElMessage.success('修改成功!')
-          row.verify = status
-        } else {
-          ElMessage.info('修改失败')
-        }
-      })
-    })
-    .catch(() => {
-      ElMessage.info('取消修改')
-    })
-}
-
-function handleExport() {
-  const query = { ...listQuery, pageIndex: 1 }
-  getUserListExcel(query).then((res) => {
-    if (res.retCode === 200) {
-      if (res.retData) {
-        window.location.href = res.retData
-      } else {
-        ElMessage.warning('数据为空，无法导出!')
-      }
-    } else {
-      ElMessage.error('导出失败!')
-    }
-  })
-}
-
-function handleEdit(row) {
-  router.push({ name: 'userListEdit', query: { id: row.userId } })
-}
-function handleDetail(row) {
-  router.push({ name: 'userListDetail', query: { id: row.userId } })
-}
-
-function eventFn(e) {
-  if (e.code === 'Enter') {
-    e.preventDefault()
-    handleSearchList()
-  }
-}
-
-onMounted(() => {
-  isCreated = true
-  getList()
-  document.addEventListener('keyup', eventFn)
-})
-onActivated(() => {
-  document.addEventListener('keyup', eventFn)
-  if (!isCreated) {
-    getList()
-  }
-  isCreated = false
-})
-onDeactivated(() => {
-  isCreated = false
-  document.removeEventListener('keyup', eventFn)
-})
-</script>
-
-<style lang="scss" scoped>
-.operate-container > div:first-child {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-</style>

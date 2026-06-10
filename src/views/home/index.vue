@@ -1,17 +1,93 @@
+<script setup name="home">
+import { computed, onMounted, reactive, ref, shallowRef } from 'vue'
+import { getStatisticsUser, getUserCount } from '@/api/home'
+import { getCookie } from '@/utils/support'
+import avatar from '@/assets/images/user.png'
+
+const trueName = shallowRef(getCookie('trueName') || '')
+const statsLoading = shallowRef(false)
+const statisticsLoading = shallowRef(false)
+const statisticsQueryType = shallowRef(0)
+const statisticsList = ref([])
+
+const stats = reactive({
+  userCount: '-',
+  productCount: '-',
+  productFaqCount: '-'
+})
+
+const queryTypeOptions = [
+  { value: 0, label: '近一周' },
+  { value: 1, label: '近一个月' },
+  { value: 2, label: '近一年' }
+]
+
+const cards = computed(() => [
+  { key: 'userCount', label: '用户总数', value: stats.userCount, icon: 'User', color: '#2274e7' },
+  { key: 'productCount', label: '产品数量', value: stats.productCount, icon: 'Goods', color: '#67c23a' },
+  { key: 'productFaqCount', label: '常见问题', value: stats.productFaqCount, icon: 'QuestionFilled', color: '#e6a23c' }
+])
+
+const maxRegistrationCount = computed(() => {
+  return statisticsList.value.reduce((max, item) => {
+    const count = Number(item.userCount) || 0
+    return Math.max(max, count)
+  }, 0)
+})
+
+function formatCount(value) {
+  return value ?? '-'
+}
+
+function getBarWidth(count) {
+  const value = Number(count) || 0
+  if (!value || !maxRegistrationCount.value) return '0%'
+  return `${Math.max((value / maxRegistrationCount.value) * 100, 6)}%`
+}
+
+async function loadStats() {
+  statsLoading.value = true
+  try {
+    const res = await getUserCount()
+    const data = res.retData || {}
+    stats.userCount = formatCount(data.userCount)
+    stats.productCount = formatCount(data.productCount)
+    stats.productFaqCount = formatCount(data.productFaqCount)
+  } finally {
+    statsLoading.value = false
+  }
+}
+
+async function loadRegistrationStats() {
+  statisticsLoading.value = true
+  try {
+    const res = await getStatisticsUser({ queryType: statisticsQueryType.value })
+    statisticsList.value = res.retData || []
+  } finally {
+    statisticsLoading.value = false
+  }
+}
+
+onMounted(() => {
+  loadStats()
+  loadRegistrationStats()
+})
+</script>
+
 <template>
   <div class="app-container home">
     <el-card shadow="never" class="welcome">
       <div class="welcome-inner">
         <img :src="avatar" class="avatar" alt="avatar" />
         <div class="hello">
-          <div class="title">你好，{{ trueName || '管理员' }} 👋</div>
-          <div class="sub">欢迎使用 Gleam 管理中心（Vue3 升级版）</div>
+          <div class="title">你好，{{ trueName || '管理员' }}</div>
+          <div class="sub">欢迎使用 Gleam 管理中心</div>
         </div>
       </div>
     </el-card>
 
-    <el-row :gutter="16" class="stat-row">
-      <el-col v-for="card in cards" :key="card.key" :xs="12" :sm="6">
+    <el-row v-loading="statsLoading" :gutter="16" class="stat-row">
+      <el-col v-for="card in cards" :key="card.key" :xs="24" :sm="8">
         <el-card shadow="never" class="stat-card">
           <div class="stat-icon" :style="{ background: card.color }">
             <el-icon><component :is="card.icon" /></el-icon>
@@ -24,94 +100,85 @@
       </el-col>
     </el-row>
 
-    <el-card shadow="never" class="tip-card">
+    <el-card v-loading="statisticsLoading" shadow="never" class="trend-card">
       <template #header>
-        <span class="font-title-medium">技术栈</span>
+        <div class="trend-header">
+          <span class="font-title-medium">用户注册统计</span>
+          <el-radio-group
+            v-model="statisticsQueryType"
+            size="small"
+            @change="loadRegistrationStats"
+          >
+            <el-radio-button
+              v-for="item in queryTypeOptions"
+              :key="item.value"
+              :label="item.value"
+            >
+              {{ item.label }}
+            </el-radio-button>
+          </el-radio-group>
+        </div>
       </template>
-      <el-space wrap>
-        <el-tag type="success">Vue 3</el-tag>
-        <el-tag type="success">Vite</el-tag>
-        <el-tag>Element Plus</el-tag>
-        <el-tag>Pinia</el-tag>
-        <el-tag>Vue Router 4</el-tag>
-        <el-tag type="warning">vxe-table</el-tag>
-        <el-tag type="info">axios</el-tag>
-        <el-tag type="info">dayjs</el-tag>
-        <el-tag type="info">lodash-es</el-tag>
-      </el-space>
+
+      <div v-if="statisticsList.length" class="trend-list">
+        <div v-for="item in statisticsList" :key="item.queryDate" class="trend-row">
+          <span class="trend-date">{{ item.queryDate || '-' }}</span>
+          <div class="trend-track">
+            <div class="trend-bar" :style="{ width: getBarWidth(item.userCount) }" />
+          </div>
+          <span class="trend-count">{{ item.userCount ?? 0 }}</span>
+        </div>
+      </div>
+      <el-empty v-else description="暂无数据" :image-size="80" />
     </el-card>
   </div>
 </template>
-
-<script setup name="home">
-import { ref, onMounted } from 'vue'
-import { getUserCount } from '@/api/home'
-import { getCookie } from '@/utils/support'
-import avatar from '@/assets/images/user.png'
-
-const trueName = ref(getCookie('trueName') || '')
-
-const cards = ref([
-  { key: 'userCount', label: '用户总数', value: '-', icon: 'User', color: '#2274e7' },
-  { key: 'todayCount', label: '今日新增', value: '-', icon: 'Plus', color: '#67c23a' },
-  { key: 'orderCount', label: '运单总数', value: '-', icon: 'Tickets', color: '#e6a23c' },
-  { key: 'activeCount', label: '活跃用户', value: '-', icon: 'DataLine', color: '#f56c6c' }
-])
-
-async function loadStats() {
-  try {
-    const res = await getUserCount()
-    const data = res.retData || {}
-    // 后端字段不固定，做安全映射
-    cards.value[0].value = data.userCount ?? data.totalCount ?? '-'
-    cards.value[1].value = data.todayCount ?? data.todayAddCount ?? '-'
-    cards.value[2].value = data.orderCount ?? data.wayBillCount ?? '-'
-    cards.value[3].value = data.activeCount ?? data.activeUserCount ?? '-'
-  } catch (e) {
-    // 未登录或后端不可达时静默
-  }
-}
-
-onMounted(loadStats)
-</script>
 
 <style lang="scss" scoped>
 .home {
   margin-top: 10px;
 }
+
 .welcome-inner {
   display: flex;
   align-items: center;
+
   .avatar {
     width: 56px;
     height: 56px;
     border-radius: 50%;
     margin-right: 16px;
   }
+
   .title {
     font-size: 18px;
     color: #303133;
     font-weight: 600;
   }
+
   .sub {
     font-size: 13px;
     color: #909399;
     margin-top: 6px;
   }
 }
+
 .stat-row {
   margin-top: 16px;
 }
+
 .stat-card {
   margin-bottom: 16px;
+
   :deep(.el-card__body) {
     display: flex;
     align-items: center;
   }
+
   .stat-icon {
     width: 48px;
     height: 48px;
-    border-radius: 10px;
+    border-radius: 8px;
     color: #fff;
     font-size: 24px;
     display: flex;
@@ -119,18 +186,65 @@ onMounted(loadStats)
     justify-content: center;
     margin-right: 14px;
   }
+
   .stat-value {
     font-size: 22px;
     font-weight: 700;
     color: #303133;
   }
+
   .stat-label {
     font-size: 13px;
     color: #909399;
     margin-top: 4px;
   }
 }
-.tip-card {
+
+.trend-card {
   margin-top: 4px;
+}
+
+.trend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trend-list {
+  display: grid;
+  gap: 12px;
+}
+
+.trend-row {
+  display: grid;
+  grid-template-columns: 120px minmax(120px, 1fr) 64px;
+  align-items: center;
+  gap: 12px;
+  min-height: 24px;
+}
+
+.trend-date {
+  color: #606266;
+  font-size: 13px;
+}
+
+.trend-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #edf1f7;
+  overflow: hidden;
+}
+
+.trend-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: #2274e7;
+}
+
+.trend-count {
+  color: #303133;
+  font-weight: 600;
+  text-align: right;
 }
 </style>

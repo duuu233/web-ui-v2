@@ -75,7 +75,7 @@
 <script setup name="department">
 import { ref, reactive, onMounted, onActivated } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getDepartments, setFetchTreeList, setDelDepartment } from '@/api/menu'
+import { getDepartments, setDepartment, setDelDepartment } from '@/api/menu'
 import { validateC_E_N } from '@/utils/validate'
 
 const treeRef = ref(null)
@@ -145,7 +145,7 @@ function remove(data) {
 function handleDialogConfirm() {
   formRef.value.validate((valid) => {
     if (!valid) return false
-    setFetchTreeList(form).then((response) => {
+    setDepartment(form).then((response) => {
       if (response.retCode === 200) {
         dialogVisible.value = false
         ElMessage.success(isEdit.value ? '编辑成功！' : '新增成功！')

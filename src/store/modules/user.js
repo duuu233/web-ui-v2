@@ -14,14 +14,18 @@ export const useUserStore = defineStore('user', {
   actions: {
     // 登录
     login(userInfo) {
-      const username = userInfo.username.trim()
+      const adminName = (userInfo.adminName || '').trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password)
+        login({
+          adminName,
+          password: userInfo.password
+        })
           .then((response) => {
-            const data = response.retData
+            const data = response.retData || {}
             const tokenStr = data.adminToken
             setToken(tokenStr)
             this.token = tokenStr
+            this.name = data.trueName || data.adminName || ''
             resolve(response)
           })
           .catch((error) => {

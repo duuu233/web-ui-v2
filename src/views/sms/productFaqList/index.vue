@@ -1,7 +1,118 @@
+<script setup name="productFaqList">
+import { shallowRef } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import SearchPanel from '@/components/SearchPanel/index.vue'
+import ListToolbar from '@/components/ListToolbar/index.vue'
+import PaginationBar from '@/components/PaginationBar/index.vue'
+import { usePagedList, cleanQuery } from '@/composables/usePagedList'
+import { formatDate } from '@/utils/date'
+import { getProductFaqList, setProductFaqVerify } from '@/api/productList'
+
+const router = useRouter()
+
+const languageOptions = [
+  { value: 1, label: '英语' },
+  { value: 2, label: '德语' },
+  { value: 3, label: '西班牙语' },
+  { value: 4, label: '法语' },
+  { value: 5, label: '意大利语' },
+  { value: 6, label: '葡萄牙语' }
+]
+
+const verifyOptions = [
+  { value: 1, label: '有效' },
+  { value: 0, label: '无效' }
+]
+
+const defaultListQuery = () => ({
+  pageIndex: 1,
+  pageSize: 10,
+  keyword: null,
+  language: null,
+  verify: null
+})
+
+const dateList = shallowRef([])
+const {
+  listQuery,
+  list,
+  total,
+  listLoading,
+  getList,
+  handleSearchList: searchList,
+  handleResetSearch: resetSearch,
+  handleSizeChange,
+  handleCurrentChange
+} = usePagedList({
+  fetchList: getProductFaqList,
+  defaultQuery: defaultListQuery,
+  buildParams: cleanQuery
+})
+
+function formatDateTime(time) {
+  if (time == null || time === '') return 'N/A'
+  return formatDate(new Date(time), 'yyyy-MM-dd hh:mm:ss')
+}
+
+function applyDateRange() {
+  if (dateList.value?.length) {
+    listQuery.startDate = dateList.value[0]
+    listQuery.endDate = dateList.value[1]
+    return
+  }
+  delete listQuery.startDate
+  delete listQuery.endDate
+}
+
+function handleStatusChange(row) {
+  ElMessageBox.confirm('该操作将删除此常见问题的所有相关语种数据，确认删除吗?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      setProductFaqVerify({ verify: 0, id: row.faqId }).then((response) => {
+        if (response.retCode === 200) {
+          ElMessage.success('删除成功!')
+          getList()
+        } else {
+          ElMessage.info('修改失败')
+        }
+      })
+    })
+    .catch(() => {
+      ElMessage.info('取消修改')
+    })
+}
+
+function handleSearchList() {
+  applyDateRange()
+  searchList()
+}
+
+function handleResetSearch() {
+  dateList.value = []
+  resetSearch()
+}
+
+function handleAdd() {
+  router.push({ name: 'productFaqListAdd' })
+}
+
+function handleEdit(row) {
+  router.push({ name: 'productFaqListEdit', query: { id: row.pflId } })
+}
+
+function handleDetail(row) {
+  router.push({ name: 'productFaqListDetail', query: { id: row.pflId } })
+}
+</script>
+
 <template>
   <div class="app-container">
     <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
-      <el-form-item label="常见问题关键词">
+      <el-form-item label="问题关键词">
         <el-input
           v-model="listQuery.keyword"
           placeholder="请输入常见问题关键词"
@@ -11,16 +122,29 @@
           show-word-limit
         />
       </el-form-item>
+
       <el-form-item label="语种">
         <el-select v-model="listQuery.language" clearable placeholder="请选择语种" style="width: 160px">
-          <el-option label="英语" :value="1" />
-          <el-option label="德语" :value="2" />
-          <el-option label="西班牙语" :value="3" />
-          <el-option label="法语" :value="4" />
-          <el-option label="意大利语" :value="5" />
-          <el-option label="葡萄牙语" :value="6" />
+          <el-option
+            v-for="item in languageOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
+
+      <el-form-item label="状态">
+        <el-select v-model="listQuery.verify" clearable placeholder="请选择状态" style="width: 120px">
+          <el-option
+            v-for="item in verifyOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateList"
@@ -32,31 +156,22 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          :shortcuts="dateShortcuts"
         />
       </el-form-item>
     </SearchPanel>
 
-    <!-- 操作 -->
-    <el-card class="operate-container" shadow="never">
-      <div>
-        <el-icon><Tickets /></el-icon>
-        <span>常见问题列表</span>
-      </div>
-      <div>
-        <el-button
-          v-permission="['Post_Product_AddProductFaq']"
-          size="small"
-          type="primary"
-          icon="Document"
-          @click="handleAdd"
-        >
-          新增常见问题
-        </el-button>
-      </div>
-    </el-card>
+    <ListToolbar title="常见问题列表">
+      <el-button
+        v-permission="['Post_Product_AddProductFaq']"
+        size="small"
+        type="primary"
+        icon="Document"
+        @click="handleAdd"
+      >
+        新增常见问题
+      </el-button>
+    </ListToolbar>
 
-    <!-- 列表 -->
     <div class="table-container">
       <vxe-table
         :data="list"
@@ -70,12 +185,19 @@
       >
         <vxe-column type="seq" title="编号" width="70" align="center" />
         <vxe-column field="faqId" title="业务ID" width="100" align="center" />
-        <vxe-column field="productName" title="所属产品" align="center" show-overflow />
-        <vxe-column field="languageMsg" title="语种" align="center" show-overflow />
-        <vxe-column field="faqTitle" title="标题" align="center" show-overflow />
-        <vxe-column field="grade" title="排序值(数值越大排名越前)" align="center" show-overflow />
-        <vxe-column title="是否自动翻译多语种" align="center">
-          <template #default="{ row }">{{ row.isAutoTranslate == 0 ? '否' : '是' }}</template>
+        <vxe-column field="productName" title="所属产品" min-width="140" align="center" show-overflow />
+        <vxe-column field="languageMsg" title="语种" width="110" align="center" show-overflow />
+        <vxe-column field="faqTitle" title="标题" min-width="180" align="center" show-overflow />
+        <vxe-column field="grade" title="排序值" width="90" align="center" />
+        <vxe-column title="状态" width="90" align="center">
+          <template #default="{ row }">
+            <span :class="row.verify ? 'enable_txt' : 'disable_txt'">
+              {{ row.verifyMsg || (row.verify ? '有效' : '无效') }}
+            </span>
+          </template>
+        </vxe-column>
+        <vxe-column title="创建时间" width="170" align="center">
+          <template #default="{ row }">{{ formatDateTime(row.joinTime) }}</template>
         </vxe-column>
         <vxe-column title="操作" width="220" align="center" fixed="right">
           <template #default="{ row }">
@@ -89,7 +211,7 @@
                 编辑
               </el-button>
               <el-button
-                v-permission="['Get_Product_ProductDetailFaq']"
+                v-permission="['Get_Product_GetProductFaqDetail']"
                 size="small"
                 type="primary"
                 @click="handleDetail(row)"
@@ -97,7 +219,8 @@
                 详情
               </el-button>
               <el-button
-                v-permission="['post_Product_setProductFaqVerify']"
+                v-if="row.verify !== 0"
+                v-permission="['Post_Product_SetProductFaqVerify']"
                 size="small"
                 type="danger"
                 @click="handleStatusChange(row)"
@@ -110,170 +233,22 @@
       </vxe-table>
     </div>
 
-    <!-- 分页 -->
-    <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="listQuery.pageIndex"
-        v-model:page-size="listQuery.pageSize"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :page-sizes="[10, 20, 30]"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <PaginationBar
+      v-model:current-page="listQuery.pageIndex"
+      v-model:page-size="listQuery.pageSize"
+      :total="total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
-<script setup name="productFaqList">
-import { ref, reactive, onMounted, onActivated, onDeactivated } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import SearchPanel from '@/components/SearchPanel/index.vue'
-import { getProductFaqList, setProductFaqVerify } from '@/api/productList'
-
-const router = useRouter()
-
-const defaultListQuery = () => ({ pageIndex: 1, pageSize: 10, keyword: null })
-
-const listQuery = reactive(defaultListQuery())
-const dateList = ref([])
-const list = ref([])
-const total = ref(0)
-const listLoading = ref(false)
-let isCreated = false
-
-const dateShortcuts = [
-  {
-    text: '最近一周',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
-    }
-  },
-  {
-    text: '最近一个月',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
-    }
-  },
-  {
-    text: '最近三个月',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      return [start, end]
-    }
-  }
-]
-
-function getList() {
-  listLoading.value = true
-  getProductFaqList(listQuery)
-    .then((response) => {
-      listLoading.value = false
-      list.value = response.retData.pageData || []
-      total.value = response.retData.recordCount || 0
-    })
-    .catch(() => {
-      listLoading.value = false
-    })
-}
-
-function handleStatusChange(row) {
-  const status = row.verify === 1 ? 0 : 1
-  ElMessageBox.confirm('该操作将删除此常见问题的所有相关语种数据，确认删除吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  })
-    .then(() => {
-      setProductFaqVerify({ verify: status, id: row.faqId }).then((response) => {
-        if (response.retCode === 200) {
-          ElMessage.success('修改成功!')
-          getList()
-        } else {
-          ElMessage.info('修改失败')
-        }
-      })
-    })
-    .catch(() => {
-      ElMessage.info('取消修改')
-    })
-}
-
-function handleSearchList() {
-  listQuery.pageIndex = 1
-  if (dateList.value && dateList.value.length) {
-    listQuery.startDate = dateList.value[0]
-    listQuery.endDate = dateList.value[1]
-  } else {
-    delete listQuery.startDate
-    delete listQuery.endDate
-  }
-  getList()
-}
-function handleResetSearch() {
-  Object.assign(listQuery, defaultListQuery())
-  dateList.value = []
-  delete listQuery.startDate
-  delete listQuery.endDate
-  getList()
-}
-function handleSizeChange(val) {
-  listQuery.pageIndex = 1
-  listQuery.pageSize = val
-  getList()
-}
-function handleCurrentChange(val) {
-  listQuery.pageIndex = val
-  getList()
-}
-
-function handleAdd() {
-  router.push({ name: 'productFaqListAdd' })
-}
-function handleEdit(row) {
-  router.push({ name: 'productFaqListEdit', query: { id: row.pflId } })
-}
-function handleDetail(row) {
-  router.push({ name: 'productFaqListDetail', query: { id: row.pflId } })
-}
-
-function eventFn(e) {
-  if (e.code === 'Enter') {
-    e.preventDefault()
-    handleSearchList()
-  }
-}
-
-onMounted(() => {
-  isCreated = true
-  getList()
-  document.addEventListener('keyup', eventFn)
-})
-onActivated(() => {
-  document.addEventListener('keyup', eventFn)
-  if (!isCreated) getList()
-  isCreated = false
-})
-onDeactivated(() => {
-  isCreated = false
-  document.removeEventListener('keyup', eventFn)
-})
-</script>
-
 <style lang="scss" scoped>
-.operate-container > div:first-child {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.enable_txt {
+  color: #67c23a;
+}
+
+.disable_txt {
+  color: #f56c6c;
 }
 </style>

@@ -1,14 +1,11 @@
 import request from '@/utils/request'
 
 // 登录
-export function login(adminName, password) {
+export function login(data) {
   return request({
     url: '/Passport/adminLogin',
     method: 'post',
-    data: {
-      adminName,
-      password
-    }
+    data
   })
 }
 
@@ -16,15 +13,6 @@ export function login(adminName, password) {
 export function getSysMenus(params) {
   return request({
     url: '/Jurisdiction/getSysMenus',
-    method: 'get',
-    params
-  })
-}
-
-// 获取键值对字典
-export function getKeyValues(params) {
-  return request({
-    url: '/Common/getKeyValues',
     method: 'get',
     params
   })

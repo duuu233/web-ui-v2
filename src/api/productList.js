@@ -9,6 +9,14 @@ export function getProductList(params) {
   })
 }
 
+export function getUserProductList(params) {
+  return request({
+    url: '/Product/getUserProductList',
+    method: 'get',
+    params
+  })
+}
+
 // 产品详情
 export function getProductDetail(params) {
   return request({

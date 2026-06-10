@@ -1,3 +1,86 @@
+<script setup name="config">
+import { onActivated, onMounted, reactive, ref, shallowRef } from 'vue'
+import { ElMessage } from 'element-plus'
+import { getConfigDataList, setConfigDataEdit } from '@/api/config'
+
+const form = reactive({ configList: [] })
+const loading = shallowRef(true)
+const formRef = ref(null)
+
+const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5_]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+
+function getConfigLabel(item) {
+  return item.configContent || item.configKey || `配置 ${item.configType}`
+}
+
+function isEditableConfig(item) {
+  return [1, 2].includes(item.configType)
+}
+
+function shouldValidateEmail(item) {
+  const label = `${item?.configKey || ''}${item?.configContent || ''}`
+  return /email|mail|邮箱/i.test(label)
+}
+
+function validateConfigValue(rule, value, callback) {
+  const index = Number(rule.field.split('.')[1])
+  const item = form.configList[index]
+  if (!value) {
+    callback(new Error('配置值不能为空'))
+    return
+  }
+  if (shouldValidateEmail(item) && !emailReg.test(value)) {
+    callback(new Error('请输入正确的邮箱'))
+    return
+  }
+  callback()
+}
+
+const rules = {
+  configValue: [{ required: true, validator: validateConfigValue, trigger: 'blur' }]
+}
+
+function buildConfigPayload() {
+  return {
+    listConfigTypeValue: form.configList.map((item) => {
+      const payload = {
+        configType: item.configType,
+        configValue: item.configValue
+      }
+      if (item.configKey !== undefined && item.configKey !== null) payload.configKey = item.configKey
+      if (item.adminId !== undefined && item.adminId !== null) payload.adminId = item.adminId
+      if (item.countyId !== undefined && item.countyId !== null) payload.countyId = item.countyId
+      return payload
+    })
+  }
+}
+
+async function getData() {
+  loading.value = true
+  try {
+    const response = await getConfigDataList()
+    form.configList = response.retData || []
+  } finally {
+    loading.value = false
+  }
+}
+
+async function handleDialogConfirm() {
+  if (!formRef.value) return
+  try {
+    await formRef.value.validate()
+    await setConfigDataEdit(buildConfigPayload())
+    ElMessage.success('保存成功')
+    getData()
+  } catch (error) {
+    // Element Plus validation and request interceptor already surface errors.
+  }
+}
+
+onMounted(getData)
+onActivated(getData)
+</script>
+
 <template>
   <div class="app-container">
     <el-card v-loading="loading" class="box-card" shadow="never">
@@ -5,25 +88,25 @@
         <span>系统设置</span>
       </template>
       <el-form ref="formRef" :model="form" :rules="rules" label-width="160px" size="small">
-        <template v-for="(item, index) in form.configList" :key="index">
+        <template v-for="(item, index) in form.configList" :key="item.configKey || index">
           <el-form-item
-            v-if="[1, 2].indexOf(item.configType) !== -1"
-            :label="item.configKey"
+            v-if="isEditableConfig(item)"
+            :label="getConfigLabel(item)"
             :prop="'configList.' + index + '.configValue'"
             :rules="rules.configValue"
           >
             <el-input
               v-if="item.configType === 2"
               v-model="item.configValue"
-              placeholder="请输入平台邮箱"
+              :placeholder="`请输入${getConfigLabel(item)}`"
               style="width: 311px"
               maxlength="40"
               show-word-limit
             />
             <el-input
-              v-if="item.configType === 1"
+              v-else
               v-model="item.configValue"
-              placeholder="请输入平台设备id"
+              :placeholder="`请输入${getConfigLabel(item)}`"
               type="textarea"
               :rows="2"
               style="width: 311px"
@@ -34,7 +117,7 @@
               v-if="item.configType === 1"
               style="padding-left: 6px; font-size: 12px"
             >
-              (多个之间请使用英文逗号分隔)
+              (多个值请使用英文逗号分隔)
             </i>
           </el-form-item>
         </template>
@@ -46,65 +129,12 @@
           size="small"
           @click="handleDialogConfirm"
         >
-          保 存
+          保存
         </el-button>
       </div>
     </el-card>
   </div>
 </template>
-
-<script setup name="config">
-import { ref, reactive, onMounted, onActivated } from 'vue'
-import { ElMessage } from 'element-plus'
-import { getConfigDataList, setConfigDataEdit } from '@/api/config'
-
-const form = reactive({ configList: [] })
-const loading = ref(true)
-const formRef = ref(null)
-
-const emailReg = /^[A-Za-z0-9一-龥]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
-const validateConfigValue = (rule, value, callback) => {
-  // rule.field 形如 configList.0.configValue, index 为页面从上到下顺序
-  const index = rule.field.split('.')[1]
-  if (index === '0') {
-    if (!value) return callback(new Error('平台邮箱不能为空'))
-    if (!emailReg.test(value)) return callback(new Error('请输入正确的邮箱'))
-    return callback()
-  }
-  if (index === '1') {
-    if (!value) return callback(new Error('平台设备id不能为空'))
-    return callback()
-  }
-  callback()
-}
-const rules = {
-  configValue: [{ required: true, validator: validateConfigValue, trigger: 'blur' }]
-}
-
-function getData() {
-  getConfigDataList().then((response) => {
-    if (response.retCode === 200) {
-      form.configList = response.retData || []
-      loading.value = false
-    }
-  })
-}
-
-function handleDialogConfirm() {
-  formRef.value.validate((valid) => {
-    if (!valid) return
-    setConfigDataEdit({ listConfigTypeValue: [...form.configList] }).then((res) => {
-      if (res.retCode === 200) {
-        ElMessage.success('保存成功！')
-      }
-      getData()
-    })
-  })
-}
-
-onMounted(getData)
-onActivated(getData)
-</script>
 
 <style lang="scss" scoped>
 .btn-box {

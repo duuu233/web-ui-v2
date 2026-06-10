@@ -1,10 +1,87 @@
+<script setup name="login">
+import { reactive, ref, shallowRef } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import md5 from 'js-md5'
+import { validateE_N, validateC_E_N } from '@/utils/validate'
+import { setCookie, getCookie } from '@/utils/support'
+import { useUserStore } from '@/store/modules/user'
+import login_bg from '@/assets/images/login_bg.png'
+import login_bx from '@/assets/images/login_bx.png'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+const loginFormRef = ref(null)
+const loading = shallowRef(false)
+
+const loginForm = reactive({
+  adminName: getCookie('adminName') || getCookie('username') || '',
+  password: getCookie('password') || ''
+})
+
+const validateAdminName = (rule, value, callback) => {
+  if (!value) {
+    return callback(new Error('请输入账号'))
+  }
+  if (!validateC_E_N(value)) {
+    return callback(new Error('请输入中文、英文或数字'))
+  }
+  if ((value + '').length < 2 || (value + '').length > 20) {
+    return callback(new Error('请输入 2~20 位中文、英文或数字'))
+  }
+  callback()
+}
+
+const validatePass = (rule, value, callback) => {
+  if (!value) {
+    return callback(new Error('请输入密码'))
+  }
+  if (!validateE_N(value) || (value + '').length < 6 || (value + '').length > 20) {
+    return callback(new Error('请输入 6~20 位英文、数字或下划线'))
+  }
+  callback()
+}
+
+const loginRules = {
+  adminName: [{ required: true, trigger: 'blur', validator: validateAdminName }],
+  password: [{ required: true, trigger: 'blur', validator: validatePass }]
+}
+
+function cacheLoginUser(data) {
+  setCookie('trueName', data.trueName || data.adminName || '', 15)
+  setCookie('adminName', data.adminName || loginForm.adminName, 15)
+  setCookie('isSysAdmin', data.isSysAdmin ?? 0, 15)
+}
+
+function handleLogin() {
+  loginFormRef.value.validate((valid) => {
+    if (!valid) return false
+    loading.value = true
+    userStore
+      .login({
+        adminName: loginForm.adminName,
+        password: md5(loginForm.password)
+      })
+      .then((res) => {
+        cacheLoginUser(res.retData || {})
+        ElMessage({ message: '登录成功！', type: 'success', duration: 1000 })
+        router.push({ path: '/' })
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  })
+}
+</script>
+
 <template>
   <div class="login_content_bg">
     <img :src="login_bg" class="login_bg_img" alt="bg" />
     <div class="logon_content_bx">
       <div class="login_content_tp">
         <img :src="login_bx" class="login_bx_img" alt="" />
-        <p>Gleam管理中心</p>
+        <p class="login_title">Gleam 管理中心</p>
       </div>
       <div class="login_content_bm">
         <el-form
@@ -13,13 +90,14 @@
           :rules="loginRules"
           label-position="left"
         >
-          <el-form-item prop="username">
+          <el-form-item prop="adminName">
             <el-input
-              v-model="loginForm.username"
+              v-model="loginForm.adminName"
               class="login_input"
-              name="username"
+              name="adminName"
               type="text"
-              placeholder="请输入用户名"
+              autocomplete="username"
+              placeholder="请输入登录账号"
             >
               <template #prefix>
                 <svg-icon icon-class="loginuser" class="login-prefix" />
@@ -32,6 +110,7 @@
               class="login_input"
               name="password"
               type="password"
+              autocomplete="current-password"
               show-password
               placeholder="请输入密码"
               @keyup.enter="handleLogin"
@@ -48,101 +127,24 @@
               :loading="loading"
               @click="handleLogin"
             >
-              登 录
+              登录
             </el-button>
           </el-form-item>
         </el-form>
       </div>
     </div>
     <p class="login_copyright">
-      版权所有 深圳市火芯纪元智能有限公司2024～2030年 版本号:V1.0.0
+      版权所有 深圳市火芯纪元智能有限公司 2024-2030年 版本号 V1.0.0
     </p>
   </div>
 </template>
-
-<script setup name="login">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import md5 from 'js-md5'
-import { validateE_N, validateC_E_N } from '@/utils/validate'
-import { setCookie, getCookie } from '@/utils/support'
-import { useUserStore } from '@/store/modules/user'
-import login_bg from '@/assets/images/login_bg.png'
-import login_bx from '@/assets/images/login_bx.png'
-
-const router = useRouter()
-const userStore = useUserStore()
-
-const loginFormRef = ref(null)
-const loading = ref(false)
-
-const loginForm = ref({
-  username: getCookie('username') || '',
-  password: getCookie('password') || ''
-})
-
-const validateUsername = (rule, value, callback) => {
-  if (!value) {
-    return callback(new Error('请输入账号'))
-  } else if (!validateC_E_N(value)) {
-    return callback(new Error('请输入中英文或数字'))
-  } else if ((value + '').length < 2 || (value + '').length > 20) {
-    return callback(new Error('请输入2~20个中英文数字'))
-  } else {
-    callback()
-  }
-}
-const validatePass = (rule, value, callback) => {
-  if (!value) {
-    return callback(new Error('请输入密码'))
-  } else if (!validateE_N(value)) {
-    return callback(new Error('请输入6~20个英文数字或下划线'))
-  } else if ((value + '').length < 6 || (value + '').length > 20) {
-    return callback(new Error('请输入6~20个英文数字或下划线'))
-  } else {
-    callback()
-  }
-}
-
-const loginRules = {
-  username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-  password: [{ required: true, trigger: 'blur', validator: validatePass }]
-}
-
-function handleLogin() {
-  loginFormRef.value.validate((valid) => {
-    if (!valid) return false
-    loading.value = true
-    const payload = {
-      password: md5(loginForm.value.password),
-      username: loginForm.value.username
-    }
-    userStore
-      .login(payload)
-      .then((res) => {
-        loading.value = false
-        setCookie('trueName', res.retData.trueName, 15)
-        if (res.retCode === 200) {
-          setCookie('countyName', res.retData.countyName, 15)
-          setCookie('cityName', res.retData.cityName, 15)
-          setCookie('isSysAdmin', res.retData.isSysAdmin, 15)
-        }
-        ElMessage({ message: '登录成功！', type: 'success', duration: 1000 })
-        router.push({ path: '/' })
-      })
-      .catch(() => {
-        loading.value = false
-      })
-  })
-}
-</script>
 
 <style scoped lang="scss">
 .login-prefix {
   font-size: 16px;
   color: #2274e7;
 }
+
 .login_content_bg {
   position: fixed;
   width: 100%;
@@ -151,12 +153,14 @@ function handleLogin() {
   left: 0;
   box-sizing: content-box;
 }
+
 .login_bg_img {
   display: inline-block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .logon_content_bx {
   width: 400px;
   height: 420px;
@@ -168,11 +172,13 @@ function handleLogin() {
   background-color: #fff;
   overflow: hidden;
 }
+
 .login_content_tp {
   width: 100%;
   height: 130px;
   position: relative;
 }
+
 .login_bx_img {
   width: 400px;
   height: 130px;
@@ -181,7 +187,8 @@ function handleLogin() {
   left: 0;
   z-index: 1;
 }
-.login_content_tp p {
+
+.login_title {
   position: absolute;
   top: 0;
   left: 0;
@@ -194,6 +201,7 @@ function handleLogin() {
   font-weight: 500;
   z-index: 9;
 }
+
 .login_copyright {
   width: 100vw;
   text-align: center;
@@ -203,13 +211,16 @@ function handleLogin() {
   line-height: 14px;
   position: absolute;
 }
+
 .login_content_bm {
   width: 317px;
   margin: 40px auto 0;
 }
+
 .login_input {
   margin-bottom: 30px;
 }
+
 .logon_btn {
   margin-top: 5px;
   width: 100%;

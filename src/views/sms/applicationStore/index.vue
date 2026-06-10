@@ -33,7 +33,7 @@
       </div>
       <div>
         <el-button
-          v-permission="['Post_Content_SetAppMarketEdit']"
+          v-permission="['Post_AppVersion_SetAppMarketEdit']"
           size="small"
           type="primary"
           icon="Plus"
@@ -68,7 +68,7 @@
           </template>
         </vxe-column>
         <vxe-column
-          v-permission="['Post_Content_SetAppMarketVerify']"
+          v-permission="['Post_AppVersion_SetAppMarketVerify']"
           title="是否显示"
           width="120"
           align="center"
@@ -86,7 +86,7 @@
           <template #default="{ row }">
             <div class="handle-table-box">
               <el-button
-                v-permission="['Post_Content_SetAppMarketEdit']"
+                v-permission="['Post_AppVersion_SetAppMarketEdit']"
                 size="small"
                 type="primary"
                 @click="addFreight('edit', row)"
@@ -94,7 +94,7 @@
                 编辑
               </el-button>
               <el-button
-                v-permission="['Post_Content_SetAppMarketDelete']"
+                v-permission="['Post_AppVersion_SetAppMarketDelete']"
                 size="small"
                 type="danger"
                 @click="handleDelete(row)"

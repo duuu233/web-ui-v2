@@ -44,6 +44,7 @@
       >
         <vxe-column type="seq" title="编号" width="60" align="center" />
         <vxe-column field="systemName" title="菜单名称" align="center" show-overflow />
+        <vxe-column field="systemCode" title="系统编码" align="center" show-overflow />
         <vxe-column title="状态" align="center">
           <template #default="{ row }">
             <span :class="row.verify ? 'enable_txt' : 'disable_txt'">
@@ -62,7 +63,9 @@
             />
           </template>
         </vxe-column>
-        <vxe-column field="joinTime" title="添加时间" width="160" align="center" />
+        <vxe-column title="添加时间" width="160" align="center">
+          <template #default="{ row }">{{ formatDateTime(row.joinTime) }}</template>
+        </vxe-column>
         <vxe-column title="操作" width="320" align="center" fixed="right">
           <template #default="{ row }">
             <div class="handle-table-box">
@@ -128,6 +131,12 @@
       <el-form ref="formRef" :model="form" :rules="rules" size="small">
         <el-form-item label="菜单名称" prop="systemName">
           <el-input v-model="form.systemName" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="系统编码" prop="systemCode">
+          <el-input v-model="form.systemCode" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="备注" prop="content">
+          <el-input v-model="form.content" type="textarea" :rows="4" style="width: 250px" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -256,12 +265,14 @@ import { ElMessage } from 'element-plus'
 import SearchPanel from '@/components/SearchPanel/index.vue'
 import {
   fetchList,
+  getAdminSystemsDetails,
   setAdminSystemsVerify,
   getAdminStaffBySys,
   setAdminSystems,
   getRoleBySystem,
   setAdminSystemBindRoles
 } from '@/api/menu'
+import { formatDate } from '@/utils/date'
 import { isArr } from '@/utils/index'
 
 const router = useRouter()
@@ -283,6 +294,13 @@ const rules = {
   systemName: [
     { required: true, message: '请输入菜单名称', trigger: 'blur' },
     { min: 2, max: 20, message: '长度在 2 到 20 个中英文数字', trigger: 'blur' }
+  ],
+  systemCode: [
+    { required: true, message: '请输入系统编码', trigger: 'blur' },
+    { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+  ],
+  content: [
+    { max: 20, message: '最多 20 个字符', trigger: 'blur' }
   ]
 }
 
@@ -301,6 +319,11 @@ const roleTotal = ref(0)
 const roleTableRef = ref(null)
 const oldBindRoleIds = ref([])
 const checkedBindRoleIds = ref([])
+
+function formatDateTime(time) {
+  if (time == null || time === '') return 'N/A'
+  return formatDate(new Date(time), 'yyyy-MM-dd hh:mm:ss')
+}
 
 function getList() {
   listLoading.value = true
@@ -352,14 +375,18 @@ function handleAdd() {
 function handleEdit(row) {
   isEdit.value = true
   Object.keys(form).forEach((k) => delete form[k])
-  Object.assign(form, row)
   dialogVisible.value = true
+  getAdminSystemsDetails({ id: row.id }).then((response) => {
+    if (response.retCode === 200) {
+      Object.assign(form, response.retData)
+    }
+  })
 }
 function handleDialogConfirm() {
   formRef.value.validate((valid) => {
     if (!valid) return false
     const data = { ...form }
-    if (!isEdit.value) data.verify = 1
+    if (!isEdit.value) data.id = 0
     setAdminSystems(data).then((response) => {
       if (response.retCode === 200) {
         dialogVisible.value = false

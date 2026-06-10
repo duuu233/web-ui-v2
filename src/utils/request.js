@@ -9,6 +9,12 @@ const apiBaseURL = import.meta.env.DEV
   ? apiPrefix
   : `${apiOrigin.replace(/\/$/, '')}${apiPrefix}`
 
+function appendFormDataIfMissing(formData, key, value) {
+  if (value === null || value === undefined || value === '') return
+  if (typeof formData.has === 'function' && formData.has(key)) return
+  formData.append(key, value)
+}
+
 // 创建 axios 实例
 const service = axios.create({
   baseURL: apiBaseURL, // api 的 base_url
@@ -67,15 +73,22 @@ service.interceptors.request.use(
         if (!config.data) {
           config.data = {}
         }
-        config.data.randomString = randomString
-        config.data.sign = sign
-        if (getToken()) {
-          config.data.userToken = getToken()
-        }
-        // 过滤 null
-        for (const key in config.data) {
-          if (config.data[key] === null) {
-            config.data[key] = ''
+        const isFormData = typeof FormData !== 'undefined' && config.data instanceof FormData
+        if (isFormData) {
+          appendFormDataIfMissing(config.data, 'randomString', randomString)
+          appendFormDataIfMissing(config.data, 'sign', sign)
+          appendFormDataIfMissing(config.data, 'userToken', getToken())
+        } else {
+          config.data.randomString = randomString
+          config.data.sign = sign
+          if (getToken()) {
+            config.data.userToken = getToken()
+          }
+          // 过滤 null
+          for (const key in config.data) {
+            if (config.data[key] === null) {
+              config.data[key] = ''
+            }
           }
         }
       }

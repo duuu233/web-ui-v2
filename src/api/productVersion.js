@@ -24,13 +24,15 @@ export function editProductVersion(data) {
   })
 }
 
-export function getProductVersionDetail(params) {
+export function getUserDeviceVersionDetail(params) {
   return request({
-    url: '/ProductVersion/getProductVersionDetail',
+    url: '/ProductVersion/getUserDeviceVersionDetail',
     method: 'get',
     params
   })
 }
+
+export const getProductVersionDetail = getUserDeviceVersionDetail
 
 export function getProductVersionList(params) {
   return request({

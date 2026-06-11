@@ -6,7 +6,7 @@ import { getProductList } from '@/api/productList'
 import {
   addProductVersion,
   editProductVersion,
-  getProductVersionDetail
+  getUserDeviceVersionDetail
 } from '@/api/productVersion'
 
 const route = useRoute()
@@ -60,7 +60,7 @@ function loadProductOptions() {
 
 function getDetail() {
   if (!route.query.id) return
-  getProductVersionDetail({ id: route.query.id }).then((response) => {
+  getUserDeviceVersionDetail({ id: route.query.id }).then((response) => {
     if (response.retCode === 200) {
       Object.assign(formData, defaultForm(), response.retData)
     }

@@ -67,7 +67,7 @@ Implemented API wrappers:
 - `POST /ProductVersion/addProductVersion`
 - `POST /ProductVersion/deleteProductVersion`
 - `POST /ProductVersion/editProductVersion`
-- `GET /ProductVersion/getProductVersionDetail`
+- `GET /ProductVersion/getUserDeviceVersionDetail`
 - `GET /ProductVersion/getProductVersionList`
 - `POST /ProductVersion/setProductVersionVerify`
 
@@ -83,6 +83,12 @@ Changed files:
 - `src/views/sms/productVersion/detail.vue`
 - `src/router/routes.js`
 - `docs/api-integration-progress.md`
+- `docs/interface-list.md`
+
+Notes:
+
+- The 2026-06-11 interface checklist changes product version detail from `/ProductVersion/getProductVersionDetail` to `/ProductVersion/getUserDeviceVersionDetail`.
+- The machine-readable Swagger source still listed `/ZoneAdmin/ProductVersion/getProductVersionDetail` when checked on 2026-06-11, so this change follows the provided latest checklist.
 
 Verification:
 

@@ -2,7 +2,12 @@
 import { computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { setFileUpload } from '@/api/oss'
-import { isValidUploadSize, normalizeUploadedFiles } from './utils'
+import {
+  getUploadPreviewUrl,
+  isValidUploadSize,
+  normalizeUploadFileList,
+  normalizeUploadedFiles
+} from './utils'
 
 const props = defineProps({
   modelValue: {
@@ -21,8 +26,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const fileList = computed({
-  get: () => props.modelValue || [],
-  set: (val) => emit('update:modelValue', val)
+  get: () => normalizeUploadFileList(props.modelValue),
+  set: (val) => emit('update:modelValue', normalizeUploadFileList(val))
 })
 
 function beforeUpload(file) {
@@ -65,7 +70,7 @@ function handleRemove() {
     </el-upload>
     <div v-if="fileList.length" class="file-list">
       <div v-for="(item, index) in fileList" :key="item.url || index" class="file-item">
-        <a :href="item.url" target="_blank" rel="noopener">{{ item.name }}</a>
+        <a :href="item.url || getUploadPreviewUrl(item)" target="_blank" rel="noopener">{{ item.name }}</a>
         <el-icon v-if="!disabled" class="del" @click="handleRemove(index)"><Delete /></el-icon>
       </div>
     </div>

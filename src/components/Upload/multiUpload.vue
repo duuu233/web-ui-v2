@@ -1,8 +1,15 @@
 <script setup name="MultiUpload">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { setFileUpload } from '@/api/oss'
-import { isValidUploadSize, normalizeUploadedFiles } from './utils'
+import {
+  createUploadPreviewUrl,
+  getUploadPreviewUrl,
+  isValidUploadSize,
+  normalizeUploadFileList,
+  normalizeUploadedFiles,
+  revokeUploadPreviewUrl
+} from './utils'
 
 const props = defineProps({
   modelValue: {
@@ -21,9 +28,15 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const fileList = computed({
-  get: () => props.modelValue || [],
-  set: (val) => emit('update:modelValue', val)
+  get: () => normalizeUploadFileList(props.modelValue),
+  set: (val) => emit('update:modelValue', normalizeUploadFileList(val))
 })
+
+function withLocalPreview(files, file) {
+  const previewUrl = createUploadPreviewUrl(file)
+  if (!previewUrl) return files
+  return files.map((item) => ({ ...item, previewUrl }))
+}
 
 function beforeUpload(file) {
   const isImage = file.type.indexOf('image') !== -1
@@ -44,7 +57,10 @@ async function handleUpload(option) {
     if (remainingCount <= 0) return
 
     const response = await setFileUpload(option.file)
-    const uploadedFiles = normalizeUploadedFiles(response.retData, option.file).slice(0, remainingCount)
+    const uploadedFiles = withLocalPreview(
+      normalizeUploadedFiles(response.retData, option.file).slice(0, remainingCount),
+      option.file
+    )
     if (!uploadedFiles.length) throw new Error('Upload response does not include a file URL')
 
     fileList.value = fileList.value.concat(uploadedFiles)
@@ -57,9 +73,14 @@ async function handleUpload(option) {
 
 function handleRemove(index) {
   const newList = fileList.value.slice()
-  newList.splice(index, 1)
+  const removedFiles = newList.splice(index, 1)
+  removedFiles.forEach(revokeUploadPreviewUrl)
   fileList.value = newList
 }
+
+onBeforeUnmount(() => {
+  fileList.value.forEach(revokeUploadPreviewUrl)
+})
 </script>
 
 <template>
@@ -76,7 +97,7 @@ function handleRemove(index) {
     </el-upload>
     <div v-if="fileList.length" class="upload-list">
       <div v-for="(item, index) in fileList" :key="item.url || index" class="upload-list-item">
-        <img :src="item.url" alt="" />
+        <img :src="getUploadPreviewUrl(item)" :alt="item.name || ''" />
         <div v-if="!disabled" class="upload-list-item-actions">
           <span @click="handleRemove(index)"><el-icon><Delete /></el-icon></span>
         </div>

@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import md5 from 'js-md5'
 import { getUserDetail, setUserInfo } from '@/api/userList'
 import { formatDate } from '@/utils/date'
+import PageHeader from '@/components/PageHeader/index.vue'
 
 const props = defineProps({
   pageType: {
@@ -110,11 +111,10 @@ onActivated(() => {
 
 <template>
   <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <el-icon><EditPen /></el-icon>
+    <PageHeader>
       <span v-if="pageType === 2">编辑用户</span>
       <span v-else>查看用户</span>
-    </el-card>
+    </PageHeader>
 
     <el-card class="box-card">
       <el-form
@@ -205,9 +205,4 @@ onActivated(() => {
   margin-top: 10px;
 }
 
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
 </style>

@@ -23,9 +23,27 @@ const queryTypeOptions = [
 ]
 
 const cards = computed(() => [
-  { key: 'userCount', label: '用户总数', value: stats.userCount, icon: 'User', color: '#2274e7' },
-  { key: 'productCount', label: '产品数量', value: stats.productCount, icon: 'Goods', color: '#67c23a' },
-  { key: 'productFaqCount', label: '常见问题', value: stats.productFaqCount, icon: 'QuestionFilled', color: '#e6a23c' }
+  {
+    key: 'userCount',
+    label: '用户总数',
+    value: stats.userCount,
+    icon: 'User',
+    color: '#2274e7'
+  },
+  {
+    key: 'productCount',
+    label: '产品数量',
+    value: stats.productCount,
+    icon: 'Goods',
+    color: '#67c23a'
+  },
+  {
+    key: 'productFaqCount',
+    label: '常见问题',
+    value: stats.productFaqCount,
+    icon: 'QuestionFilled',
+    color: '#e6a23c'
+  }
 ])
 
 const maxRegistrationCount = computed(() => {
@@ -61,7 +79,9 @@ async function loadStats() {
 async function loadRegistrationStats() {
   statisticsLoading.value = true
   try {
-    const res = await getStatisticsUser({ queryType: statisticsQueryType.value })
+    const res = await getStatisticsUser({
+      queryType: statisticsQueryType.value
+    })
     statisticsList.value = res.retData || []
   } finally {
     statisticsLoading.value = false
@@ -81,7 +101,7 @@ onMounted(() => {
         <img :src="avatar" class="avatar" alt="avatar" />
         <div class="hello">
           <div class="title">你好，{{ trueName || '管理员' }}</div>
-          <div class="sub">欢迎使用 Gleam 管理中心</div>
+          <div class="sub">欢迎使用 曝石相框 管理中心</div>
         </div>
       </div>
     </el-card>
@@ -121,10 +141,17 @@ onMounted(() => {
       </template>
 
       <div v-if="statisticsList.length" class="trend-list">
-        <div v-for="item in statisticsList" :key="item.queryDate" class="trend-row">
+        <div
+          v-for="item in statisticsList"
+          :key="item.queryDate"
+          class="trend-row"
+        >
           <span class="trend-date">{{ item.queryDate || '-' }}</span>
           <div class="trend-track">
-            <div class="trend-bar" :style="{ width: getBarWidth(item.userCount) }" />
+            <div
+              class="trend-bar"
+              :style="{ width: getBarWidth(item.userCount) }"
+            />
           </div>
           <span class="trend-count">{{ item.userCount ?? 0 }}</span>
         </div>

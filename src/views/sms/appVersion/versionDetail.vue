@@ -1,10 +1,9 @@
 <template>
   <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <el-icon><EditPen /></el-icon>
+    <PageHeader>
       <span v-if="route.query.type === 'add'">添加版本信息</span>
       <span v-else-if="route.query.type === 'edit'">编辑版本信息</span>
-    </el-card>
+    </PageHeader>
     <el-card class="box-card">
       <el-form ref="appFormRef" :model="appForm" :rules="rules" label-width="180px" size="small">
         <el-form-item label="版本号" prop="versionNumber">
@@ -63,6 +62,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { valiNumber } from '@/utils/validate'
 import { setAppVersionEdit, getAppVersionDetail } from '@/api/appVersion'
+import PageHeader from '@/components/PageHeader/index.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -135,11 +135,6 @@ onActivated(init)
 <style lang="scss" scoped>
 .box-card {
   margin-top: 10px;
-}
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 .section-title {
   background-color: #efefef;

@@ -37,14 +37,20 @@ const validatePass = (rule, value, callback) => {
   if (!value) {
     return callback(new Error('请输入密码'))
   }
-  if (!validateE_N(value) || (value + '').length < 6 || (value + '').length > 20) {
+  if (
+    !validateE_N(value) ||
+    (value + '').length < 6 ||
+    (value + '').length > 20
+  ) {
     return callback(new Error('请输入 6~20 位英文、数字或下划线'))
   }
   callback()
 }
 
 const loginRules = {
-  adminName: [{ required: true, trigger: 'blur', validator: validateAdminName }],
+  adminName: [
+    { required: true, trigger: 'blur', validator: validateAdminName }
+  ],
   password: [{ required: true, trigger: 'blur', validator: validatePass }]
 }
 
@@ -55,7 +61,7 @@ function cacheLoginUser(data) {
 }
 
 function handleLogin() {
-  loginFormRef.value.validate((valid) => {
+  loginFormRef.value.validate(valid => {
     if (!valid) return false
     loading.value = true
     userStore
@@ -63,7 +69,7 @@ function handleLogin() {
         adminName: loginForm.adminName,
         password: md5(loginForm.password)
       })
-      .then((res) => {
+      .then(res => {
         cacheLoginUser(res.retData || {})
         ElMessage({ message: '登录成功！', type: 'success', duration: 1000 })
         router.push({ path: '/' })
@@ -81,7 +87,7 @@ function handleLogin() {
     <div class="logon_content_bx">
       <div class="login_content_tp">
         <img :src="login_bx" class="login_bx_img" alt="" />
-        <p class="login_title">Gleam 管理中心</p>
+        <p class="login_title">曝石相框 管理中心</p>
       </div>
       <div class="login_content_bm">
         <el-form
@@ -134,7 +140,7 @@ function handleLogin() {
       </div>
     </div>
     <p class="login_copyright">
-      版权所有 深圳市火芯纪元智能有限公司 2024-2030年 版本号 V1.0.0
+      版权所有 启和明(深圳)新能源科技有限公司 2024-2030年 版本号 V1.0.0
     </p>
   </div>
 </template>

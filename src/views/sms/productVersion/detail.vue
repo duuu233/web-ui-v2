@@ -8,6 +8,7 @@ import {
   editProductVersion,
   getUserDeviceVersionDetail
 } from '@/api/productVersion'
+import PageHeader from '@/components/PageHeader/index.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -100,10 +101,7 @@ onActivated(init)
 
 <template>
   <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <el-icon><EditPen /></el-icon>
-      <span>{{ route.query.type === 'edit' ? '编辑产品版本' : '新增产品版本' }}</span>
-    </el-card>
+    <PageHeader :title="route.query.type === 'edit' ? '编辑产品版本' : '新增产品版本'" />
 
     <el-card class="box-card">
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" size="small">
@@ -164,10 +162,5 @@ onActivated(init)
 <style lang="scss" scoped>
 .box-card {
   margin-top: 10px;
-}
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 </style>

@@ -111,12 +111,15 @@ ul {
 .enable_txt {
   color: #67c23a;
 }
+
 .disable_txt {
   color: #f56c6c;
 }
+
 .info_txt {
   color: #919399;
 }
+
 .click_txt {
   color: #3382f0;
 }
@@ -127,17 +130,17 @@ ul {
 }
 
 .app-container {
-  margin: 0 20px 15px;
+  margin: 12px 20px 12px;
 }
 
 // 搜索栏样式
-.filter-container {
-}
+.filter-container {}
 
 // 操作栏样式
 .operate-container {
   margin-top: 10px;
 }
+
 .operate-container .el-card__body {
   display: flex;
   align-items: center;
@@ -185,22 +188,27 @@ ul {
   font-size: 20px;
   color: #303133;
 }
+
 .font-title-large {
   font-size: 18px;
   color: #303133;
 }
+
 .font-title-medium {
   font-size: 16px;
   color: #303133;
 }
+
 .font-medium {
   font-size: 16px;
   color: #606266;
 }
+
 .font-small {
   font-size: 14px;
   color: #606266;
 }
+
 .font-extra-small {
   font-size: 13px;
   color: #606266;
@@ -209,15 +217,19 @@ ul {
 .color-main {
   color: #409eff;
 }
+
 .color-success {
   color: #67c23a;
 }
+
 .color-warning {
   color: #e6a23c;
 }
+
 .color-danger {
   color: #f56c6c;
 }
+
 .color-info {
   color: #909399;
 }
@@ -240,10 +252,12 @@ ul {
 .el-card {
   border: none;
 }
+
 .el-card,
 .el-message {
   border-radius: 5px;
 }
+
 .el-card.is-always-shadow,
 .el-card.is-hover-shadow:focus,
 .el-card.is-hover-shadow:hover {
@@ -253,11 +267,13 @@ ul {
 // vxe-table 列表统一外观
 .vxe-table {
   border-radius: 5px;
+
   .vxe-header--column {
     background: #f2f6fa;
     color: #555;
   }
 }
+
 .table-container .vxe-table--render-default {
   border-radius: 5px;
 }

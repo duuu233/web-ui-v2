@@ -1,11 +1,10 @@
 <template>
   <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <el-icon><EditPen /></el-icon>
+    <PageHeader>
       <span v-if="pageType === 1">添加常见问题</span>
       <span v-else-if="pageType === 2">编辑常见问题</span>
       <span v-else-if="pageType === 3">查看常见问题</span>
-    </el-card>
+    </PageHeader>
     <el-card class="box-card">
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="180px" size="small">
         <el-form-item label="所属产品" prop="productId">
@@ -78,6 +77,7 @@ import {
   editProductFaq,
   getProductList
 } from '@/api/productList'
+import PageHeader from '@/components/PageHeader/index.vue'
 
 const props = defineProps({
   pageType: {
@@ -174,10 +174,5 @@ onActivated(() => {
 <style lang="scss" scoped>
 .box-card {
   margin-top: 10px;
-}
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 </style>

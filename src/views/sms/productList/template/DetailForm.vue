@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 import { addProduct, editProduct, getProductDetail } from '@/api/productList'
 import MultiUpload from '@/components/Upload/MultiUpload.vue'
+import PageHeader from '@/components/PageHeader/index.vue'
 
 const props = defineProps({
   pageType: {
@@ -109,12 +110,11 @@ onActivated(() => {
 
 <template>
   <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <el-icon><EditPen /></el-icon>
+    <PageHeader>
       <span v-if="pageType === 1">添加产品</span>
       <span v-else-if="pageType === 2">编辑产品</span>
       <span v-else-if="pageType === 3">查看产品</span>
-    </el-card>
+    </PageHeader>
 
     <el-card class="box-card">
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" size="small">
@@ -199,12 +199,6 @@ onActivated(() => {
 <style lang="scss" scoped>
 .box-card {
   margin-top: 10px;
-}
-
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .size-fields {

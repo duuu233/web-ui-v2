@@ -84,7 +84,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="upload-container">
+  <div class="multi-upload">
     <el-upload
       v-if="!disabled && fileList.length < maxCount"
       :action="''"
@@ -99,7 +99,14 @@ onBeforeUnmount(() => {
       <div v-for="(item, index) in fileList" :key="item.url || index" class="upload-list-item">
         <img :src="getUploadPreviewUrl(item)" :alt="item.name || ''" />
         <div v-if="!disabled" class="upload-list-item-actions">
-          <span @click="handleRemove(index)"><el-icon><Delete /></el-icon></span>
+          <button
+            type="button"
+            class="upload-remove-button"
+            aria-label="Remove image"
+            @click="handleRemove(index)"
+          >
+            <el-icon><Delete /></el-icon>
+          </button>
         </div>
       </div>
     </div>
@@ -107,8 +114,43 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss" scoped>
-.upload-container {
-  display: inline-block;
+.multi-upload {
+  --multi-upload-size: 112px;
+
+  display: inline-flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  line-height: 1;
+}
+
+.multi-upload :deep(.el-upload) {
+  display: inline-flex;
+}
+
+.multi-upload :deep(.el-upload.el-upload--picture-card) {
+  width: var(--multi-upload-size);
+  height: var(--multi-upload-size);
+  min-width: var(--multi-upload-size);
+  min-height: var(--multi-upload-size);
+  border-color: #c7d0dd;
+  border-radius: 8px;
+  background: #fbfcff;
+  color: #8b95a5;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.multi-upload :deep(.el-upload.el-upload--picture-card:hover) {
+  border-color: #409eff;
+  background: #f4f9ff;
+  color: #409eff;
+}
+
+.multi-upload :deep(.el-upload.el-upload--picture-card .el-icon) {
+  font-size: 24px;
 }
 
 .upload-list {
@@ -119,14 +161,18 @@ onBeforeUnmount(() => {
 
 .upload-list-item {
   position: relative;
-  width: 100px;
-  height: 100px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  flex: 0 0 var(--multi-upload-size);
+  width: var(--multi-upload-size);
+  height: var(--multi-upload-size);
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  background: #f5f7fa;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(31, 45, 61, 0.08);
 }
 
 .upload-list-item img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -134,11 +180,42 @@ onBeforeUnmount(() => {
 
 .upload-list-item-actions {
   position: absolute;
-  top: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 24, 39, 0.54);
   color: #fff;
-  padding: 2px 6px;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.upload-list-item:hover .upload-list-item-actions,
+.upload-list-item-actions:focus-within {
+  opacity: 1;
+}
+
+.upload-remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
   cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.upload-remove-button:hover,
+.upload-remove-button:focus-visible {
+  background: #f56c6c;
+  outline: none;
+  transform: scale(1.04);
 }
 </style>

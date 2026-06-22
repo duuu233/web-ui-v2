@@ -45,7 +45,8 @@ const rules = {
   productImg: [{ required: true, type: 'array', message: '请上传产品图片', trigger: 'change' }],
   shapeType: [{ required: true, message: '请选择形状类型', trigger: 'change' }],
   width: [{ required: true, message: '请输入宽度', trigger: 'blur' }],
-  height: [{ required: true, message: '请输入高度', trigger: 'blur' }]
+  height: [{ required: true, message: '请输入高度', trigger: 'blur' }],
+  broadcastId: [{ required: true, message: '请输入广播ID', trigger: 'blur' }]
 }
 
 function resetForm() {
@@ -170,7 +171,7 @@ onActivated(() => {
           </div>
         </el-form-item>
 
-        <el-form-item label="广播ID">
+        <el-form-item label="广播ID" prop="broadcastId">
           <el-input
             v-model="formData.broadcastId"
             class="input-width"

@@ -12,17 +12,50 @@
       :props="defaultProps"
     >
       <template #default="{ node, data }">
-        <span class="custom-tree-node show-hide" style="width: 100%">
-          <span>{{ node.data.appName }} ({{ node.data.appCode }})</span>
+        <span class="custom-tree-node">
+          <span class="tree-node-label">
+            {{ node.data.appName }} ({{ node.data.appCode }})
+          </span>
           <span class="handle-btns">
             <el-tooltip effect="dark" content="新增" placement="top">
-              <el-icon style="padding-left: 10px" @click.stop="add(data)"><Plus /></el-icon>
+              <el-button
+                class="tree-action-btn"
+                type="primary"
+                link
+                :icon="Plus"
+                aria-label="新增"
+                @click.stop="add(data)"
+              />
             </el-tooltip>
-            <el-tooltip v-if="data.id !== 0" effect="dark" content="编辑" placement="top">
-              <el-icon style="padding-left: 10px" @click.stop="edit(data)"><Edit /></el-icon>
+            <el-tooltip
+              v-if="data.id !== 0"
+              effect="dark"
+              content="编辑"
+              placement="top"
+            >
+              <el-button
+                class="tree-action-btn"
+                type="primary"
+                link
+                :icon="Edit"
+                aria-label="编辑"
+                @click.stop="edit(data)"
+              />
             </el-tooltip>
-            <el-tooltip v-if="data.id !== 0" effect="dark" content="删除" placement="top">
-              <el-icon style="padding-left: 10px" @click.stop="remove(data)"><Delete /></el-icon>
+            <el-tooltip
+              v-if="data.id !== 0"
+              effect="dark"
+              content="删除"
+              placement="top"
+            >
+              <el-button
+                class="tree-action-btn"
+                type="danger"
+                link
+                :icon="Delete"
+                aria-label="删除"
+                @click.stop="remove(data)"
+              />
             </el-tooltip>
           </span>
         </span>
@@ -39,7 +72,13 @@
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="form" label-width="150px" :rules="rules" size="small">
+      <el-form
+        ref="formRef"
+        :model="form"
+        label-width="150px"
+        :rules="rules"
+        size="small"
+      >
         <el-form-item label="模块名称" prop="appName">
           <el-input v-model="form.appName" class="input-width" />
         </el-form-item>
@@ -67,7 +106,9 @@
       </el-form>
       <template #footer>
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" size="small" @click="handleDialogConfirm">确 定</el-button>
+        <el-button type="primary" size="small" @click="handleDialogConfirm"
+          >确 定</el-button
+        >
       </template>
     </el-dialog>
   </el-card>
@@ -77,6 +118,7 @@
 import { ref, reactive, onMounted, onActivated } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Delete, Edit, Plus } from '@element-plus/icons-vue'
 import {
   getAdminAppliBySys,
   setAdminAppli,
@@ -94,7 +136,13 @@ const id = ref(null)
 
 const dialogVisible = ref(false)
 const isEdit = ref(false)
-const form = reactive({ id: 0, parentId: null, isNav: 1, isRefresh: 1, systemId: null })
+const form = reactive({
+  id: 0,
+  parentId: null,
+  isNav: 1,
+  isRefresh: 1,
+  systemId: null
+})
 const formRef = ref(null)
 const rules = {
   appName: [
@@ -108,12 +156,16 @@ const rules = {
 }
 
 function resetForm(extra = {}) {
-  Object.keys(form).forEach((k) => delete form[k])
-  Object.assign(form, { id: 0, parentId: null, isNav: 1, isRefresh: 1, systemId: 0 }, extra)
+  Object.keys(form).forEach(k => delete form[k])
+  Object.assign(
+    form,
+    { id: 0, parentId: null, isNav: 1, isRefresh: 1, systemId: 0 },
+    extra
+  )
 }
 
 function treeList() {
-  getAdminAppliBySys({ id: id.value }).then((response) => {
+  getAdminAppliBySys({ id: id.value }).then(response => {
     if (response.retCode === 200) {
       menuTreeList.value = response.retData || []
     }
@@ -127,9 +179,9 @@ function add(data) {
 }
 function edit(data) {
   isEdit.value = true
-  getAdminAppliDetails({ id: data.id }).then((res) => {
+  getAdminAppliDetails({ id: data.id }).then(res => {
     if (res.retCode === 200) {
-      Object.keys(form).forEach((k) => delete form[k])
+      Object.keys(form).forEach(k => delete form[k])
       Object.assign(form, res.retData)
     }
   })
@@ -141,7 +193,7 @@ function remove(data) {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    setDelAdminAppli({ id: data.id }).then((response) => {
+    setDelAdminAppli({ id: data.id }).then(response => {
       if (response.retCode === 200) {
         ElMessage.success('删除成功！')
         treeList()
@@ -150,9 +202,9 @@ function remove(data) {
   })
 }
 function handleDialogConfirm() {
-  formRef.value.validate((valid) => {
+  formRef.value.validate(valid => {
     if (!valid) return false
-    setAdminAppli(form).then((response) => {
+    setAdminAppli(form).then(response => {
       if (response.retCode === 200) {
         dialogVisible.value = false
         ElMessage.success(isEdit.value ? '编辑成功！' : '新增成功！')
@@ -176,16 +228,31 @@ onActivated(() => {
 </script>
 
 <style scoped lang="scss">
-.show-hide {
+.custom-tree-node {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  min-width: 0;
 }
-.show-hide .handle-btns {
-  display: none;
+.tree-node-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.show-hide:hover .handle-btns {
-  display: inline-flex !important;
+.handle-btns {
+  display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
+  gap: 4px;
+  margin-left: 12px;
+}
+.tree-action-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 16px;
 }
 </style>

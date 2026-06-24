@@ -4,7 +4,6 @@ import { ElMessage } from 'element-plus'
 import { setFileUpload } from '@/api/oss'
 import {
   getUploadPreviewUrl,
-  isValidUploadSize,
   normalizeUploadFileList,
   normalizeUploadedFiles
 } from './utils'
@@ -21,6 +20,16 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  // 单个文件大小上限(MB)，<= 0 表示不限制
+  maxSize: {
+    type: Number,
+    default: 15
+  },
+  // 允许选择的文件类型(原生 input accept)，为空表示不限制
+  accept: {
+    type: String,
+    default: ''
   }
 })
 const emit = defineEmits(['update:modelValue'])
@@ -31,8 +40,8 @@ const fileList = computed({
 })
 
 function beforeUpload(file) {
-  if (!isValidUploadSize(file)) {
-    ElMessage.error('文件大小不能超过 15M')
+  if (props.maxSize > 0 && file?.size && file.size > props.maxSize * 1024 * 1024) {
+    ElMessage.error(`文件大小不能超过 ${props.maxSize}M`)
     return false
   }
   return true
@@ -62,6 +71,7 @@ function handleRemove() {
     <el-upload
       v-if="!disabled && fileList.length < maxCount"
       :action="''"
+      :accept="accept"
       :http-request="handleUpload"
       :show-file-list="false"
       :before-upload="beforeUpload"

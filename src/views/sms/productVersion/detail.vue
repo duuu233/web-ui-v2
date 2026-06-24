@@ -1,5 +1,5 @@
 <script setup name="productVersionDetail">
-import { onActivated, onMounted, reactive, ref, shallowRef } from 'vue'
+import { computed, onActivated, onMounted, reactive, ref, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getProductList } from '@/api/productList'
@@ -9,6 +9,7 @@ import {
   getUserDeviceVersionDetail
 } from '@/api/productVersion'
 import PageHeader from '@/components/PageHeader/index.vue'
+import FileUpload from '@/components/Upload/FileUpload.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -34,13 +35,32 @@ const formData = reactive(defaultForm())
 const productOptions = ref([])
 const submitting = shallowRef(false)
 
+// 取 URL 末段作为文件展示名
+function getFileNameFromUrl(url) {
+  if (!url) return '附件'
+  const clean = String(url).split('?')[0]
+  const name = decodeURIComponent(clean.substring(clean.lastIndexOf('/') + 1))
+  return name || '附件'
+}
+
+// FileUpload 使用数组 [{ name, url }]，与表单中的 downloadPath 字符串互相转换
+const downloadFileList = computed({
+  get() {
+    if (!formData.downloadPath) return []
+    return [{ name: getFileNameFromUrl(formData.downloadPath), url: formData.downloadPath }]
+  },
+  set(val) {
+    formData.downloadPath = val?.[0]?.url || ''
+  }
+})
+
 const rules = {
   productId: [{ required: true, message: '请选择产品', trigger: 'change' }],
   versionNumber: [
     { required: true, message: '请输入版本号', trigger: 'blur' },
     { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
   ],
-  downloadPath: [{ required: true, message: '请输入附件地址', trigger: 'blur' }],
+  downloadPath: [{ required: true, message: '请上传附件', trigger: 'change' }],
   compulsory: [{ required: true, message: '请选择升级类型', trigger: 'change' }],
   grade: [{ required: true, message: '请输入权重', trigger: 'blur' }]
 }
@@ -125,13 +145,7 @@ onActivated(init)
           />
         </el-form-item>
         <el-form-item label="附件地址" prop="downloadPath">
-          <el-input
-            v-model="formData.downloadPath"
-            class="input-width"
-            type="textarea"
-            :rows="4"
-            placeholder="请输入附件地址"
-          />
+          <FileUpload v-model="downloadFileList" :max-count="1" :max-size="0" accept=".bin" />
         </el-form-item>
         <el-form-item label="升级类型" prop="compulsory">
           <el-radio-group v-model="formData.compulsory">

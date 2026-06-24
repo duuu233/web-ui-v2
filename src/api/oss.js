@@ -24,7 +24,9 @@ export function setFileUpload(files) {
   return request({
     url: appendUserTokenQuery('/Common/setFileUpload'),
     method: 'post',
-    data: buildUploadFormData(files)
+    data: buildUploadFormData(files),
+    // 上传大文件(如 .bin 固件)可能很慢，取消 60s 超时限制
+    timeout: 0
   })
 }
 

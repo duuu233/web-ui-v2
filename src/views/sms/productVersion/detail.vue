@@ -70,7 +70,7 @@ const rules = {
   productId: [{ required: true, message: '请选择产品', trigger: 'change' }],
   versionNumber: [
     { required: true, message: '请输入版本号', trigger: 'blur' },
-    { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+    { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
   ],
   downloadPath: [{ required: true, message: '请上传附件', trigger: 'change' }],
   compulsory: [
@@ -171,7 +171,7 @@ onActivated(init)
             v-model="formData.versionNumber"
             class="input-width"
             placeholder="请输入版本号"
-            maxlength="20"
+            maxlength="100"
             show-word-limit
           />
         </el-form-item>

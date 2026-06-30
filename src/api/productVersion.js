@@ -26,7 +26,7 @@ export function editProductVersion(data) {
 
 export function getUserDeviceVersionDetail(params) {
   return request({
-    url: '/ProductVersion/getUserDeviceVersionDetail',
+    url: '/ProductVersion/getProductVersionDetail',
     method: 'get',
     params
   })

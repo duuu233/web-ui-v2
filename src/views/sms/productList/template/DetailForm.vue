@@ -22,14 +22,21 @@ const shapeTypeOptions = [
   { value: 1, label: '圆形' }
 ]
 
+const screenTypeOptions = [
+  { value: 0, label: '竖屏' },
+  { value: 1, label: '横屏' }
+]
+
 const defaultForm = () => ({
   productId: null,
   productName: '',
   productImg: [],
   shapeType: 0,
+  screenType: 0,
   width: null,
   height: null,
-  broadcastId: ''
+  broadcastId: '',
+  carouselInterval: null
 })
 
 const formRef = ref(null)
@@ -44,9 +51,11 @@ const rules = {
   ],
   productImg: [{ required: true, type: 'array', message: '请上传产品图片', trigger: 'change' }],
   shapeType: [{ required: true, message: '请选择形状类型', trigger: 'change' }],
+  screenType: [{ required: true, message: '请选择屏幕方向', trigger: 'change' }],
   width: [{ required: true, message: '请输入宽度', trigger: 'blur' }],
   height: [{ required: true, message: '请输入高度', trigger: 'blur' }],
-  broadcastId: [{ required: true, message: '请输入广播ID', trigger: 'blur' }]
+  broadcastId: [{ required: true, message: '请输入广播ID', trigger: 'blur' }],
+  carouselInterval: [{ required: true, message: '请输入轮播间隔', trigger: 'blur' }]
 }
 
 function resetForm() {
@@ -59,7 +68,9 @@ async function getData() {
   const detail = res.retData || {}
   Object.assign(formData, defaultForm(), detail, {
     productImg: detail.productImg ? [{ url: detail.productImg, name: '产品图片' }] : [],
-    broadcastId: detail.broadcastId || ''
+    broadcastId: detail.broadcastId ?? '',
+    carouselInterval: detail.carouselInterval ?? null,
+    screenType: detail.screenType ?? 0
   })
 }
 
@@ -143,6 +154,14 @@ onActivated(() => {
           </el-radio-group>
         </el-form-item>
 
+        <el-form-item label="屏幕方向" prop="screenType">
+          <el-radio-group v-model="formData.screenType" :disabled="pageType === 3">
+            <el-radio v-for="item in screenTypeOptions" :key="item.value" :label="item.value">
+              {{ item.label }}
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+
         <el-form-item label="尺寸(cm)" required>
           <div class="size-fields">
             <el-form-item prop="width">
@@ -177,6 +196,18 @@ onActivated(() => {
             class="input-width"
             placeholder="请输入广播ID"
             clearable
+            :disabled="pageType === 3"
+          />
+        </el-form-item>
+
+        <el-form-item label="轮播间隔(小时)" prop="carouselInterval">
+          <el-input-number
+            v-model="formData.carouselInterval"
+            :min="0"
+            :max="2147483647"
+            :precision="0"
+            :controls="false"
+            placeholder="请输入轮播间隔"
             :disabled="pageType === 3"
           />
         </el-form-item>

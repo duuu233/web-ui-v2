@@ -34,13 +34,15 @@ const classObj = computed(() => ({
 .app-wrapper {
   @include clearfix;
   position: relative;
-  min-height: 100vh;
-  padding-top: 70px;
-  padding-left: 240px;
-  background-color: #edf5fb;
+  min-height: 100dvh;
+  padding-top: var(--shell-header-height);
+  padding-left: var(--shell-sidebar-width);
+  background:
+    radial-gradient(circle at 100% 0, rgba(242, 105, 16, 0.045), transparent 24rem),
+    var(--app-canvas);
 }
 
 .main-container {
-  min-height: calc(100vh - 70px);
+  min-height: calc(100dvh - var(--shell-header-height));
 }
 </style>

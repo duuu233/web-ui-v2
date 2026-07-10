@@ -25,8 +25,8 @@ function goHome() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: #fff;
+  min-height: 100dvh;
+  background: var(--app-canvas);
 }
 .img-404 {
   max-width: 360px;
@@ -37,7 +37,7 @@ function goHome() {
   margin-top: 20px;
   h1 {
     font-size: 60px;
-    color: #2274e7;
+    color: var(--brand-500);
   }
   p {
     font-size: 14px;

@@ -70,63 +70,67 @@ function isActive(name) {
     width: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #99a9bf;
+    background: #ccd3db;
     border-radius: 20px;
   }
 }
 .menus-box {
   .item {
-    padding-bottom: 20px;
-    margin-left: 10px;
-    padding-left: 10px;
-    border-bottom: 1px solid #e2eafa;
+    padding: 12px 12px 16px;
+    margin: 0 8px;
+    border-bottom: 1px solid var(--app-border);
   }
   .title {
     display: flex;
     font-size: 14px;
-    line-height: 40px;
-    color: #333;
-    margin-top: 14px;
-    font-weight: 600;
+    line-height: 30px;
+    color: var(--app-ink);
+    margin: 0 0 6px;
+    font-weight: 650;
     align-items: center;
     position: relative;
     .line {
-      width: 4px;
-      height: 16px;
-      background-color: #2274e7;
+      width: 3px;
+      height: 14px;
+      background-color: var(--brand-500);
       position: absolute;
-      left: -10px;
+      left: -12px;
       top: 50%;
       transform: translateY(-50%);
       border-radius: 2px;
     }
   }
   .route-box {
-    display: flex;
-    font-size: 12px;
-    line-height: 30px;
-    flex-wrap: wrap;
-    color: #555;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+    color: var(--app-text);
     .subitem {
-      width: 110px;
       a,
       span {
-        display: inline-block;
-        border-bottom: 1px solid transparent;
-        line-height: 15px;
+        display: block;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        line-height: 18px;
         max-width: 100%;
+        padding: 6px 8px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        transition:
+          color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+          background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       }
       a:hover {
-        color: #2274e7;
-        border-bottom: 1px solid #2274e7;
+        color: var(--brand-600);
+        background: var(--brand-50);
       }
     }
   }
 }
 .clickedNav {
-  color: #2274e7 !important;
+  color: var(--brand-600) !important;
+  border-color: #f8c6a6 !important;
+  background: var(--brand-100) !important;
 }
 </style>

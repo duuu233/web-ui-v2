@@ -144,9 +144,9 @@ onBeforeUnmount(() => {
 }
 
 .multi-upload :deep(.el-upload.el-upload--picture-card:hover) {
-  border-color: #409eff;
-  background: #f4f9ff;
-  color: #409eff;
+  border-color: var(--brand-500);
+  background: var(--brand-50);
+  color: var(--brand-600);
 }
 
 .multi-upload :deep(.el-upload.el-upload--picture-card .el-icon) {

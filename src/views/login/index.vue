@@ -148,7 +148,7 @@ function handleLogin() {
 <style scoped lang="scss">
 .login-prefix {
   font-size: 16px;
-  color: #2274e7;
+  color: var(--brand-500);
 }
 
 .login_content_bg {
@@ -174,9 +174,11 @@ function handleLogin() {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 20px;
+  border: 1px solid rgba(37, 43, 50, 0.08);
+  border-radius: 16px;
   background-color: #fff;
   overflow: hidden;
+  box-shadow: 0 22px 56px rgba(37, 43, 50, 0.12);
 }
 
 .login_content_tp {
@@ -231,11 +233,11 @@ function handleLogin() {
   margin-top: 5px;
   width: 100%;
   height: 45px;
-  border-radius: 22.5px;
-  font-weight: 400;
-  background-color: #409eff;
-  border-color: #409eff;
-  box-shadow: 0px 6px 23px 0px #b6d5ff;
+  border-radius: 8px;
+  font-weight: 600;
+  background-color: var(--brand-500);
+  border-color: var(--brand-500);
+  box-shadow: 0 8px 20px rgba(242, 105, 16, 0.22);
   font-size: 16px;
 }
 </style>

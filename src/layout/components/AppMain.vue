@@ -19,7 +19,7 @@ const { cachedViews } = storeToRefs(useTagsViewStore())
 
 <style scoped>
 .app-main {
-  min-height: calc(100vh - 70px - 40px);
-  padding-top: 6px;
+  min-height: calc(100dvh - var(--shell-header-height) - 42px);
+  padding-top: 2px;
 }
 </style>

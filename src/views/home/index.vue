@@ -28,21 +28,24 @@ const cards = computed(() => [
     label: '用户总数',
     value: stats.userCount,
     icon: 'User',
-    color: '#2274e7'
+    color: '#f26910',
+    span: 12
   },
   {
     key: 'productCount',
     label: '产品数量',
     value: stats.productCount,
     icon: 'Goods',
-    color: '#67c23a'
+    color: '#d9550c',
+    span: 6
   },
   {
     key: 'productFaqCount',
     label: '常见问题',
     value: stats.productFaqCount,
     icon: 'QuestionFilled',
-    color: '#e6a23c'
+    color: '#b9460a',
+    span: 6
   }
 ])
 
@@ -107,7 +110,7 @@ onMounted(() => {
     </el-card>
 
     <el-row v-loading="statsLoading" :gutter="16" class="stat-row">
-      <el-col v-for="card in cards" :key="card.key" :xs="24" :sm="8">
+      <el-col v-for="card in cards" :key="card.key" :xs="24" :sm="card.span">
         <el-card shadow="never" class="stat-card">
           <div class="stat-icon" :style="{ background: card.color }">
             <el-icon><component :is="card.icon" /></el-icon>
@@ -163,72 +166,106 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .home {
-  margin-top: 10px;
+  margin-top: 16px;
+}
+
+.welcome {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    top: -52px;
+    right: -52px;
+    width: 170px;
+    height: 170px;
+    border: 26px solid var(--brand-50);
+    border-radius: 50%;
+    content: '';
+    pointer-events: none;
+  }
 }
 
 .welcome-inner {
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 1;
 
   .avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    margin-right: 16px;
+    width: 60px;
+    height: 60px;
+    border: 4px solid var(--brand-50);
+    border-radius: 16px;
+    margin-right: 18px;
   }
 
   .title {
-    font-size: 18px;
-    color: #303133;
-    font-weight: 600;
+    font-size: 20px;
+    color: var(--app-ink);
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 
   .sub {
     font-size: 13px;
-    color: #909399;
+    color: var(--app-text);
     margin-top: 6px;
   }
 }
 
 .stat-row {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .stat-card {
   margin-bottom: 16px;
+  min-height: 118px;
+  transition:
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(79, 46, 29, 0.08);
+  }
 
   :deep(.el-card__body) {
     display: flex;
     align-items: center;
+    min-height: 116px;
+    padding: 20px 22px;
   }
 
   .stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
+    width: 54px;
+    height: 54px;
+    border-radius: 15px;
     color: #fff;
     font-size: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 14px;
+    margin-right: 16px;
+    box-shadow: 0 8px 18px rgba(242, 105, 16, 0.18);
   }
 
   .stat-value {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 700;
-    color: #303133;
+    color: var(--app-ink);
+    letter-spacing: -0.03em;
   }
 
   .stat-label {
     font-size: 13px;
-    color: #909399;
+    color: var(--app-text);
     margin-top: 4px;
   }
 }
 
 .trend-card {
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .trend-header {
@@ -240,38 +277,53 @@ onMounted(() => {
 
 .trend-list {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .trend-row {
   display: grid;
   grid-template-columns: 120px minmax(120px, 1fr) 64px;
   align-items: center;
-  gap: 12px;
-  min-height: 24px;
+  gap: 14px;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--app-surface-muted);
 }
 
 .trend-date {
-  color: #606266;
+  color: var(--app-text);
   font-size: 13px;
 }
 
 .trend-track {
   height: 8px;
   border-radius: 999px;
-  background: #edf1f7;
+  background: #eceff3;
   overflow: hidden;
 }
 
 .trend-bar {
   height: 100%;
   border-radius: 999px;
-  background: #2274e7;
+  background: var(--brand-500);
 }
 
 .trend-count {
-  color: #303133;
+  color: var(--app-ink);
   font-weight: 600;
   text-align: right;
+}
+
+@media (max-width: 768px) {
+  .trend-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .trend-row {
+    grid-template-columns: 86px minmax(80px, 1fr) 46px;
+    gap: 8px;
+  }
 }
 </style>

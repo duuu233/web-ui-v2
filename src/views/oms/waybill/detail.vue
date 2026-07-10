@@ -240,7 +240,7 @@ onActivated(getData)
 
 <style lang="scss" scoped>
 .app-container {
-  background-color: #edf5fb;
+  background-color: var(--app-canvas);
   padding: 0;
   margin-bottom: 100px;
 }

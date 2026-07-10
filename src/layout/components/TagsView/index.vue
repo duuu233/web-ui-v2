@@ -158,17 +158,17 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .tags-view-container {
-  height: 34px;
+  height: 42px;
   width: 100%;
-  background: #fff;
-  border-bottom: 1px solid #d8dce5;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid var(--app-border);
+  backdrop-filter: blur(10px);
 }
 .tags-view-wrapper {
   display: flex;
   align-items: center;
-  height: 34px;
-  padding: 0 10px;
+  height: 42px;
+  padding: 0 18px;
   overflow-x: auto;
   &::-webkit-scrollbar {
     height: 0;
@@ -176,20 +176,20 @@ onMounted(() => {
   .tags-view-item {
     display: inline-flex;
     align-items: center;
-    height: 26px;
-    line-height: 26px;
-    border: 1px solid #d8dce5;
-    color: #495060;
-    background: #fff;
-    padding: 0 8px;
+    height: 28px;
+    line-height: 28px;
+    border: 1px solid transparent;
+    color: var(--app-text);
+    background: transparent;
+    padding: 0 10px;
     font-size: 12px;
     margin-right: 5px;
-    border-radius: 3px;
+    border-radius: 7px;
     white-space: nowrap;
     &.active {
-      background-color: #2274e7;
+      background-color: var(--brand-500);
       color: #fff;
-      border-color: #2274e7;
+      border-color: var(--brand-500);
       .close-icon {
         color: #fff;
       }
@@ -211,17 +211,19 @@ onMounted(() => {
   position: fixed;
   list-style-type: none;
   padding: 5px 0;
-  border-radius: 4px;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 400;
-  color: #333;
-  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+  color: var(--app-ink);
+  box-shadow: 0 12px 28px rgba(37, 43, 50, 0.12);
   li {
     margin: 0;
     padding: 7px 16px;
     cursor: pointer;
     &:hover {
-      background: #eee;
+      background: var(--brand-50);
+      color: var(--brand-600);
     }
   }
 }

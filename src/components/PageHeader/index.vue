@@ -33,34 +33,34 @@ defineProps({
 .page-header {
   display: block;
   width: 100%;
-  background: #fff;
-  border-radius: 5px;
+  background: var(--app-surface);
+  border-radius: var(--app-radius);
 }
 
 .page-header :deep(.el-card__body) {
-  padding: 6px 14px;
+  padding: 10px 18px;
 }
 
 .page-header__inner {
   display: flex;
   align-items: center;
   min-height: 22px;
-  gap: 6px;
-  color: #303133;
-  line-height: 22px;
+  gap: 8px;
+  color: var(--app-ink);
+  line-height: 24px;
   white-space: nowrap;
 }
 
 .page-header__icon {
   flex: 0 0 auto;
-  color: #409eff;
-  font-size: 15px;
+  color: var(--brand-600);
+  font-size: 16px;
 }
 
 .page-header__title,
 .page-header__title :slotted(span) {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 650;
 }
 
 .page-header__extra {

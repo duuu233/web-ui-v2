@@ -23,10 +23,34 @@ defineProps({
 </template>
 
 <style scoped>
+.page-section {
+  overflow: hidden;
+}
+
+.page-section :deep(.el-card__body) {
+  padding: 16px 20px 18px;
+}
+
 .page-section__header {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  min-height: 22px;
+  color: var(--app-ink);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.page-section__header :deep(.el-icon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: var(--brand-600);
+  background: var(--brand-100);
+  font-size: 14px;
 }
 
 .page-section__extra {
@@ -34,6 +58,6 @@ defineProps({
 }
 
 .page-section__body {
-  margin-top: 15px;
+  margin-top: 16px;
 }
 </style>

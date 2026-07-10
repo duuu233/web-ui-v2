@@ -44,7 +44,7 @@ import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
 import { getLeftMenus } from '@/api/login'
 import { getCookie } from '@/utils/support'
-import logoMini from '@/assets/images/logo-mini.png'
+import logoMini from '@/assets/images/logo.png'
 import userAvatar from '@/assets/images/user.png'
 
 const appStore = useAppStore()
@@ -56,7 +56,7 @@ const clickedIndex = ref(0)
 
 function navClick(menuId, index) {
   clickedIndex.value = index
-  getLeftMenus({ parentMenuId: menuId }).then((response) => {
+  getLeftMenus({ parentMenuId: menuId }).then(response => {
     appStore.setSidebarRight(response.retData)
   })
 }
@@ -64,7 +64,7 @@ function navClick(menuId, index) {
 // 顶部导航就绪后默认选中第一个系统
 watch(
   navList,
-  (val) => {
+  val => {
     if (val && val.length) {
       navClick(val[0].id, 0)
     }

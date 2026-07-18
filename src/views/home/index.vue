@@ -28,7 +28,6 @@ const cards = computed(() => [
     label: '用户总数',
     value: stats.userCount,
     icon: 'User',
-    color: '#f26910',
     span: 12
   },
   {
@@ -36,7 +35,6 @@ const cards = computed(() => [
     label: '产品数量',
     value: stats.productCount,
     icon: 'Goods',
-    color: '#d9550c',
     span: 6
   },
   {
@@ -44,7 +42,6 @@ const cards = computed(() => [
     label: '常见问题',
     value: stats.productFaqCount,
     icon: 'QuestionFilled',
-    color: '#b9460a',
     span: 6
   }
 ])
@@ -112,7 +109,7 @@ onMounted(() => {
     <el-row v-loading="statsLoading" :gutter="16" class="stat-row">
       <el-col v-for="card in cards" :key="card.key" :xs="24" :sm="card.span">
         <el-card shadow="never" class="stat-card">
-          <div class="stat-icon" :style="{ background: card.color }">
+          <div class="stat-icon">
             <el-icon><component :is="card.icon" /></el-icon>
           </div>
           <div class="stat-info">
@@ -227,7 +224,7 @@ onMounted(() => {
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(79, 46, 29, 0.08);
+    box-shadow: 0 14px 28px rgba(43, 39, 36, 0.07);
   }
 
   :deep(.el-card__body) {
@@ -237,17 +234,20 @@ onMounted(() => {
     padding: 20px 22px;
   }
 
+  // 三块实心饱和橙是首页最刺眼的部分。改成品牌浅底 + 品牌深色图标：
+  // 同样能认出品牌，但橙色面积和亮度都降下来了。
   .stat-icon {
     width: 54px;
     height: 54px;
     border-radius: 15px;
-    color: #fff;
+    border: 1px solid var(--brand-100);
+    background: var(--brand-50);
+    color: var(--brand-600);
     font-size: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 16px;
-    box-shadow: 0 8px 18px rgba(242, 105, 16, 0.18);
   }
 
   .stat-value {
@@ -299,7 +299,7 @@ onMounted(() => {
 .trend-track {
   height: 8px;
   border-radius: 999px;
-  background: #eceff3;
+  background: #ebe8e4;
   overflow: hidden;
 }
 

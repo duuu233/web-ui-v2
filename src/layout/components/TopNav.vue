@@ -29,7 +29,7 @@
         </el-dropdown>
         <i class="right-line" />
         <div class="message-icon-box">
-          <svg-icon icon-class="nav-ring" class="color-main" />
+          <svg-icon icon-class="nav-ring" />
         </div>
       </div>
     </div>
@@ -89,9 +89,9 @@ function logout() {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #252b32;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 24px rgba(24, 29, 34, 0.12);
+  background-color: var(--app-shell);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 24px rgba(38, 34, 32, 0.1);
   z-index: 99;
 }
 .logo {
@@ -139,11 +139,9 @@ function logout() {
       color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
       background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  li:hover,
-  .clickedNav {
-    background-color: rgba(242, 105, 16, 0.13);
+  li:hover {
+    background-color: rgba(255, 255, 255, 0.06);
     color: #fff;
-    box-shadow: inset 0 -3px 0 var(--brand-500);
   }
 }
 .avatar-container {
@@ -180,10 +178,12 @@ function logout() {
   font-size: 20px;
   color: rgba(255, 255, 255, 0.82);
 }
+// 选中态：中性填充 + 2px LOGO 橙指示条。
+// 深色顶栏上的细指示条是 LOGO 原色唯一合适的位置，面积小到不会刺眼。
 .clickedNav {
-  background-color: rgba(242, 105, 16, 0.13);
+  background-color: rgba(255, 255, 255, 0.08);
   color: #fff;
-  box-shadow: inset 0 -3px 0 var(--brand-500);
+  box-shadow: inset 0 -2px 0 var(--brand-logo);
 }
 
 @media (max-width: 768px) {

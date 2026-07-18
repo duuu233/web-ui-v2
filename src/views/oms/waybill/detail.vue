@@ -186,9 +186,9 @@ function refundStatus(v) {
   return v
 }
 function orderStateStyle(v) {
-  if (v === '已送达') return '#67C23A'
-  if (['已取消', '已无效', '已转出'].indexOf(v) !== -1) return '#909399'
-  if (['待调度', '待取货', '配送中'].indexOf(v) !== -1) return '#E6A23C'
+  if (v === '已送达') return 'var(--app-success)'
+  if (['已取消', '已无效', '已转出'].indexOf(v) !== -1) return 'var(--app-info)'
+  if (['待调度', '待取货', '配送中'].indexOf(v) !== -1) return 'var(--app-warning)'
   return ''
 }
 
@@ -268,7 +268,7 @@ onActivated(getData)
     display: flex;
     align-items: center;
     justify-content: center;
-    border-right: 1px solid #eee;
+    border-right: 1px solid var(--app-border);
     flex-direction: column;
   }
   .step-box {
@@ -289,7 +289,7 @@ onActivated(getData)
   .item {
     flex: 1;
     padding: 0 20px;
-    border-right: 1px solid #eee;
+    border-right: 1px solid var(--app-border);
     .title {
       padding-bottom: 20px;
       font-size: 18px;

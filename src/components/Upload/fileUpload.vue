@@ -104,6 +104,6 @@ function handleRemove() {
 
 .file-item .del {
   cursor: pointer;
-  color: #f56c6c;
+  color: var(--app-danger);
 }
 </style>

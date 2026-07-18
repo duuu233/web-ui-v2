@@ -8,13 +8,13 @@
 
 @mixin scrollBar {
   &::-webkit-scrollbar-track-piece {
-    background: #d3dce6;
+    background: var(--app-surface-muted);
   }
   &::-webkit-scrollbar {
     width: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #99a9bf;
+    background: #c8c3bd;
     border-radius: 20px;
   }
 }

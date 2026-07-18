@@ -241,6 +241,6 @@ onActivated(() => {
 
 .size-separator {
   line-height: 32px;
-  color: #909399;
+  color: var(--app-info);
 }
 </style>

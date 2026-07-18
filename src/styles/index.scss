@@ -5,45 +5,104 @@
 @use './sidebar';
 
 :root {
-  --brand-50: #fff6f0;
-  --brand-100: #fff0e6;
-  --brand-400: #f58a45;
-  --brand-500: #f26910;
-  --brand-600: #d9550c;
-  --brand-700: #b9460a;
-  --app-canvas: #f4f6f8;
+  // 品牌色阶：色相锁定 LOGO 的 24°，靠明度分层，不靠饱和度堆强度。
+  --brand-logo: #f26910; // LOGO 原色，只允许出现在 1-3px 指示条
+  --brand-50: #fbf4ee;
+  --brand-100: #f4e5d8;
+  --brand-200: #e8cbb1;
+  --brand-300: #d6a67e;
+  --brand-400: #c37b45;
+  --brand-500: #b25a1e; // 主色填充，白字 4.8:1
+  --brand-600: #964a15; // hover / 链接文字，白底 6.4:1
+  --brand-700: #78390f;
+
+  // 暖中性底：与橙色同色温，整屏不再有冷灰与暖橙互相顶的感觉。
+  --app-canvas: #f5f4f2;
   --app-surface: #ffffff;
-  --app-surface-muted: #f8fafb;
-  --app-border: #e5e9ee;
-  --app-border-strong: #d9e0e7;
-  --app-ink: #252b32;
-  --app-text: #657080;
-  --app-muted: #8a95a3;
+  --app-surface-muted: #faf9f7;
+  --app-surface-hover: #f2f0ed;
+  --app-border: #e8e5e1;
+  --app-border-strong: #cbc6c0; // 输入框描边，比原来的冷灰更实一些
+  --app-ink: #2b2724;
+  --app-text: #6b6560;
+  --app-muted: #7a736c;
+  --app-shell: #262220; // 顶栏底色
+
+  // 语义色统一压深到白底可读（≥ 4.9:1），并把 warning 推到 45° 黄金色，
+  // 避免和 24° 的品牌橙撞色导致「警告看起来像品牌色」。
+  --app-success: #2e7d4f;
+  --app-warning: #8a6c12;
+  --app-danger: #b3352e;
+  --app-info: #6b6560;
+
   --shell-header-height: 72px;
   --shell-sidebar-width: 256px;
   --app-radius: 12px;
   --control-radius: 8px;
 
   --el-color-primary: var(--brand-500);
-  --el-color-primary-light-3: #f7965c;
-  --el-color-primary-light-5: #fab18a;
-  --el-color-primary-light-7: #fcd2b8;
-  --el-color-primary-light-8: #fde2d1;
-  --el-color-primary-light-9: var(--brand-50);
+  --el-color-primary-light-3: #c98c62;
+  --el-color-primary-light-5: #d9ad8f;
+  --el-color-primary-light-7: #e8cdbc;
+  --el-color-primary-light-8: #f0ded2;
+  --el-color-primary-light-9: #f7efe9;
   --el-color-primary-dark-2: var(--brand-600);
+
+  --el-color-success: var(--app-success);
+  --el-color-success-light-3: #6da484;
+  --el-color-success-light-5: #96bea7;
+  --el-color-success-light-7: #c0d8ca;
+  --el-color-success-light-8: #d5e5dc;
+  --el-color-success-light-9: #eaf2ed;
+  --el-color-success-dark-2: #256440;
+
+  --el-color-warning: var(--app-warning);
+  --el-color-warning-light-3: #ad9859;
+  --el-color-warning-light-5: #c5b689;
+  --el-color-warning-light-7: #dcd3b8;
+  --el-color-warning-light-8: #e8e2d0;
+  --el-color-warning-light-9: #f3f0e7;
+  --el-color-warning-dark-2: #6e560e;
+
+  --el-color-danger: var(--app-danger);
+  --el-color-danger-light-3: #ca726d;
+  --el-color-danger-light-5: #d99a97;
+  --el-color-danger-light-7: #e8c2c0;
+  --el-color-danger-light-8: #f0d7d5;
+  --el-color-danger-light-9: #f7ebea;
+  --el-color-danger-dark-2: #8f2a25;
+
+  --el-color-error: var(--app-danger);
+  --el-color-error-light-3: #ca726d;
+  --el-color-error-light-5: #d99a97;
+  --el-color-error-light-7: #e8c2c0;
+  --el-color-error-light-8: #f0d7d5;
+  --el-color-error-light-9: #f7ebea;
+  --el-color-error-dark-2: #8f2a25;
+
+  --el-color-info: var(--app-info);
+  --el-color-info-light-3: #979390;
+  --el-color-info-light-5: #b5b2b0;
+  --el-color-info-light-7: #d3d1cf;
+  --el-color-info-light-8: #e1e0df;
+  --el-color-info-light-9: #f0f0ef;
+  --el-color-info-dark-2: #56514d;
+
   --el-border-color: var(--app-border-strong);
   --el-border-color-light: var(--app-border);
-  --el-border-color-lighter: #eef1f4;
+  --el-border-color-lighter: #efedea;
   --el-fill-color-blank: var(--app-surface);
   --el-fill-color-light: var(--app-surface-muted);
+  --el-fill-color-lighter: var(--app-surface-muted);
   --el-bg-color: var(--app-surface);
   --el-bg-color-page: var(--app-canvas);
+  --el-bg-color-overlay: var(--app-surface);
   --el-text-color-primary: var(--app-ink);
-  --el-text-color-regular: #525d6b;
+  --el-text-color-regular: #56504b;
   --el-text-color-secondary: var(--app-text);
-  --el-text-color-placeholder: #98a2ae;
+  --el-text-color-placeholder: var(--app-muted);
   --el-border-radius-base: var(--control-radius);
-  --el-box-shadow-light: 0 12px 28px rgba(37, 43, 50, 0.08);
+  --el-box-shadow-light: 0 12px 28px rgba(43, 39, 36, 0.08);
 }
 
 html {
@@ -105,7 +164,7 @@ a:hover {
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand-500);
+  outline: 2px solid var(--brand-600);
   outline-offset: 2px;
 }
 
@@ -147,11 +206,11 @@ ul {
 }
 
 .enable_txt {
-  color: #2f7d4d;
+  color: var(--app-success);
 }
 
 .disable_txt {
-  color: #c53d3d;
+  color: var(--app-danger);
 }
 
 .info_txt,
@@ -165,15 +224,15 @@ ul {
 }
 
 .color-success {
-  color: #2f7d4d;
+  color: var(--app-success);
 }
 
 .color-warning {
-  color: #b86610;
+  color: var(--app-warning);
 }
 
 .color-danger {
-  color: #c53d3d;
+  color: var(--app-danger);
 }
 
 .app-main {
@@ -260,13 +319,13 @@ ul {
   border: 1px solid var(--app-border);
   border-radius: var(--app-radius);
   background: var(--app-surface);
-  box-shadow: 0 10px 26px rgba(37, 43, 50, 0.035);
+  box-shadow: 0 10px 26px rgba(43, 39, 36, 0.04);
 }
 
 .el-card.is-always-shadow,
 .el-card.is-hover-shadow:focus,
 .el-card.is-hover-shadow:hover {
-  box-shadow: 0 10px 26px rgba(37, 43, 50, 0.035);
+  box-shadow: 0 10px 26px rgba(43, 39, 36, 0.04);
 }
 
 .el-card__header {
@@ -322,7 +381,7 @@ ul {
 .el-select__wrapper:hover,
 .el-date-editor.el-input__wrapper:hover,
 .el-date-editor.el-range-editor:hover {
-  box-shadow: 0 0 0 1px #c4ccd5 inset;
+  box-shadow: 0 0 0 1px #c2bdb7 inset;
 }
 
 .el-input__wrapper.is-focus,
@@ -334,7 +393,7 @@ ul {
 }
 
 .el-form-item__label {
-  color: #4f5967;
+  color: #56504b;
   font-weight: 500;
 }
 
@@ -354,11 +413,11 @@ ul {
 
 .vxe-table {
   border-radius: var(--app-radius);
-  color: #4d5764;
+  color: #56504b;
 
   .vxe-header--column {
-    background: #f7f8fa;
-    color: #4d5764;
+    background: var(--app-surface-muted);
+    color: #56504b;
     font-size: 13px;
     font-weight: 650;
   }
@@ -368,7 +427,12 @@ ul {
   border-radius: var(--app-radius) var(--app-radius) 0 0;
 }
 
-.vxe-table--render-default .vxe-body--row.row--hover,
+// 行悬停走中性灰：表格是整个后台出现频率最高的界面，
+// 每次划过都染一层橙色是「刺眼」的主要来源。品牌色只留给「当前选中行」。
+.vxe-table--render-default .vxe-body--row.row--hover {
+  background-color: var(--app-surface-hover);
+}
+
 .vxe-table--render-default .vxe-body--row.row--current {
   background-color: var(--brand-50);
 }

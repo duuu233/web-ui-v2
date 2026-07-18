@@ -22,7 +22,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="是否自动翻译多语种" prop="isAutoTranslate">
+        <el-form-item label="是否自动生成多语种" prop="isAutoTranslate">
           <el-radio-group v-model="formData.isAutoTranslate" :disabled="pageType === 3">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
@@ -92,7 +92,7 @@ const router = useRouter()
 const formRef = ref(null)
 const formData = reactive({
   productId: '',
-  isAutoTranslate: 0,
+  isAutoTranslate: 1,
   grade: 0,
   faqTitle: '',
   faqContent: '',
@@ -103,7 +103,7 @@ let isInitialized = false
 
 const rules = {
   productId: [{ required: true, message: '请选择所属产品', trigger: 'change' }],
-  isAutoTranslate: [{ required: true, message: '请选择是否自动翻译多语种', trigger: 'change' }],
+  isAutoTranslate: [{ required: true, message: '请选择是否自动生成多语种', trigger: 'change' }],
   grade: [{ required: true, message: '请输入排序值', trigger: 'blur' }],
   faqTitle: [{ required: true, message: '请输入常见问题标题', trigger: 'blur' }],
   faqContent: [{ required: true, message: '请输入常见问题内容', trigger: 'blur' }]

@@ -245,10 +245,10 @@ function handleDetail(row) {
 
 <style lang="scss" scoped>
 .enable_txt {
-  color: #67c23a;
+  color: var(--app-success);
 }
 
 .disable_txt {
-  color: #f56c6c;
+  color: var(--app-danger);
 }
 </style>

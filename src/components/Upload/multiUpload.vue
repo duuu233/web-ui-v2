@@ -133,10 +133,10 @@ onBeforeUnmount(() => {
   height: var(--multi-upload-size);
   min-width: var(--multi-upload-size);
   min-height: var(--multi-upload-size);
-  border-color: #c7d0dd;
+  border-color: var(--app-border-strong);
   border-radius: 8px;
-  background: #fbfcff;
-  color: #8b95a5;
+  background: var(--app-surface-muted);
+  color: var(--app-muted);
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
@@ -164,9 +164,9 @@ onBeforeUnmount(() => {
   flex: 0 0 var(--multi-upload-size);
   width: var(--multi-upload-size);
   height: var(--multi-upload-size);
-  border: 1px solid #d8dee8;
+  border: 1px solid var(--app-border-strong);
   border-radius: 8px;
-  background: #f5f7fa;
+  background: var(--app-surface-muted);
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(31, 45, 61, 0.08);
 }
@@ -214,7 +214,7 @@ onBeforeUnmount(() => {
 
 .upload-remove-button:hover,
 .upload-remove-button:focus-visible {
-  background: #f56c6c;
+  background: var(--app-danger);
   outline: none;
   transform: scale(1.04);
 }

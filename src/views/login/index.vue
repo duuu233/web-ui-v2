@@ -174,11 +174,11 @@ function handleLogin() {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(37, 43, 50, 0.08);
+  border: 1px solid rgba(43, 39, 36, 0.08);
   border-radius: 16px;
   background-color: #fff;
   overflow: hidden;
-  box-shadow: 0 22px 56px rgba(37, 43, 50, 0.12);
+  box-shadow: 0 22px 56px rgba(43, 39, 36, 0.12);
 }
 
 .login_content_tp {
@@ -214,7 +214,7 @@ function handleLogin() {
   width: 100vw;
   text-align: center;
   font-size: 14px;
-  color: #555;
+  color: var(--app-text);
   bottom: 74px;
   line-height: 14px;
   position: absolute;
@@ -237,7 +237,7 @@ function handleLogin() {
   font-weight: 600;
   background-color: var(--brand-500);
   border-color: var(--brand-500);
-  box-shadow: 0 8px 20px rgba(242, 105, 16, 0.22);
+  box-shadow: 0 6px 16px rgba(43, 39, 36, 0.1);
   font-size: 16px;
 }
 </style>

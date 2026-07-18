@@ -41,7 +41,7 @@ function goHome() {
   }
   p {
     font-size: 14px;
-    color: #909399;
+    color: var(--app-info);
     margin: 12px 0 20px;
   }
 }

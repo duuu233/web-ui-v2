@@ -8,7 +8,7 @@
       <el-form ref="appFormRef" :model="appForm" :rules="rules" label-width="180px" size="small">
         <el-form-item label="版本号" prop="versionNumber">
           <el-input v-model="appForm.versionNumber" placeholder="请输入版本号" class="input-width" />
-          <i style="padding-left: 6px; font-size: 12px; color: #909399">(版本号填写格式如:V2.0.0)</i>
+          <i style="padding-left: 6px; font-size: 12px; color: var(--app-info)">(版本号填写格式如:V2.0.0)</i>
         </el-form-item>
 
         <el-form-item label="发布终端" prop="terminal">
@@ -137,7 +137,7 @@ onActivated(init)
   margin-top: 10px;
 }
 .section-title {
-  background-color: #efefef;
+  background-color: var(--app-surface-muted);
   padding-left: 20px;
   margin-bottom: 30px;
   line-height: 32px;

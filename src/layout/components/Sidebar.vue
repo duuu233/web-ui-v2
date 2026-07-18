@@ -70,7 +70,7 @@ function isActive(name) {
     width: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #ccd3db;
+    background: #d3cec8;
     border-radius: 20px;
   }
 }
@@ -92,7 +92,7 @@ function isActive(name) {
     .line {
       width: 3px;
       height: 14px;
-      background-color: var(--brand-500);
+      background-color: var(--brand-logo);
       position: absolute;
       left: -12px;
       top: 50%;
@@ -121,16 +121,19 @@ function isActive(name) {
           color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
           background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       }
+      // hover 用中性灰，只有「当前页」用品牌色，
+      // 否则整条侧边栏在鼠标移动时一直在闪橙色。
       a:hover {
-        color: var(--brand-600);
-        background: var(--brand-50);
+        color: var(--app-ink);
+        background: var(--app-surface-hover);
       }
     }
   }
 }
 .clickedNav {
   color: var(--brand-600) !important;
-  border-color: #f8c6a6 !important;
-  background: var(--brand-100) !important;
+  border-color: transparent !important;
+  background: var(--brand-50) !important;
+  font-weight: 600;
 }
 </style>

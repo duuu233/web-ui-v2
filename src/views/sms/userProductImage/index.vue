@@ -344,7 +344,8 @@ function handleStatusChange(status, row) {
               :model-value="row.verify"
               :active-value="1"
               :inactive-value="0"
-              @change="handleStatusChange($event, row)"
+              
+            
             />
           </template>
         </vxe-column>

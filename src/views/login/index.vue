@@ -7,7 +7,6 @@ import { validateE_N, validateC_E_N } from '@/utils/validate'
 import { setCookie, getCookie } from '@/utils/support'
 import { useUserStore } from '@/store/modules/user'
 import login_bg from '@/assets/images/login_bg.png'
-import login_bx from '@/assets/images/login_bx.png'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -86,7 +85,6 @@ function handleLogin() {
     <img :src="login_bg" class="login_bg_img" alt="bg" />
     <div class="logon_content_bx">
       <div class="login_content_tp">
-        <img :src="login_bx" class="login_bx_img" alt="" />
         <p class="login_title">曝石相框 管理中心</p>
       </div>
       <div class="login_content_bm">
@@ -181,19 +179,41 @@ function handleLogin() {
   box-shadow: 0 22px 56px rgba(43, 39, 36, 0.12);
 }
 
+// 顶部色带用主题色阶绘制，跟随 --brand-* 变化，不再依赖固定颜色的图片
 .login_content_tp {
   width: 100%;
   height: 130px;
   position: relative;
-}
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--brand-600) 0%,
+    var(--brand-500) 55%,
+    var(--brand-400) 100%
+  );
 
-.login_bx_img {
-  width: 400px;
-  height: 130px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
+  // 两个柔光圆点，还原原设计的层次感
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &::before {
+    width: 190px;
+    height: 190px;
+    top: -96px;
+    right: -34px;
+  }
+
+  &::after {
+    width: 140px;
+    height: 140px;
+    bottom: -62px;
+    left: -40px;
+  }
 }
 
 .login_title {

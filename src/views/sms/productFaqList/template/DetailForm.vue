@@ -14,6 +14,7 @@
             :disabled="pageType === 3"
             placeholder="请选择所属产品"
           >
+            <el-option label="全部" :value="0" />
             <el-option
               v-for="item in productList"
               :key="item.productId"
@@ -22,10 +23,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="是否自动生成多语种" prop="isAutoTranslate">
-          <el-radio-group v-model="formData.isAutoTranslate" :disabled="pageType === 3">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
+        <el-form-item label="选择语种" prop="language">
+          <el-radio-group v-model="formData.language" :disabled="pageType !== 1">
+            <el-radio v-for="item in languageOptions" :key="item.value" :label="item.value">
+              {{ item.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="排序值(数值越大排名越前)" prop="grade">
@@ -89,10 +91,17 @@ const props = defineProps({
 const route = useRoute()
 const router = useRouter()
 
+const languageOptions = [
+  { value: 1, label: '英语' },
+  { value: 2, label: '简中' },
+  { value: 3, label: '繁中' },
+  { value: 4, label: '日文' }
+]
+
 const formRef = ref(null)
 const formData = reactive({
-  productId: '',
-  isAutoTranslate: 1,
+  productId: 0,
+  language: 1,
   grade: 0,
   faqTitle: '',
   faqContent: '',
@@ -102,8 +111,7 @@ const productList = ref([])
 let isInitialized = false
 
 const rules = {
-  productId: [{ required: true, message: '请选择所属产品', trigger: 'change' }],
-  isAutoTranslate: [{ required: true, message: '请选择是否自动生成多语种', trigger: 'change' }],
+  language: [{ required: true, message: '请选择语种', trigger: 'change' }],
   grade: [{ required: true, message: '请输入排序值', trigger: 'blur' }],
   faqTitle: [{ required: true, message: '请输入常见问题标题', trigger: 'blur' }],
   faqContent: [{ required: true, message: '请输入常见问题内容', trigger: 'blur' }]
@@ -118,8 +126,8 @@ async function getData() {
   const res = await getProductFaqDetail({ id: route.query.id })
   const d = res.retData || {}
   Object.assign(formData, {
-    productId: d.productId || '',
-    isAutoTranslate: d.isAutoTranslate || 0,
+    productId: d.productId ?? 0,
+    language: d.language || 1,
     grade: d.grade || 0,
     faqTitle: d.faqTitle || '',
     faqContent: d.faqContent || '',
@@ -144,11 +152,12 @@ async function initializeData() {
 function submitForm() {
   formRef.value.validate(async (valid) => {
     if (!valid) return false
-    const productItem = productList.value.find((item) => item.productId === formData.productId)
-    if (productItem) {
-      formData.productId = productItem.productId
-      formData.productName = productItem.productName
+    // 未选择所属产品时默认按「全部」提交
+    if (formData.productId === '' || formData.productId === null || formData.productId === undefined) {
+      formData.productId = 0
     }
+    const productItem = productList.value.find((item) => item.productId === formData.productId)
+    formData.productName = productItem ? productItem.productName : '全部'
     if (props.pageType === 1) {
       await addProductFaq(formData)
     } else if (props.pageType === 2) {

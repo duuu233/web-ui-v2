@@ -52,13 +52,13 @@
           />
         </el-form-item>
         <el-form-item label="常见问题内容" prop="faqContent">
-          <el-input
+          <RichEditor
             v-model="formData.faqContent"
-            type="textarea"
-            :rows="10"
             :disabled="pageType === 3"
-            style="width: 60vw"
+            width="60vw"
+            height="400px"
             placeholder="请输入常见问题内容"
+            @change="formRef?.validateField('faqContent')"
           />
         </el-form-item>
         <el-form-item>
@@ -80,6 +80,7 @@ import {
   getProductList
 } from '@/api/productList'
 import PageHeader from '@/components/PageHeader/index.vue'
+import RichEditor from '@/components/RichEditor/index.vue'
 
 const props = defineProps({
   pageType: {
@@ -114,7 +115,7 @@ const rules = {
   language: [{ required: true, message: '请选择语种', trigger: 'change' }],
   grade: [{ required: true, message: '请输入排序值', trigger: 'blur' }],
   faqTitle: [{ required: true, message: '请输入常见问题标题', trigger: 'blur' }],
-  faqContent: [{ required: true, message: '请输入常见问题内容', trigger: 'blur' }]
+  faqContent: [{ required: true, message: '请输入常见问题内容', trigger: 'change' }]
 }
 
 async function getEnumData() {

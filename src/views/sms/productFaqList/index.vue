@@ -47,7 +47,9 @@ const {
 } = usePagedList({
   fetchList: getProductFaqList,
   defaultQuery: defaultListQuery,
-  buildParams: cleanQuery
+  buildParams: cleanQuery,
+  reloadOnActivated: false,
+  refreshKey: 'productFaqList'
 })
 
 function formatDateTime(time) {

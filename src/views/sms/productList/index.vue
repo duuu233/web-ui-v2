@@ -38,7 +38,8 @@ const {
   fetchList: getProductList,
   defaultQuery: defaultListQuery,
   buildParams: cleanQuery,
-  reloadOnActivated: false
+  reloadOnActivated: false,
+  refreshKey: 'productList'
 })
 
 function formatDateTime(time) {

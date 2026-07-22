@@ -63,6 +63,7 @@ import { ElMessage } from 'element-plus'
 import { valiNumber } from '@/utils/validate'
 import { setAppVersionEdit, getAppVersionDetail } from '@/api/appVersion'
 import PageHeader from '@/components/PageHeader/index.vue'
+import { invalidateList } from '@/composables/useListRefresh'
 
 const route = useRoute()
 const router = useRouter()
@@ -118,6 +119,7 @@ function submitForm() {
     setAppVersionEdit(form).then((response) => {
       if (response.retCode === 200) {
         ElMessage.success(route.query.type === 'edit' ? '编辑成功' : '新增成功')
+        invalidateList('appVersion')
         router.push({ path: '/sms/appVersion' })
       }
     })

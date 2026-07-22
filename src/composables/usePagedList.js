@@ -1,4 +1,5 @@
 import { reactive, shallowRef, onMounted, onActivated } from 'vue'
+import { consumeListInvalidation } from './useListRefresh'
 
 export function cleanQuery(query) {
   const params = { ...query }
@@ -22,7 +23,8 @@ export function usePagedList(options) {
     buildParams = cleanQuery,
     onError = () => {},
     immediate = true,
-    reloadOnActivated = true
+    reloadOnActivated = true,
+    refreshKey = ''
   } = options
 
   const listQuery = reactive(defaultQuery())
@@ -74,7 +76,23 @@ export function usePagedList(options) {
   }
 
   if (immediate) onMounted(getList)
-  if (reloadOnActivated) onActivated(getList)
+
+  if (reloadOnActivated || refreshKey) {
+    let isInitialActivation = true
+
+    onActivated(() => {
+      if (isInitialActivation) {
+        isInitialActivation = false
+        // onActivated also runs after the initial mount, which has already loaded the list.
+        const isInvalidated = consumeListInvalidation(refreshKey)
+        if (!immediate && (reloadOnActivated || isInvalidated)) getList()
+        return
+      }
+
+      const isInvalidated = consumeListInvalidation(refreshKey)
+      if (reloadOnActivated || isInvalidated) getList()
+    })
+  }
 
   return {
     listQuery,

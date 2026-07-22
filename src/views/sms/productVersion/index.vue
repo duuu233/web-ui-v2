@@ -1,6 +1,7 @@
 <script setup name="productVersion">
-import { computed, onActivated, onMounted, reactive, ref, shallowRef } from 'vue'
+import { computed, onMounted, reactive, ref, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
+import { useListRefreshOnActivated } from '@/composables/useListRefresh'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import SearchPanel from '@/components/SearchPanel/index.vue'
 import ListToolbar from '@/components/ListToolbar/index.vue'
@@ -176,7 +177,7 @@ function init() {
 }
 
 onMounted(init)
-onActivated(init)
+useListRefreshOnActivated('productVersion', init)
 </script>
 
 <template>

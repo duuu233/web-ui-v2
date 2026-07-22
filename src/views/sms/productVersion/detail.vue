@@ -17,6 +17,7 @@ import {
 } from '@/api/productVersion'
 import PageHeader from '@/components/PageHeader/index.vue'
 import FileUpload from '@/components/Upload/FileUpload.vue'
+import { invalidateList } from '@/composables/useListRefresh'
 
 const route = useRoute()
 const router = useRouter()
@@ -117,6 +118,7 @@ function submitForm() {
           ElMessage.success(
             route.query.type === 'edit' ? '编辑成功' : '新增成功'
           )
+          invalidateList('productVersion')
           router.push({ name: 'productVersion' })
         }
       })

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 import { addProduct, editProduct, getProductDetail } from '@/api/productList'
+import { invalidateList } from '@/composables/useListRefresh'
 import MultiUpload from '@/components/Upload/MultiUpload.vue'
 import PageHeader from '@/components/PageHeader/index.vue'
 
@@ -102,6 +103,7 @@ function submitForm() {
         await editProduct(submitData)
       }
       ElMessage.success(props.pageType === 1 ? '新增成功' : '编辑成功')
+      invalidateList('productList')
       router.push({ name: 'productList' })
     } finally {
       submitting.value = false

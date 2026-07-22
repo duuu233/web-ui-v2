@@ -108,8 +108,9 @@
 </template>
 
 <script setup name="appVersion">
-import { ref, reactive, onMounted, onActivated } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useListRefreshOnActivated } from '@/composables/useListRefresh'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import SearchPanel from '@/components/SearchPanel/index.vue'
 import { getAppVersionList, setAppVersionVerify } from '@/api/appVersion'
@@ -187,7 +188,7 @@ function addVersion(type, data) {
 }
 
 onMounted(getList)
-onActivated(getList)
+useListRefreshOnActivated('appVersion', getList)
 </script>
 
 <style lang="scss" scoped>

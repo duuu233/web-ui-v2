@@ -81,6 +81,7 @@ import {
 } from '@/api/productList'
 import PageHeader from '@/components/PageHeader/index.vue'
 import RichEditor from '@/components/RichEditor/index.vue'
+import { invalidateList } from '@/composables/useListRefresh'
 
 const props = defineProps({
   pageType: {
@@ -165,6 +166,7 @@ function submitForm() {
       await editProductFaq(formData)
     }
     ElMessage.success(props.pageType === 1 ? '新增成功' : '编辑成功')
+    invalidateList('productFaqList')
     setTimeout(() => {
       router.push({ path: '/sms/productFaqList' })
     }, 1000)

@@ -55,7 +55,9 @@ const {
 } = usePagedList({
   fetchList: getUserList,
   defaultQuery: defaultListQuery,
-  buildParams: cleanQuery
+  buildParams: cleanQuery,
+  reloadOnActivated: false,
+  refreshKey: 'userList'
 })
 
 function formatDateTime(time) {

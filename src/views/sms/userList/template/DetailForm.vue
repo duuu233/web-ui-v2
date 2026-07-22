@@ -6,6 +6,7 @@ import md5 from 'js-md5'
 import { getUserDetail, setUserInfo } from '@/api/userList'
 import { formatDate } from '@/utils/date'
 import PageHeader from '@/components/PageHeader/index.vue'
+import { invalidateList } from '@/composables/useListRefresh'
 
 const props = defineProps({
   pageType: {
@@ -86,6 +87,7 @@ function submitForm() {
     try {
       await setUserInfo(buildSubmitData())
       ElMessage.success('编辑成功')
+      invalidateList('userList')
       router.push({ name: 'userList' })
     } finally {
       submitting.value = false

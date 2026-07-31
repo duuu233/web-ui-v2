@@ -37,7 +37,8 @@ const defaultForm = () => ({
   width: null,
   height: null,
   broadcastId: '',
-  carouselInterval: null
+  carouselInterval: null,
+  rotationDegree: 0
 })
 
 const formRef = ref(null)
@@ -71,7 +72,8 @@ async function getData() {
     productImg: detail.productImg ? [{ url: detail.productImg, name: '产品图片' }] : [],
     broadcastId: detail.broadcastId ?? '',
     carouselInterval: detail.carouselInterval ?? null,
-    screenType: detail.screenType ?? 0
+    screenType: detail.screenType ?? 0,
+    rotationDegree: detail.rotationDegree ?? 0
   })
 }
 
@@ -210,6 +212,16 @@ onActivated(() => {
             :precision="0"
             :controls="false"
             placeholder="请输入轮播间隔"
+            :disabled="pageType === 3"
+          />
+        </el-form-item>
+
+        <el-form-item label="旋转度数" prop="rotationDegree">
+          <el-input-number
+            v-model="formData.rotationDegree"
+            :precision="0"
+            :controls="false"
+            placeholder="请输入旋转度数"
             :disabled="pageType === 3"
           />
         </el-form-item>

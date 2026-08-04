@@ -39,7 +39,7 @@ const defaultForm = () => ({
   broadcastId: '',
   carouselInterval: null,
   rotationDegree: 0,
-  verticalrotation: 0
+  verticalRotation: 0
 })
 
 const formRef = ref(null)
@@ -88,7 +88,7 @@ async function getData() {
     carouselInterval: detail.carouselInterval ?? null,
     screenType: detail.screenType ?? 0,
     rotationDegree: detail.rotationDegree ?? 0,
-    verticalrotation: detail.verticalrotation ?? 0
+    verticalRotation: detail.verticalRotation ?? 0
   })
 }
 
@@ -269,9 +269,9 @@ onActivated(() => {
           />
         </el-form-item>
 
-        <el-form-item label="竖向旋转度数" prop="verticalrotation">
+        <el-form-item label="竖向旋转度数" prop="verticalRotation">
           <el-input-number
-            v-model="formData.verticalrotation"
+            v-model="formData.verticalRotation"
             :precision="0"
             :controls="false"
             placeholder="请输入竖向旋转度数"

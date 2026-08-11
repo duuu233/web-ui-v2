@@ -256,6 +256,75 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/commerce',
+    component: Layout,
+    redirect: '/commerce/goods',
+    name: 'commerce',
+    meta: {
+      title: '商品与订单'
+    },
+    children: [
+      {
+        path: 'goods',
+        name: 'goodsList',
+        component: () => import('@/views/commerce/goods/index.vue'),
+        meta: {
+          title: '商品列表',
+          icon: 'sms-flash'
+        }
+      },
+      {
+        path: 'goods/add',
+        name: 'goodsListAdd',
+        component: () => import('@/views/commerce/goods/add.vue'),
+        meta: {
+          title: '新增商品',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'goods/edit',
+        name: 'goodsListEdit',
+        component: () => import('@/views/commerce/goods/edit.vue'),
+        meta: {
+          title: '编辑商品',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'goods/detail',
+        name: 'goodsListDetail',
+        component: () => import('@/views/commerce/goods/detail.vue'),
+        meta: {
+          title: '商品详情',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'orders',
+        name: 'orderList',
+        component: () => import('@/views/commerce/order/index.vue'),
+        meta: {
+          title: '订单列表',
+          icon: 'oms-waybill'
+        }
+      },
+      {
+        path: 'orders/detail',
+        name: 'orderListDetail',
+        component: () => import('@/views/commerce/order/detail.vue'),
+        meta: {
+          title: '订单详情',
+          icon: 'oms-waybill'
+        },
+        hidden: true
+      }
+    ]
+  },
+  {
     path: '/ums',
     component: Layout,
     redirect: '/ums/admin',

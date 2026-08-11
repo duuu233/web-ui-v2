@@ -20,6 +20,8 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Common | 管理后台-通用相关接口 | Completed | Home stats, config, and upload now use `/Common/*`; unsupported area/TMS common APIs removed. |
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, and status now align with `/User/*`. |
+| Goods | 管理后台-商品相关接口 | Completed | Added goods list/add/edit/detail/status pages and `/Goods/*` API wrappers. |
+| Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers. |
 
 ## Completed Work
 
@@ -57,6 +59,52 @@ Verification:
 Pending:
 
 - Confirm next module before continuing.
+
+### 管理后台-商品与订单接口
+
+Status: Completed
+
+Implemented API wrappers:
+
+- `POST /Goods/addGoods`
+- `GET /Goods/getGoodsList`
+- `GET /Goods/getGoodsDetail`
+- `POST /Goods/editGoods`
+- `POST /Goods/setGoodsVerify`
+- `GET /Order/getOrderList`
+- `GET /Order/getOrderDetail`
+
+Added UI routes:
+
+- `goodsList`
+- `goodsListAdd`
+- `goodsListEdit`
+- `goodsListDetail`
+- `orderList`
+- `orderListDetail`
+
+Changed files:
+
+- `src/api/goods.js`
+- `src/api/order.js`
+- `src/views/commerce/**`
+- `src/router/routes.js`
+- `scripts/sync-commerce-menu.mjs`
+- `docs/dynamic-menu-sync.md`
+- `docs/api-integration-progress.md`
+- `docs/interface-list.md`
+
+Notes:
+
+- Swagger and live read-only responses were checked on 2026-08-11.
+- Goods and order list filters match Swagger query fields and use the shared `pageIndex/pageSize/pageData/recordCount` pagination convention.
+- Menu synchronization is idempotent and keeps credentials outside the repository.
+- Backend menu `appUrl` values are the local route names `goodsList` and `orderList`; operation nodes reuse the exact `v-permission` codes.
+
+Verification:
+
+- `npm run build` passed on 2026-08-11.
+- The menu sync was applied to system `1`: 9 nodes created, then a second read-only preview confirmed all 9 nodes exist with no configuration drift.
 
 ### 管理后台-产品版本控制接口
 

@@ -4,6 +4,7 @@ Source:
 
 - Manual checklist image provided on 2026-06-11.
 - Machine-readable Swagger checked on 2026-06-11: `https://api.boltfox.cn/v2/api-docs`.
+- Goods and order Swagger contracts plus live read-only response samples rechecked on 2026-08-11.
 
 Comparison result:
 
@@ -35,5 +36,7 @@ Backend prefix:
 | Device version | Device version settings | Edit version | `POST /ZoneAdmin/ProductVersion/editProductVersion` | Done. |
 | Device version | Device version settings | Enable/disable version | `POST /ZoneAdmin/ProductVersion/setProductVersionVerify` | Done. |
 | Help management | Help content list | Upload/edit/delete by device dimension | Original interface set: `GET /ZoneAdmin/Product/getProductFaqList`, `GET /ZoneAdmin/Product/getProductFaqDetail`, `POST /ZoneAdmin/Product/addProductFaq`, `POST /ZoneAdmin/Product/editProductFaq`, `POST /ZoneAdmin/Product/setProductFaqVerify` | Done. |
+| Commerce | Goods management | Goods list, detail, add, edit, enable/disable | `GET /ZoneAdmin/Goods/getGoodsList`, `GET /ZoneAdmin/Goods/getGoodsDetail`, `POST /ZoneAdmin/Goods/addGoods`, `POST /ZoneAdmin/Goods/editGoods`, `POST /ZoneAdmin/Goods/setGoodsVerify` | Done. Routes: `goodsList`, `goodsListAdd`, `goodsListEdit`, `goodsListDetail`. |
+| Commerce | Order management | Order list and detail | `GET /ZoneAdmin/Order/getOrderList`, `GET /ZoneAdmin/Order/getOrderDetail` | Done. Routes: `orderList`, `orderListDetail`. |
 | System settings | Backend permission settings | Permissions, roles, menus, departments | Original function: `/ZoneAdmin/Jurisdiction/*` | Done. |
 | System settings | App version settings | App version upgrade | Original function: `/ZoneAdmin/AppVersion/*` | Done. |

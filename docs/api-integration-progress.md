@@ -155,13 +155,13 @@ Changed files:
 Notes:
 
 - Swagger was rechecked on 2026-08-12. Lists use the shared `pageIndex/pageSize/pageData/recordCount` contract and expose every documented query field.
-- The product image form submits the documented `categoryIdList`, `productIdList`, `img`, `imgThumb`, `title`, and `content` fields. If no separate thumbnail is uploaded, `imgThumb` uses the original image URL.
+- The product image form submits the documented `categoryIdList`, `productIdList`, `img`, `imgThumb`, `title`, and `content` fields. Original uploads in add/edit mode call `/Common/setFileUpload` with query `isUploadThumb=1`; returned `urlThumb` becomes `imgThumb`, remains replaceable through the thumbnail upload field, and falls back to the original URL only when no thumbnail URL is available.
 - AI configuration has no detail endpoint in Swagger, so editing uses the selected list row in a dedicated dialog.
 - The menu declaration keeps the sidebar-compatible two-level navigation shape and includes every operation permission code from the interface checklist.
 
 Verification:
 
-- `npm run build` passed on 2026-08-12.
+- `node --check` passed for `src/api/oss.js` and `useProductImageForm.js`, and `npm run build` passed after adding the official-gallery thumbnail upload flow on 2026-08-12.
 - Backend menu preview/write still requires `BOLTFOX_USER_TOKEN` in the target environment. Run `npm run menu:sync:commerce -- --apply --update` to add the new nodes and migrate the old product menu names.
 
 ### 管理后台-产品版本控制接口

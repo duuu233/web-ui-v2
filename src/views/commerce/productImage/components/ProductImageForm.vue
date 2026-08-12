@@ -31,6 +31,15 @@ function productOptionLabel(item) {
   const size = item.width && item.height ? ` · ${item.width}×${item.height}` : ''
   return `${item.productName || `产品 ${item.productId}`}${size}`
 }
+
+function handleOriginalImageUpdate(files) {
+  const imageFiles = Array.isArray(files) ? files : []
+  const imageFile = imageFiles[0]
+  formData.imageFiles = imageFiles
+  formData.thumbnailFiles = imageFile?.urlThumb
+    ? [{ name: `${imageFile.name || '图库图片'}（缩略图）`, url: imageFile.urlThumb }]
+    : []
+}
 </script>
 
 <template>
@@ -57,7 +66,7 @@ function productOptionLabel(item) {
             <div>
               <h2 class="section-title">图片素材</h2>
               <p class="section-description">
-                上传公共图库原图；未单独上传缩略图时，接口会使用原图地址。
+                上传公共图库原图时自动生成缩略图，也可以单独上传图片替换。
               </p>
             </div>
           </div>
@@ -65,20 +74,22 @@ function productOptionLabel(item) {
           <div class="upload-grid">
             <el-form-item class="upload-field" label="图库原图" prop="imageFiles">
               <MultiUpload
-                v-model="formData.imageFiles"
+                :model-value="formData.imageFiles"
                 :max-count="1"
                 :disabled="isReadOnly"
+                generate-thumbnail
+                @update:model-value="handleOriginalImageUpdate"
               />
               <p class="field-hint">支持常见图片格式，单张不超过 15 MB。</p>
             </el-form-item>
 
-            <el-form-item class="upload-field" label="缩略图（可选）">
+            <el-form-item class="upload-field" label="缩略图（可替换）">
               <MultiUpload
                 v-model="formData.thumbnailFiles"
                 :max-count="1"
                 :disabled="isReadOnly"
               />
-              <p class="field-hint">建议上传与原图相同比例的轻量图片。</p>
+              <p class="field-hint">默认使用自动生成的缩略图，可上传同等比例图片替换。</p>
             </el-form-item>
           </div>
         </section>

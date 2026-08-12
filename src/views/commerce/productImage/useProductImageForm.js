@@ -148,8 +148,9 @@ export function useProductImageForm(mode) {
   }
 
   function buildSubmitData() {
-    const img = formData.imageFiles[0]?.url || ''
-    const imgThumb = formData.thumbnailFiles[0]?.url || img
+    const imageFile = formData.imageFiles[0]
+    const img = imageFile?.url || ''
+    const imgThumb = formData.thumbnailFiles[0]?.url || imageFile?.urlThumb || img
     const submitData = {
       title: formData.title.trim(),
       content: formData.content.trim(),

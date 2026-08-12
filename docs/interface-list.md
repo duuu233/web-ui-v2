@@ -27,7 +27,7 @@ Backend prefix:
 
 | Area | Module | Feature | Interface / handling | Current status |
 | --- | --- | --- | --- | --- |
-| Basic public | File upload | Upload file | `POST /ZoneAdmin/Common/setFileUpload` | Done. `src/api/oss.js` appends `userToken` in the URL query and posts `fileParam`. |
+| Basic public | File upload | Upload file | `POST /ZoneAdmin/Common/setFileUpload` | Done. `src/api/oss.js` appends `userToken` in the URL query, posts `fileParam`, and supports optional query `isUploadThumb`; official gallery original uploads pass `1` and consume returned `urlThumb`. |
 | Home | Data aggregate display | Daily/weekly/monthly users, device activations, shares | `GET /ZoneAdmin/Common/getUserCount`, `GET /ZoneAdmin/Common/getStatisticsUser` | Done. |
 | User management | User list | Registered user list | Original interface: `GET /ZoneAdmin/User/getUserList` | Done. |
 | User management | User device list | Activated device list by user dimension | `GET /ZoneAdmin/Product/getUserProductList` | Done. Route: `userProductList`. |

@@ -21,7 +21,9 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, and status now align with `/User/*`. |
 | Goods | 管理后台-商品相关接口 | Completed | Added goods list/add/edit/detail/status pages and `/Goods/*` API wrappers. |
+| Public image library | 管理后台-公共图库相关接口 | Completed | Added image and category list/add/edit/detail/status pages and `/ProductImg/*` API wrappers. |
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers. |
+| AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers. |
 
 ## Completed Work
 
@@ -105,6 +107,57 @@ Verification:
 
 - `npm run build` passed on 2026-08-11.
 - The menu sync was applied to system `1`: 9 nodes created, then a second read-only preview confirmed all 9 nodes exist with no configuration drift.
+
+### 管理后台-公共图库与 AI 费用配置接口
+
+Status: Completed
+
+Implemented API wrappers:
+
+- `POST /ProductImg/addProductImg`
+- `GET /ProductImg/getProductImgList`
+- `GET /ProductImg/getProductImgDetail`
+- `POST /ProductImg/editProductImg`
+- `POST /ProductImg/setProductImgVerify`
+- `POST /ProductImg/addImgCategory`
+- `GET /ProductImg/getImgCategoryList`
+- `GET /ProductImg/getImgCategoryDetail`
+- `POST /ProductImg/editImgCategory`
+- `POST /ProductImg/setImgCategoryVerify`
+- `GET /AiConfig/getAiConfigList`
+- `POST /AiConfig/editAiConfig`
+- `POST /AiConfig/setAiConfigVerify`
+
+Added UI routes:
+
+- `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`
+- `imageCategoryList`, `imageCategoryAdd`, `imageCategoryEdit`, `imageCategoryDetail`
+- `aiConfigList`
+
+Changed files:
+
+- `src/api/productImage.js`
+- `src/api/aiConfig.js`
+- `src/views/commerce/productImage/**`
+- `src/views/commerce/imageCategory/**`
+- `src/views/commerce/aiConfig/**`
+- `src/router/routes.js`
+- `scripts/sync-commerce-menu.mjs`
+- `docs/dynamic-menu-sync.md`
+- `docs/api-integration-progress.md`
+- `docs/interface-list.md`
+
+Notes:
+
+- Swagger was rechecked on 2026-08-12. Lists use the shared `pageIndex/pageSize/pageData/recordCount` contract and expose every documented query field.
+- The product image form submits the documented `categoryIdList`, `productIdList`, `img`, `imgThumb`, `title`, and `content` fields. If no separate thumbnail is uploaded, `imgThumb` uses the original image URL.
+- AI configuration has no detail endpoint in Swagger, so editing uses the selected list row in a dedicated dialog.
+- The menu declaration keeps the sidebar-compatible two-level navigation shape and includes every operation permission code from the interface checklist.
+
+Verification:
+
+- `npm run build` passed on 2026-08-12.
+- Backend menu preview/write still requires `BOLTFOX_USER_TOKEN` in the target environment. Run `npm run menu:sync:commerce -- --apply --update` to add the new nodes and migrate the old product menu names.
 
 ### 管理后台-产品版本控制接口
 

@@ -13,7 +13,7 @@
 ├─ package.json            # scripts 和依赖
 ├─ README.md               # 项目说明
 ├─ scripts/
-│  └─ sync-commerce-menu.mjs # 幂等同步商品/订单后端菜单
+│  └─ sync-commerce-menu.mjs # 幂等同步产品、订单与 AI 配置后端菜单
 └─ docs/
    ├─ project-structure.md # 目录结构说明
    └─ dynamic-menu-sync.md # 后端菜单自动生成与复用指南
@@ -74,7 +74,7 @@ src/composables/
 ```text
 src/views/
 ├─ home/             # 首页
-├─ commerce/         # 商品、订单管理
+├─ commerce/         # 商品、公共图库、图库分类、订单与 AI 配置
 ├─ login/            # 登录页
 ├─ log/              # 操作、接口、异常、业务日志
 ├─ oms/              # 订单 / 运单

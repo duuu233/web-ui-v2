@@ -33,6 +33,11 @@ export const terminalOptions = [
   { value: 3, label: '小程序' }
 ]
 
+export const aiModelOptions = [
+  { value: 1, label: '普通模型' },
+  { value: 2, label: '专家模型' }
+]
+
 export function getOptionLabel(options, value, fallback = '-') {
   return options.find(item => item.value === Number(value))?.label || fallback
 }
@@ -58,4 +63,8 @@ export function getOrderStateTagType(value) {
 
 export function getPayStateTagType(value) {
   return Number(value) === 1 ? 'success' : 'warning'
+}
+
+export function getAiModelTagType(value) {
+  return Number(value) === 2 ? 'warning' : 'primary'
 }

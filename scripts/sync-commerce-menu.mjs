@@ -5,7 +5,8 @@ const DEFAULT_API_BASE = 'https://api.boltfox.cn/ZoneAdmin'
 
 export const commerceMenuTree = [
   {
-    appName: '商品管理',
+    appName: '产品管理',
+    aliases: ['商品管理'],
     appCode: '#',
     appUrl: '#',
     grade: 5,
@@ -13,10 +14,10 @@ export const commerceMenuTree = [
     isRefresh: 0,
     children: [
       {
-        appName: '商品列表',
+        appName: '商品管理',
         appCode: 'Get_Goods_GetGoodsList',
         appUrl: 'goodsList',
-        grade: 0,
+        grade: 3,
         isNav: 1,
         isRefresh: 0,
         children: [
@@ -55,6 +56,90 @@ export const commerceMenuTree = [
             isRefresh: 0
           }
         ]
+      },
+      {
+        appName: '图库管理',
+        appCode: 'Get_ProductImg_GetProductImgList',
+        appUrl: 'productImageList',
+        grade: 2,
+        isNav: 1,
+        isRefresh: 0,
+        children: [
+          {
+            appName: '新增',
+            appCode: 'Post_ProductImg_AddProductImg',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          },
+          {
+            appName: '详情',
+            appCode: 'Get_ProductImg_GetProductImgDetail',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          },
+          {
+            appName: '编辑',
+            appCode: 'Post_ProductImg_EditProductImg',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          },
+          {
+            appName: '启用/禁用',
+            appCode: 'Post_ProductImg_SetProductImgVerify',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          }
+        ]
+      },
+      {
+        appName: '图库分类',
+        appCode: 'Get_ProductImg_GetImgCategoryList',
+        appUrl: 'imageCategoryList',
+        grade: 1,
+        isNav: 1,
+        isRefresh: 0,
+        children: [
+          {
+            appName: '新增',
+            appCode: 'Post_ProductImg_AddImgCategory',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          },
+          {
+            appName: '详情',
+            appCode: 'Get_ProductImg_GetImgCategoryDetail',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          },
+          {
+            appName: '编辑',
+            appCode: 'Post_ProductImg_EditImgCategory',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          },
+          {
+            appName: '启用/禁用',
+            appCode: 'Post_ProductImg_SetImgCategoryVerify',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          }
+        ]
       }
     ]
   },
@@ -67,7 +152,7 @@ export const commerceMenuTree = [
     isRefresh: 0,
     children: [
       {
-        appName: '订单列表',
+        appName: '订单管理',
         appCode: 'Get_Order_GetOrderList',
         appUrl: 'orderList',
         grade: 0,
@@ -77,6 +162,42 @@ export const commerceMenuTree = [
           {
             appName: '详情',
             appCode: 'Get_Order_GetOrderDetail',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    appName: 'AI配置',
+    appCode: '#',
+    appUrl: '#',
+    grade: 3,
+    isNav: 1,
+    isRefresh: 0,
+    children: [
+      {
+        appName: 'AI配置列表',
+        appCode: 'Get_AiConfig_GetAiConfigList',
+        appUrl: 'aiConfigList',
+        grade: 0,
+        isNav: 1,
+        isRefresh: 0,
+        children: [
+          {
+            appName: '编辑',
+            appCode: 'Post_AiConfig_EditAiConfig',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
+          },
+          {
+            appName: '启用/禁用',
+            appCode: 'Post_AiConfig_SetAiConfigVerify',
             appUrl: '#',
             grade: 0,
             isNav: 0,
@@ -123,7 +244,7 @@ function parseOptions(args) {
 
 function printHelp() {
   console.log(`
-幂等同步商品/订单后台菜单
+幂等同步产品图库、商品、订单与 AI 配置后台菜单
 
 环境变量：
   BOLTFOX_USER_TOKEN   必填，当前管理员 userToken
@@ -236,7 +357,8 @@ function findMatchingChild(parent, expected) {
   if (expected.appCode !== '#') {
     return children.find(node => node.appCode === expected.appCode) || null
   }
-  return children.find(node => node.appName === expected.appName) || null
+  const acceptedNames = [expected.appName, ...(expected.aliases || [])]
+  return children.find(node => acceptedNames.includes(node.appName)) || null
 }
 
 function normalizedUrl(value) {

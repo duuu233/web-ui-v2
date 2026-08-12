@@ -304,6 +304,84 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'product-images',
+        name: 'productImageList',
+        component: () => import('@/views/commerce/productImage/index.vue'),
+        meta: {
+          title: '公共图库',
+          icon: 'sms-flash'
+        }
+      },
+      {
+        path: 'product-images/add',
+        name: 'productImageAdd',
+        component: () => import('@/views/commerce/productImage/add.vue'),
+        meta: {
+          title: '新增图库图片',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'product-images/edit',
+        name: 'productImageEdit',
+        component: () => import('@/views/commerce/productImage/edit.vue'),
+        meta: {
+          title: '编辑图库图片',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'product-images/detail',
+        name: 'productImageDetail',
+        component: () => import('@/views/commerce/productImage/detail.vue'),
+        meta: {
+          title: '图库图片详情',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'image-categories',
+        name: 'imageCategoryList',
+        component: () => import('@/views/commerce/imageCategory/index.vue'),
+        meta: {
+          title: '图库分类',
+          icon: 'sms-flash'
+        }
+      },
+      {
+        path: 'image-categories/add',
+        name: 'imageCategoryAdd',
+        component: () => import('@/views/commerce/imageCategory/add.vue'),
+        meta: {
+          title: '新增图库分类',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'image-categories/edit',
+        name: 'imageCategoryEdit',
+        component: () => import('@/views/commerce/imageCategory/edit.vue'),
+        meta: {
+          title: '编辑图库分类',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
+        path: 'image-categories/detail',
+        name: 'imageCategoryDetail',
+        component: () => import('@/views/commerce/imageCategory/detail.vue'),
+        meta: {
+          title: '图库分类详情',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
         path: 'orders',
         name: 'orderList',
         component: () => import('@/views/commerce/order/index.vue'),
@@ -321,6 +399,15 @@ export const asyncRouterMap = [
           icon: 'oms-waybill'
         },
         hidden: true
+      },
+      {
+        path: 'ai-config',
+        name: 'aiConfigList',
+        component: () => import('@/views/commerce/aiConfig/index.vue'),
+        meta: {
+          title: 'AI 配置',
+          icon: 'ums-config'
+        }
       }
     ]
   },

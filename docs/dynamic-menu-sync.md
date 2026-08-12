@@ -36,24 +36,39 @@
 }
 ```
 
-## 商品与订单菜单树
+## 产品、订单与 AI 配置菜单树
 
 `scripts/sync-commerce-menu.mjs` 声明了本次模块的完整权限树：
 
 ```text
-商品管理 (#)
-└─ 商品列表 (Get_Goods_GetGoodsList, appUrl=goodsList)
+产品管理 (#)
+├─ 商品管理 (Get_Goods_GetGoodsList, appUrl=goodsList)
    ├─ 详情 (Get_Goods_GetGoodsDetail)
    │  ├─ 新增商品 (Post_Goods_AddGoods)
    │  └─ 编辑商品 (Post_Goods_EditGoods)
    └─ 启用/禁用 (Post_Goods_SetGoodsVerify)
+├─ 图库管理 (Get_ProductImg_GetProductImgList, appUrl=productImageList)
+│  ├─ 新增 (Post_ProductImg_AddProductImg)
+│  ├─ 详情 (Get_ProductImg_GetProductImgDetail)
+│  ├─ 编辑 (Post_ProductImg_EditProductImg)
+│  └─ 启用/禁用 (Post_ProductImg_SetProductImgVerify)
+└─ 图库分类 (Get_ProductImg_GetImgCategoryList, appUrl=imageCategoryList)
+   ├─ 新增 (Post_ProductImg_AddImgCategory)
+   ├─ 详情 (Get_ProductImg_GetImgCategoryDetail)
+   ├─ 编辑 (Post_ProductImg_EditImgCategory)
+   └─ 启用/禁用 (Post_ProductImg_SetImgCategoryVerify)
 
 订单管理 (#)
-└─ 订单列表 (Get_Order_GetOrderList, appUrl=orderList)
+└─ 订单管理 (Get_Order_GetOrderList, appUrl=orderList)
    └─ 详情 (Get_Order_GetOrderDetail)
+
+AI配置 (#)
+└─ AI配置列表 (Get_AiConfig_GetAiConfigList, appUrl=aiConfigList)
+   ├─ 编辑 (Post_AiConfig_EditAiConfig)
+   └─ 启用/禁用 (Post_AiConfig_SetAiConfigVerify)
 ```
 
-树形层级遵循现有 `/Jurisdiction/getAdminAppliBySys?id=1` 返回结构；只有 `goodsList` 和 `orderList` 是左侧导航，其余节点只用于按钮/操作授权。
+树形层级遵循现有 `/Jurisdiction/getAdminAppliBySys?id=1` 返回结构；只有 `goodsList`、`productImageList`、`imageCategoryList`、`orderList` 和 `aiConfigList` 是左侧导航，其余节点只用于按钮/操作授权。侧栏当前只渲染分组下的一层导航，因此操作权限必须放在导航节点内部，不能再增加一层可见菜单。
 
 ## 执行同步
 
@@ -70,7 +85,7 @@ npm run menu:sync:commerce
 # 新增缺失节点；已有节点保持不变
 npm run menu:sync:commerce -- --apply
 
-# 可选：同时修正已有节点的名称、编码、路由、权重和导航配置
+# 推荐：同时修正旧版“商品管理/商品列表”等名称与权重
 npm run menu:sync:commerce -- --apply --update
 
 Remove-Item Env:BOLTFOX_USER_TOKEN
@@ -86,6 +101,7 @@ npm run menu:sync:commerce -- --system-id=2 --apply
 
 - 默认是只读预览，必须显式传 `--apply` 才写入。
 - 在同一父节点下优先按 `appCode` 查重；编码为 `#` 的分组按 `appName` 查重。
+- “产品管理”声明兼容旧版顶级名称“商品管理”，升级时不会重复创建分组；传入 `--update` 后会完成名称迁移。
 - 每次创建父节点后重新读取权限树，以真实后端 ID 创建子节点。
 - 重复执行只会跳过已存在节点，不会重复插入。
 - 默认不覆盖已有配置；只有显式传 `--update` 才会修正差异。

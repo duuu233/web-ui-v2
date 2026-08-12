@@ -1,47 +1,158 @@
-# Project Context
+# AI 项目上下文
 
-> This file is maintained for AI assistants.
+> 文档类型：当前项目上下文
+> 状态：Active
+> 最后核验：2026-08-12
+> 适用范围：`web-ui-v2` 当前工作树
+> 事实来源：源码与 CodeGraph、`package.json`、环境配置、`docs/` 中的 Active 文档
 
-## Project Overview
+## 1. 项目定位
 
-TODO: Describe project purpose.
+`web-ui-v2` 是 BoltFox 业务的 PC 管理后台前端，负责登录、后台导航、权限控制以及商品、公共图库、订单、AI 配置和系统管理等页面。后端接口统一由 `/ZoneAdmin` 前缀提供；本仓库不包含后端实现。
 
-## Tech Stack
+Git 是办公室电脑、家庭电脑和远程 SSH 环境之间唯一共享的事实来源。本机的 `.codegraph/`、依赖目录、构建产物和未提交工作区都不属于跨机器共享状态。
 
-TODO
+## 2. 技术栈与常用命令
 
-## Architecture Overview
+- Vue 3.5，业务组件以 `<script setup>` 为主。
+- Vite 5，Vue Router 4（Hash 模式），Pinia。
+- Element Plus、vxe-table、SCSS、WangEditor。
+- Axios 请求层；Cookie 保存登录态；接口响应约定为 `{ retCode, retMsg, retData }`。
+- Node.js `>=18`。
 
-TODO
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run menu:sync:commerce -- --help
+```
 
-## Directory Structure
+仓库没有独立的 `test`、`lint` 或 `type-check` 脚本。修改后的最低验证是运行与改动相关的静态检查，并执行 `npm run build`；菜单同步脚本先预览，确认后才允许带 `--apply`。
 
-TODO
+## 3. 运行环境
 
-## Core Modules
+- `VITE_APP_API_PREFIX`：接口路径前缀，缺省通常为 `/ZoneAdmin`。
+- `VITE_APP_API_ORIGIN`：生产环境接口源站。
+- `VITE_APP_PROXY_TARGET`：开发代理目标，未设置时可回退到接口源站。
+- `VITE_APP_BASE_PAY`：支付请求使用的独立地址。
 
-TODO
+只在本地环境文件或受控密钥系统中保存真实值。文档、源码、历史记录和提交信息中不得记录 Token、签名、密码、Cookie 或完整 `.env` 内容。
 
-## Data Flow
+## 4. 架构概览
 
-TODO
+```text
+src/views 与 src/components
+        ↓
+src/api/*.js
+        ↓
+src/utils/request.js
+        ↓
+VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
+        ↓
+管理后台接口
+```
 
-## Important Design Decisions
+登录和权限链：
 
-TODO
+```text
+/login
+  → src/store/modules/user.js 调用 /Passport/adminLogin
+  → /Jurisdiction/getSysMenus 生成顶部系统导航
+  → /Jurisdiction/getLeftMenus 生成左侧菜单
+  → src/router/routes.js 中的本地静态路由加载页面
+  → /Jurisdiction/getChildAppCodes 提供按钮权限码
+  → v-permission 控制操作入口
+```
 
-## Development Rules
+后端菜单只决定导航和授权，本地 `src/router/routes.js` 才决定实际组件映射。后端 `menuUrl`、路由 `name` 和页面组件 `name` 必须保持一致，否则会出现菜单无法跳转、缓存失效或标签页异常。
 
-TODO
+## 5. 关键目录
 
-## Known Risks
+| 路径 | 职责 |
+| --- | --- |
+| `src/api/` | 按业务域封装管理后台接口；URL 通常不重复写 `/ZoneAdmin`。 |
+| `src/views/` | 页面和模块内组件。 |
+| `src/components/` | 跨模块复用的表格、搜索、分页、上传等 UI。 |
+| `src/composables/` | 列表查询、刷新等可复用状态逻辑。 |
+| `src/router/` | 本地静态路由和 Hash Router。 |
+| `src/store/modules/` | 用户、布局菜单、权限与标签页状态。 |
+| `src/utils/request.js` | 主请求实例、签名、登录态和统一响应处理。 |
+| `scripts/` | 后台菜单等受控自动化脚本。 |
+| `docs/` | 当前事实文档、流程说明和冻结的历史记录。 |
 
-TODO
+完整结构说明见 [`docs/project-structure.md`](docs/project-structure.md)。
 
-## Documentation Map
+## 6. 当前核心模块
 
-TODO
+- 商品管理：商品列表、详情、新增、编辑和启禁用。
+- 图库管理：公共图库图片的列表、详情、新增、编辑和启禁用。
+- 图库分类：分类列表、详情、新增、编辑和启禁用。
+- 订单管理：订单列表与详情。
+- AI 配置：配置列表、编辑和启禁用。
+- UMS/权限：员工、角色、菜单和授权关系。
 
-## AI Working Notes
+接口完成度以 [`docs/api-integration-progress.md`](docs/api-integration-progress.md) 为当前状态入口；接口清单以 [`docs/interface-list.md`](docs/interface-list.md) 为核对依据。
 
-TODO
+## 7. 重要设计约束
+
+1. `src/api/*.js` 默认只写业务路径，公共 `/ZoneAdmin` 前缀由环境和请求层统一处理。
+2. 菜单、路由、组件名称和按钮权限码是一组跨前后端契约，任何一处变化都要联动检查。
+3. 菜单同步必须可重复执行、默认只预览、显式 `--apply` 才写入；凭证只能从环境变量读取。
+4. 列表页优先复用项目现有公共组件和 composable，不为单个页面复制一套分页、刷新或查询状态。
+5. 修改 `src/utils/request.js`、用户 Store、权限指令或路由会影响多数模块，必须先用 CodeGraph 查看调用与影响范围。
+6. CodeGraph 描述当前源码结构；Markdown 负责产品契约、操作方法、决策原因和历史。二者不能互相替代。
+
+## 8. 开发与维护流程
+
+开始任务时按以下顺序读取：
+
+1. `AGENTS.md`
+2. 本文件
+3. `docs/README.md`
+4. 与任务相关的 Active 文档
+5. CodeGraph 中的源码符号、调用链和影响范围
+6. 仅在追查原因时读取相关 Historical 记录
+
+执行约定：
+
+1. 先运行 `git status --short`，识别并保护已有用户改动。
+2. `.codegraph/` 存在时，结构分析先运行 `codegraph status .` 和 `codegraph explore "问题或符号"`。
+3. 拉取代码后运行 `codegraph sync .`；完成有意义的源码修改后再次同步并检查状态。
+4. 行为、接口、架构、命令、权限或部署方式变化时，更新对应 Active 文档。
+5. 一次集中修改建立一份 `docs/history/YYYY-MM/YYYY-MM-DD-主题.md`；不要把流水账追加到 AI_CONTEXT。
+6. 记录实际运行过的验证，不把“计划验证”写成“已通过”。
+
+## 9. 已知风险与待确认项
+
+- 项目暂无自动化测试、lint 和类型检查脚本，回归主要依赖构建与人工验证。
+- 后台菜单与本地路由可能独立演进；新增页面后需要重新绑定角色权限并重新登录验证。
+- 请求签名和统一错误处理集中在请求层，修改的影响面很大。
+- Swagger、线上返回值和已有页面可能短期不一致，应在文档中标明核验日期与事实来源。
+- 仓库同时保留 `yarn.lock` 与 `pnpm-lock.yaml`；主包管理器尚未形成明确的仓库规则，不应擅自重写锁文件。
+- 支付请求使用独立请求地址，修改通用接口环境变量时不能默认覆盖支付链路。
+
+## 10. 文档地图
+
+- [`docs/README.md`](docs/README.md)：文档导航、生命周期和维护规则。
+- [`docs/project-structure.md`](docs/project-structure.md)：当前目录与模块组织。
+- [`docs/interface-list.md`](docs/interface-list.md)：接口核对清单。
+- [`docs/api-integration-progress.md`](docs/api-integration-progress.md)：接口接入状态。
+- [`docs/dynamic-menu-sync.md`](docs/dynamic-menu-sync.md)：动态菜单同步、验证和回滚。
+- [`docs/history/README.md`](docs/history/README.md)：本地操作更新记录规范与模板。
+
+## 11. 兄弟项目边界与同步触发
+
+| 项目 | 主要职责 | 需要同步的变化 |
+| --- | --- | --- |
+| `web-ui-v2` | BoltFox PC 管理后台 | 管理端接口、权限码、菜单/路由契约、运营配置字段。 |
+| `flowerpot` | 花盆产品微信小程序 | 面向用户的接口模型、设备/产品状态、登录与业务口径。 |
+| `flowerpot-web` | 花盆产品 PC 管理后台 | 花盆后台接口、管理菜单、权限和运营字段。 |
+
+只有共享契约发生变化时才同步事实和影响；各项目按自己的源码、技术栈与部署方式填写，不能复制另一项目的模块或命令。跨项目同步要在各自历史记录中写明上游来源、实际同步内容、有意保留的差异和未完成项。
+
+## 12. AI 工作备注
+
+- 不根据文件名猜行为；先看 CodeGraph 和当前源码。
+- 不覆盖与当前任务无关的未提交改动。
+- 不把本机绝对路径、临时缓存或某台机器的安装状态写成跨环境事实。
+- 历史记录只用于追溯；若历史与 Active 文档或源码冲突，以当前源码和最新 Active 文档为准，并修正文档。

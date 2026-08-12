@@ -1,5 +1,10 @@
 # Interface Checklist
 
+> Document type: API contract checklist
+> Status: Active
+> Last verified: 2026-08-12
+> Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
+
 Source:
 
 - Manual checklist image provided on 2026-06-11.

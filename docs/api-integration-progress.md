@@ -1,5 +1,10 @@
 # API Integration Progress
 
+> Document type: integration status tracker
+> Status: Tracking
+> Last verified: 2026-08-12
+> Sources: current Swagger contract, API modules, routes, views, and documented live read-only checks
+
 Swagger source: https://api.boltfox.cn/swagger-ui.html#/
 
 Machine-readable source: https://api.boltfox.cn/v2/api-docs

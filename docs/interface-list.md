@@ -2,7 +2,7 @@
 
 > Document type: API contract checklist
 > Status: Active
-> Last verified: 2026-08-12
+> Last verified: 2026-08-13
 > Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
 
 Source:
@@ -11,6 +11,7 @@ Source:
 - Machine-readable Swagger checked on 2026-06-11: `https://api.boltfox.cn/v2/api-docs`.
 - Goods and order Swagger contracts plus live read-only response samples rechecked on 2026-08-11.
 - Public image library, image category, and AI configuration Swagger contracts rechecked on 2026-08-12.
+- Home statistics and user account Swagger contracts plus live read-only samples rechecked on 2026-08-13.
 
 Comparison result:
 
@@ -28,8 +29,10 @@ Backend prefix:
 | Area | Module | Feature | Interface / handling | Current status |
 | --- | --- | --- | --- | --- |
 | Basic public | File upload | Upload file | `POST /ZoneAdmin/Common/setFileUpload` | Done. `src/api/oss.js` appends `userToken` in the URL query, posts `fileParam`, and supports optional query `isUploadThumb`; official gallery original uploads pass `1` and consume returned `urlThumb`. |
-| Home | Data aggregate display | Daily/weekly/monthly users, device activations, shares | `GET /ZoneAdmin/Common/getUserCount`, `GET /ZoneAdmin/Common/getStatisticsUser` | Done. |
-| User management | User list | Registered user list | Original interface: `GET /ZoneAdmin/User/getUserList` | Done. |
+| Home | Data aggregate display | User count, bound-device count, order amount, product/FAQ totals, and registration trend | `GET /ZoneAdmin/Common/getUserCount`, `GET /ZoneAdmin/Common/getStatisticsUser` | Done. `getUserCount` displays `userCount`, `userBindProductCount`, `orderAmount`, `productCount`, and `productFaqCount`. |
+| User management | User list | Registered user list and token balances | `GET /ZoneAdmin/User/getUserList` | Done. Displays `totalToken`, `availableToken`, and `consumeToken`; country columns are intentionally hidden from the list. |
+| User management | User account | Edit available token balance | `POST /ZoneAdmin/User/setUserAccount` | Done. Submits only `userId` and non-negative `availableToken`; the request layer appends authentication fields. |
+| User management | Account operation log | All users or one user by ID | `GET /ZoneAdmin/User/getOperatUserAccountLog` | Done. Hidden local route: `userAccountLogs`; entry points exist in the user-list toolbar and each row. |
 | User management | User device list | Activated device list by user dimension | `GET /ZoneAdmin/Product/getUserProductList` | Done. Route: `userProductList`. |
 | Product management | Product list | Product list | Original interface: `GET /ZoneAdmin/Product/getProductList` | Done. |
 | Product management | Product management | Add product | `POST /ZoneAdmin/Product/addProduct`; add `broadcastId`, remove old `productContent` and `productFile` params | Done. |

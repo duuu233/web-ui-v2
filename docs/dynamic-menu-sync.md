@@ -2,7 +2,7 @@
 
 > 文档类型：当前操作手册
 > 状态：Active
-> 最后核验：2026-08-12
+> 最后核验：2026-08-13
 > 事实来源：菜单同步脚本、路由、权限 Store 与后台接口契约
 
 本项目的页面可访问性由两部分共同决定：
@@ -41,9 +41,9 @@
 }
 ```
 
-## 产品、订单与 AI 配置菜单树
+## 声明式菜单范围
 
-`scripts/sync-commerce-menu.mjs` 声明了本次模块的完整权限树：
+`scripts/sync-admin-menu.mjs` 通过 `--scope` 选择需要同步的权限树。`commerce` 范围包含：
 
 ```text
 产品管理 (#)
@@ -75,6 +75,16 @@ AI配置 (#)
 
 树形层级遵循现有 `/Jurisdiction/getAdminAppliBySys?id=1` 返回结构；只有 `goodsList`、`productImageList`、`imageCategoryList`、`orderList` 和 `aiConfigList` 是左侧导航，其余节点只用于按钮/操作授权。侧栏当前只渲染分组下的一层导航，因此操作权限必须放在导航节点内部，不能再增加一层可见菜单。
 
+`user-account` 范围只在现有 `Get_User_GetUserList` 节点下维护两个非导航权限，不会创建或改写用户管理父级：
+
+```text
+用户列表 (Get_User_GetUserList, appUrl=userList)
+├─ 编辑用户账户 (Post_User_SetUserAccount)
+└─ 账户操作日志 (Get_User_GetOperatUserAccountLog)
+```
+
+账户日志页面使用本地隐藏路由 `userAccountLogs`，从用户列表工具栏或行操作进入；权限节点本身不展示为左侧菜单。
+
 ## 执行同步
 
 脚本不会把 token 写入代码、配置或日志。请把当前管理员 `userToken` 临时放在进程环境变量中。
@@ -93,6 +103,10 @@ npm run menu:sync:commerce -- --apply
 # 推荐：同时修正旧版“商品管理/商品列表”等名称与权重
 npm run menu:sync:commerce -- --apply --update
 
+# 用户账户权限：预览、写入
+npm run menu:sync:user-account
+npm run menu:sync:user-account -- --apply
+
 Remove-Item Env:BOLTFOX_USER_TOKEN
 ```
 
@@ -105,6 +119,7 @@ npm run menu:sync:commerce -- --system-id=2 --apply
 脚本的安全特性：
 
 - 默认是只读预览，必须显式传 `--apply` 才写入。
+- `commerce` 与 `user-account` 是独立范围；执行其中一个不会遍历或修改另一个范围的节点。
 - 在同一父节点下优先按 `appCode` 查重；编码为 `#` 的分组按 `appName` 查重。
 - “产品管理”声明兼容旧版顶级名称“商品管理”，升级时不会重复创建分组；传入 `--update` 后会完成名称迁移。
 - 每次创建父节点后重新读取权限树，以真实后端 ID 创建子节点。
@@ -116,7 +131,7 @@ npm run menu:sync:commerce -- --system-id=2 --apply
 1. 从 `https://api.boltfox.cn/v2/api-docs` 核对接口路径、HTTP 方法、入参和输出模型。
 2. 在 `src/api/<module>.js` 中新增请求封装；路径省略 `/ZoneAdmin`，由环境变量统一补齐。
 3. 在 `src/router/routes.js` 注册列表和隐藏的详情/编辑路由，固定路由 `name`。
-4. 在菜单同步脚本的声明树中新增节点：导航节点的 `appUrl` 填路由 `name`。
+4. 在菜单同步脚本的适用 scope 中新增节点：导航节点的 `appUrl` 填路由 `name`；若是已有导航下的操作权限，使用 `parentCode` 定位父节点。
 5. 页面按钮通过 `v-permission="['对应 appCode']"` 使用同一权限编码。
 6. 先执行只读预览，再执行 `--apply`，最后重新读取权限树确认。
 7. 非系统管理员需要在“角色管理 → 绑定权限”中勾选新增节点，并重新登录刷新 `getChildAppCodes` 与左侧菜单缓存。

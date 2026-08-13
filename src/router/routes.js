@@ -93,6 +93,16 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'userAccountLogs',
+        name: 'userAccountLogs',
+        component: () => import('@/views/sms/userList/accountLogs.vue'),
+        meta: {
+          title: '账户操作日志',
+          icon: 'sms-flash'
+        },
+        hidden: true
+      },
+      {
         path: 'productList',
         name: 'productList',
         component: () => import('@/views/sms/productList/index.vue'),

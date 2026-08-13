@@ -2,7 +2,7 @@
 
 > 文档类型：当前项目上下文
 > 状态：Active
-> 最后核验：2026-08-12
+> 最后核验：2026-08-13
 > 适用范围：`web-ui-v2` 当前工作树
 > 事实来源：源码与 CodeGraph、`package.json`、环境配置、`docs/` 中的 Active 文档
 
@@ -25,6 +25,7 @@ npm run dev
 npm run build
 npm run preview
 npm run menu:sync:commerce -- --help
+npm run menu:sync:user-account -- --help
 ```
 
 仓库没有独立的 `test`、`lint` 或 `type-check` 脚本。修改后的最低验证是运行与改动相关的静态检查，并执行 `npm run build`；菜单同步脚本先预览，确认后才允许带 `--apply`。
@@ -85,6 +86,8 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 ## 6. 当前核心模块
 
 - 商品管理：商品列表、详情、新增、编辑和启禁用。
+- 首页统计：用户总数、绑定设备数、订单金额、产品数、常见问题数以及注册趋势。
+- 用户管理：用户列表、详情、基础资料编辑、状态、星币账户调整与账户操作日志。
 - 图库管理：公共图库图片的列表、详情、新增、编辑和启禁用；新增/编辑原图时上传接口携带 `isUploadThumb=1`，并优先使用返回的 `urlThumb` 作为缩略图。
 - 图库分类：分类列表、详情、新增、编辑和启禁用。
 - 订单管理：订单列表与详情。

@@ -2,7 +2,7 @@
 
 > Document type: integration status tracker
 > Status: Tracking
-> Last verified: 2026-08-12
+> Last verified: 2026-08-13
 > Sources: current Swagger contract, API modules, routes, views, and documented live read-only checks
 
 Swagger source: https://api.boltfox.cn/swagger-ui.html#/
@@ -22,15 +22,53 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Product | 管理后台-产品相关接口 | Completed | Product, product FAQ, and user product list now use `/Product/*`. |
 | Login | 管理后台-登录 | Completed | Login request and token handling now match `/Passport/adminLogin`. |
 | Permission | 管理后台-权限 | Completed | UMS permission pages now align with `/Jurisdiction/*`; unsupported area route removed. |
-| Common | 管理后台-通用相关接口 | Completed | Home stats, config, and upload now use `/Common/*`; unsupported area/TMS common APIs removed. |
+| Common | 管理后台-通用相关接口 | Completed | Home stats include bound-device count and order amount; config and upload use `/Common/*`; unsupported area/TMS common APIs removed. |
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
-| User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, and status now align with `/User/*`. |
+| User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, status, token-account editing, and account logs align with `/User/*`. |
 | Goods | 管理后台-商品相关接口 | Completed | Added goods list/add/edit/detail/status pages and `/Goods/*` API wrappers. |
 | Public image library | 管理后台-公共图库相关接口 | Completed | Added image and category list/add/edit/detail/status pages and `/ProductImg/*` API wrappers. |
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers. |
 | AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers. |
 
 ## Completed Work
+
+### 首页统计与用户账户管理增量
+
+Status: Completed
+
+Implemented API integration:
+
+- `GET /Common/getUserCount` now consumes `userBindProductCount` and `orderAmount` in addition to the existing totals.
+- `GET /User/getUserList` now displays `totalToken`, `availableToken`, and `consumeToken`.
+- `POST /User/setUserAccount`
+- `GET /User/getOperatUserAccountLog`
+
+Added UI route:
+
+- `userAccountLogs` (hidden route, reachable from the user-list toolbar or a specific user row)
+
+Changed files:
+
+- `src/api/userList.js`
+- `src/views/home/index.vue`
+- `src/views/sms/userList/index.vue`
+- `src/views/sms/userList/components/UserAccountEditor.vue`
+- `src/views/sms/userList/accountLogs.vue`
+- `src/router/routes.js`
+- `scripts/sync-admin-menu.mjs`
+
+Notes:
+
+- Swagger and live read-only responses were rechecked on 2026-08-13. The account editor submits only `userId` and `availableToken`; authentication fields remain centralized in `src/utils/request.js`.
+- The user list intentionally hides country and country-code columns. Users with `Post_User_SetUserAccount` can click the available-token value to edit it; other users see a read-only value.
+- System `1` received the idempotent permission nodes `Post_User_SetUserAccount` and `Get_User_GetOperatUserAccountLog` under the existing `Get_User_GetUserList` node. No role bindings were changed.
+
+Verification:
+
+- `node --check scripts/sync-admin-menu.mjs` and `node --check src/api/userList.js` passed.
+- `npm run build` passed on 2026-08-13.
+- Live read-only account-log verification returned `retCode=200`; filtering by a sampled user ID returned only matching rows.
+- Menu preview reported two missing nodes; apply created both; a second preview reported both as existing.
 
 ### 管理后台-APP版本管理接口
 
@@ -96,7 +134,7 @@ Changed files:
 - `src/api/order.js`
 - `src/views/commerce/**`
 - `src/router/routes.js`
-- `scripts/sync-commerce-menu.mjs`
+- `scripts/sync-admin-menu.mjs`
 - `docs/dynamic-menu-sync.md`
 - `docs/api-integration-progress.md`
 - `docs/interface-list.md`
@@ -147,7 +185,7 @@ Changed files:
 - `src/views/commerce/imageCategory/**`
 - `src/views/commerce/aiConfig/**`
 - `src/router/routes.js`
-- `scripts/sync-commerce-menu.mjs`
+- `scripts/sync-admin-menu.mjs`
 - `docs/dynamic-menu-sync.md`
 - `docs/api-integration-progress.md`
 - `docs/interface-list.md`
@@ -374,7 +412,7 @@ Notes:
 
 - `FormData` POST requests now append `randomString`, `sign`, and `userToken` as multipart fields.
 - Upload components now submit backend `fileParam` form-data and continue to expose `{ name, url }[]` via `v-model`.
-- Home statistics now match Swagger fields `userCount`, `productCount`, and `productFaqCount`, with registration statistics loaded from `getStatisticsUser`.
+- Home statistics now match Swagger fields `userCount`, `userBindProductCount`, `orderAmount`, `productCount`, and `productFaqCount`, with registration statistics loaded from `getStatisticsUser`.
 - Removed unsupported area settings API/page and old unsupported TMS statistics wrappers.
 
 Verification:
@@ -432,20 +470,27 @@ Implemented API wrappers:
 - `GET /User/getUserDetail`
 - `GET /User/getUserList`
 - `GET /User/getUserListExcel`
+- `GET /User/getOperatUserAccountLog`
 - `POST /User/setUserInfo`
+- `POST /User/setUserAccount`
 - `POST /User/setUserVerify`
 
 Changed files:
 
 - `src/api/userList.js`
 - `src/views/sms/userList/index.vue`
+- `src/views/sms/userList/accountLogs.vue`
+- `src/views/sms/userList/components/UserAccountEditor.vue`
 - `src/views/sms/userList/template/DetailForm.vue`
+- `src/router/routes.js`
 - `docs/api-integration-progress.md`
 
 Notes:
 
 - Removed unsupported `getUserDetailsOrders` wrapper.
 - User list now supports Swagger filters: keyword, date range, language, terminal, and status.
+- User list displays all three token-account fields, hides the country columns, and exposes permission-controlled available-token editing.
+- Account operation logs can be opened globally or for a single user through the hidden `userAccountLogs` route.
 - Export uses `/User/getUserListExcel` with the current supported filters.
 - Edit submits only Swagger-supported fields: `userId`, `nickName`, `userEmail`, and optional md5 `password`.
 - Detail/edit page displays non-editable detail fields from `UserDetailApiOut`.

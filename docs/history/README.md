@@ -58,3 +58,4 @@ docs/history/
 
 - [`2026-08/2026-08-12-ai-context-codegraph-maintenance.md`](2026-08/2026-08-12-ai-context-codegraph-maintenance.md)：建立项目专属 AI 上下文、文档入口与 CodeGraph/历史记录维护规则。
 - [`2026-08/2026-08-12-official-gallery-upload-thumbnail.md`](2026-08/2026-08-12-official-gallery-upload-thumbnail.md)：官方图库新增/编辑原图上传请求生成缩略图并提交返回地址。
+- [`2026-08/2026-08-13-user-account-statistics.md`](2026-08/2026-08-13-user-account-statistics.md)：首页新增绑定设备与订单金额统计，用户列表接入星币账户编辑、账户日志及对应后台权限。

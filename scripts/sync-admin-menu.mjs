@@ -209,10 +209,43 @@ export const commerceMenuTree = [
   }
 ]
 
+export const userAccountMenuNodes = [
+  {
+    appName: '编辑用户账户',
+    appCode: 'Post_User_SetUserAccount',
+    appUrl: '#',
+    grade: 1,
+    isNav: 0,
+    isRefresh: 0
+  },
+  {
+    appName: '账户操作日志',
+    appCode: 'Get_User_GetOperatUserAccountLog',
+    appUrl: '#',
+    grade: 0,
+    isNav: 0,
+    isRefresh: 0
+  }
+]
+
+const menuScopes = {
+  commerce: {
+    label: '商品、图库、订单与 AI 配置',
+    parentCode: null,
+    nodes: commerceMenuTree
+  },
+  'user-account': {
+    label: '用户账户与账户日志',
+    parentCode: 'Get_User_GetUserList',
+    nodes: userAccountMenuNodes
+  }
+}
+
 function parseOptions(args) {
   const options = {
     apply: false,
     update: false,
+    scope: process.env.BOLTFOX_MENU_SCOPE || 'commerce',
     systemId: Number(process.env.BOLTFOX_SYSTEM_ID || 1),
     apiBase: process.env.BOLTFOX_API_BASE || DEFAULT_API_BASE,
     token: process.env.BOLTFOX_USER_TOKEN || ''
@@ -221,6 +254,9 @@ function parseOptions(args) {
   for (const argument of args) {
     if (argument === '--apply') options.apply = true
     else if (argument === '--update') options.update = true
+    else if (argument.startsWith('--scope=')) {
+      options.scope = argument.slice('--scope='.length)
+    }
     else if (argument.startsWith('--system-id=')) {
       options.systemId = Number(argument.slice('--system-id='.length))
     } else if (argument.startsWith('--api-base=')) {
@@ -238,20 +274,25 @@ function parseOptions(args) {
   if (options.update && !options.apply) {
     throw new Error('--update 必须与 --apply 一起使用')
   }
+  if (!menuScopes[options.scope]) {
+    throw new Error(`scope 必须是以下值之一：${Object.keys(menuScopes).join(', ')}`)
+  }
 
   return options
 }
 
 function printHelp() {
   console.log(`
-幂等同步产品图库、商品、订单与 AI 配置后台菜单
+幂等同步管理后台菜单与操作权限
 
 环境变量：
   BOLTFOX_USER_TOKEN   必填，当前管理员 userToken
   BOLTFOX_SYSTEM_ID    可选，默认 1
   BOLTFOX_API_BASE     可选，默认 ${DEFAULT_API_BASE}
+  BOLTFOX_MENU_SCOPE   可选，默认 commerce
 
 参数：
+  --scope=<scope>      同步范围：commerce 或 user-account
   --apply              实际新增缺失节点；省略时只预览
   --update             同时更新已存在但配置漂移的节点（必须搭配 --apply）
   --system-id=<id>     覆盖系统 ID
@@ -350,6 +391,24 @@ function findNodeById(nodes, id) {
     if (child) return child
   }
   return null
+}
+
+function findNodeByCode(nodes, appCode) {
+  for (const node of nodes || []) {
+    if (node.appCode === appCode) return node
+    const child = findNodeByCode(node.childs, appCode)
+    if (child) return child
+  }
+  return null
+}
+
+function resolveScopeParent(root, scope) {
+  if (!scope.parentCode) return root
+  const parent = findNodeByCode([root], scope.parentCode)
+  if (!parent) {
+    throw new Error(`未找到同步范围的父节点权限：${scope.parentCode}`)
+  }
+  return parent
 }
 
 function findMatchingChild(parent, expected) {
@@ -463,19 +522,22 @@ async function main() {
   const client = createAdminClient(options)
   const response = await client.getMenuTree(options.systemId)
   const root = getVirtualRoot(response.retData || [])
+  const scope = menuScopes[options.scope]
+  const scopeParent = resolveScopeParent(root, scope)
 
   console.log(`目标系统：${options.systemId}`)
+  console.log(`同步范围：${scope.label}`)
   console.log(`执行模式：${options.apply ? '写入' : '只读预览'}`)
 
   if (!options.apply) {
-    printPreview(root, commerceMenuTree)
+    printPreview(scopeParent, scope.nodes)
     console.log('\n未写入任何数据。确认后追加 --apply 执行。')
     return
   }
 
   const stats = { created: 0, updated: 0, existing: 0 }
-  for (const node of commerceMenuTree) {
-    await syncNode(client, options, 0, node, 0, stats)
+  for (const node of scope.nodes) {
+    await syncNode(client, options, scopeParent.id, node, 0, stats)
   }
 
   console.log(

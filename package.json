@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "menu:sync:commerce": "node scripts/sync-commerce-menu.mjs"
+    "menu:sync:commerce": "node scripts/sync-admin-menu.mjs --scope=commerce",
+    "menu:sync:user-account": "node scripts/sync-admin-menu.mjs --scope=user-account"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

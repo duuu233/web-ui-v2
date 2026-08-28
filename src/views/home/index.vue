@@ -3,12 +3,20 @@ import { computed, onMounted, reactive, ref, shallowRef } from 'vue'
 import { getStatisticsUser, getUserCount } from '@/api/home'
 import { getCookie } from '@/utils/support'
 import avatar from '@/assets/images/user.png'
+import AnalyticsChartCard from './components/AnalyticsChartCard.vue'
+import {
+  createOrderRevenueOption,
+  createRegistrationBarOption
+} from './chartOptions'
 
 const trueName = shallowRef(getCookie('trueName') || '')
 const statsLoading = shallowRef(false)
 const statisticsLoading = shallowRef(false)
 const statisticsQueryType = shallowRef(0)
 const statisticsList = ref([])
+const orderRevenueLoading = shallowRef(false)
+const orderRevenueQueryType = shallowRef(0)
+const orderRevenueList = ref([])
 
 const stats = reactive({
   userCount: '-',
@@ -17,12 +25,6 @@ const stats = reactive({
   productCount: '-',
   productFaqCount: '-'
 })
-
-const queryTypeOptions = [
-  { value: 0, label: '近一周' },
-  { value: 1, label: '近一个月' },
-  { value: 2, label: '近一年' }
-]
 
 const cards = computed(() => [
   {
@@ -62,21 +64,15 @@ const cards = computed(() => [
   }
 ])
 
-const maxRegistrationCount = computed(() => {
-  return statisticsList.value.reduce((max, item) => {
-    const count = Number(item.userCount) || 0
-    return Math.max(max, count)
-  }, 0)
-})
+const registrationChartOption = computed(() =>
+  createRegistrationBarOption(statisticsList.value)
+)
+const orderRevenueChartOption = computed(() =>
+  createOrderRevenueOption(orderRevenueList.value)
+)
 
 function formatCount(value) {
   return value ?? '-'
-}
-
-function getBarWidth(count) {
-  const value = Number(count) || 0
-  if (!value || !maxRegistrationCount.value) return '0%'
-  return `${Math.max((value / maxRegistrationCount.value) * 100, 6)}%`
 }
 
 async function loadStats() {
@@ -94,21 +90,28 @@ async function loadStats() {
   }
 }
 
-async function loadRegistrationStats() {
+async function loadRegistrationStats(queryType = statisticsQueryType.value) {
   statisticsLoading.value = true
   try {
     const res = await getStatisticsUser({
-      queryType: statisticsQueryType.value
+      queryType: Number(queryType)
     })
-    statisticsList.value = res.retData || []
+    statisticsList.value = Array.isArray(res.retData) ? res.retData : []
   } finally {
     statisticsLoading.value = false
   }
 }
 
+function loadOrderRevenueStats() {
+  // 预留给后续订单收益接口的数据模型：[{ queryDate, orderAmount }]。
+  // 接口契约明确前保持空态，避免在管理后台展示模拟收益数据。
+  orderRevenueList.value = []
+}
+
 onMounted(() => {
   loadStats()
   loadRegistrationStats()
+  loadOrderRevenueStats()
 })
 </script>
 
@@ -138,44 +141,36 @@ onMounted(() => {
       </el-col>
     </el-row>
 
-    <el-card v-loading="statisticsLoading" shadow="never" class="trend-card">
-      <template #header>
-        <div class="trend-header">
-          <span class="font-title-medium">用户注册统计</span>
-          <el-radio-group
-            v-model="statisticsQueryType"
-            size="small"
-            @change="loadRegistrationStats"
-          >
-            <el-radio-button
-              v-for="item in queryTypeOptions"
-              :key="item.value"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </div>
-      </template>
+    <section class="analytics-grid" aria-label="首页经营报表">
+      <AnalyticsChartCard
+        v-model:range="statisticsQueryType"
+        title="用户注册统计"
+        eyebrow="USER GROWTH"
+        description="按注册日期查看新增用户数量"
+        :option="registrationChartOption"
+        :has-data="statisticsList.length > 0"
+        :loading="statisticsLoading"
+        empty-description="暂无注册数据"
+        aria-label="用户注册数量柱状图"
+        @range-change="loadRegistrationStats"
+      />
 
-      <div v-if="statisticsList.length" class="trend-list">
-        <div
-          v-for="item in statisticsList"
-          :key="item.queryDate"
-          class="trend-row"
-        >
-          <span class="trend-date">{{ item.queryDate || '-' }}</span>
-          <div class="trend-track">
-            <div
-              class="trend-bar"
-              :style="{ width: getBarWidth(item.userCount) }"
-            />
-          </div>
-          <span class="trend-count">{{ item.userCount ?? 0 }}</span>
-        </div>
-      </div>
-      <el-empty v-else description="暂无数据" :image-size="80" />
-    </el-card>
+      <AnalyticsChartCard
+        v-model:range="orderRevenueQueryType"
+        title="订单收益报表"
+        eyebrow="ORDER REVENUE"
+        description="按订单日期查看收益变化趋势"
+        :option="orderRevenueChartOption"
+        :has-data="orderRevenueList.length > 0"
+        :loading="orderRevenueLoading"
+        empty-description="收益统计接口待接入"
+        status-label="接口待接入"
+        status-type="warning"
+        aria-label="订单收益趋势图"
+        accent="success"
+        @range-change="loadOrderRevenueStats"
+      />
+    </section>
   </div>
 </template>
 
@@ -282,66 +277,17 @@ onMounted(() => {
   }
 }
 
-.trend-card {
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
   margin-top: 2px;
+  padding-bottom: 24px;
 }
 
-.trend-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.trend-list {
-  display: grid;
-  gap: 8px;
-}
-
-.trend-row {
-  display: grid;
-  grid-template-columns: 120px minmax(120px, 1fr) 64px;
-  align-items: center;
-  gap: 14px;
-  min-height: 34px;
-  padding: 0 10px;
-  border-radius: 8px;
-  background: var(--app-surface-muted);
-}
-
-.trend-date {
-  color: var(--app-text);
-  font-size: 13px;
-}
-
-.trend-track {
-  height: 8px;
-  border-radius: 999px;
-  background: #ebe8e4;
-  overflow: hidden;
-}
-
-.trend-bar {
-  height: 100%;
-  border-radius: 999px;
-  background: var(--brand-500);
-}
-
-.trend-count {
-  color: var(--app-ink);
-  font-weight: 600;
-  text-align: right;
-}
-
-@media (max-width: 768px) {
-  .trend-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .trend-row {
-    grid-template-columns: 86px minmax(80px, 1fr) 46px;
-    gap: 8px;
+@media (max-width: 1180px) {
+  .analytics-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

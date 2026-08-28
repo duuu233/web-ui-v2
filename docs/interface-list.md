@@ -2,7 +2,7 @@
 
 > Document type: API contract checklist
 > Status: Active
-> Last verified: 2026-08-13
+> Last verified: 2026-08-28
 > Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
 
 Source:
@@ -12,6 +12,7 @@ Source:
 - Goods and order Swagger contracts plus live read-only response samples rechecked on 2026-08-11.
 - Public image library, image category, and AI configuration Swagger contracts rechecked on 2026-08-12.
 - Home statistics and user account Swagger contracts plus live read-only samples rechecked on 2026-08-13.
+- Home report presentation and configuration-form behavior rechecked against the current frontend on 2026-08-28; no new backend contract was claimed.
 
 Comparison result:
 
@@ -29,7 +30,8 @@ Backend prefix:
 | Area | Module | Feature | Interface / handling | Current status |
 | --- | --- | --- | --- | --- |
 | Basic public | File upload | Upload file | `POST /ZoneAdmin/Common/setFileUpload` | Done. `src/api/oss.js` appends `userToken` in the URL query, posts `fileParam`, and supports optional query `isUploadThumb`; official gallery original uploads pass `1` and consume returned `urlThumb`. |
-| Home | Data aggregate display | User count, bound-device count, order amount, product/FAQ totals, and registration trend | `GET /ZoneAdmin/Common/getUserCount`, `GET /ZoneAdmin/Common/getStatisticsUser` | Done. `getUserCount` displays `userCount`, `userBindProductCount`, `orderAmount`, `productCount`, and `productFaqCount`. |
+| Home | Data aggregate display | User count, bound-device count, order amount, product/FAQ totals, and registration trend | `GET /ZoneAdmin/Common/getUserCount`, `GET /ZoneAdmin/Common/getStatisticsUser` | Done. `getUserCount` displays `userCount`, `userBindProductCount`, `orderAmount`, `productCount`, and `productFaqCount`; registration data is rendered as an ECharts column chart. |
+| Home | Order revenue report | Revenue trends for the last week, month, and year | Pending backend contract | Frontend ready. The report exposes the three query periods and reserves the view model `{ queryDate, orderAmount }`; it shows an explicit pending-interface empty state and does not display mock revenue. |
 | User management | User list | Registered user list and token balances | `GET /ZoneAdmin/User/getUserList` | Done. Displays `totalToken`, `availableToken`, and `consumeToken`; country columns are intentionally hidden from the list. |
 | User management | User account | Edit available token balance | `POST /ZoneAdmin/User/setUserAccount` | Done. Submits only `userId` and non-negative `availableToken`; the request layer appends authentication fields. |
 | User management | Account operation log | All users or one user by ID | `GET /ZoneAdmin/User/getOperatUserAccountLog` | Done. Hidden local route: `userAccountLogs`; entry points exist in the user-list toolbar and each row. |
@@ -46,9 +48,10 @@ Backend prefix:
 | Device version | Device version settings | Enable/disable version | `POST /ZoneAdmin/ProductVersion/setProductVersionVerify` | Done. |
 | Help management | Help content list | Upload/edit/delete by device dimension | Original interface set: `GET /ZoneAdmin/Product/getProductFaqList`, `GET /ZoneAdmin/Product/getProductFaqDetail`, `POST /ZoneAdmin/Product/addProductFaq`, `POST /ZoneAdmin/Product/editProductFaq`, `POST /ZoneAdmin/Product/setProductFaqVerify` | Done. |
 | Commerce | Goods management | Goods list, detail, add, edit, enable/disable | `GET /ZoneAdmin/Goods/getGoodsList`, `GET /ZoneAdmin/Goods/getGoodsDetail`, `POST /ZoneAdmin/Goods/addGoods`, `POST /ZoneAdmin/Goods/editGoods`, `POST /ZoneAdmin/Goods/setGoodsVerify` | Done. Routes: `goodsList`, `goodsListAdd`, `goodsListEdit`, `goodsListDetail`. |
-| Product management | Public image library | Image list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getProductImgList`, `GET /ZoneAdmin/ProductImg/getProductImgDetail`, `POST /ZoneAdmin/ProductImg/addProductImg`, `POST /ZoneAdmin/ProductImg/editProductImg`, `POST /ZoneAdmin/ProductImg/setProductImgVerify` | Done. Routes: `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`. |
+| Product management | Public image library | Image list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getProductImgList`, `GET /ZoneAdmin/ProductImg/getProductImgDetail`, `POST /ZoneAdmin/ProductImg/addProductImg`, `POST /ZoneAdmin/ProductImg/editProductImg`, `POST /ZoneAdmin/ProductImg/setProductImgVerify` | Done. Routes: `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`; the applicable-product/device selection is optional in add/edit and submits an empty `productIdList` when omitted. |
 | Product management | Image categories | Category list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getImgCategoryList`, `GET /ZoneAdmin/ProductImg/getImgCategoryDetail`, `POST /ZoneAdmin/ProductImg/addImgCategory`, `POST /ZoneAdmin/ProductImg/editImgCategory`, `POST /ZoneAdmin/ProductImg/setImgCategoryVerify` | Done. Routes: `imageCategoryList`, `imageCategoryAdd`, `imageCategoryEdit`, `imageCategoryDetail`. |
 | Commerce | Order management | Order list and detail | `GET /ZoneAdmin/Order/getOrderList`, `GET /ZoneAdmin/Order/getOrderDetail` | Done. Routes: `orderList`, `orderListDetail`. |
 | AI configuration | AI cost configuration | List, edit, enable/disable | `GET /ZoneAdmin/AiConfig/getAiConfigList`, `POST /ZoneAdmin/AiConfig/editAiConfig`, `POST /ZoneAdmin/AiConfig/setAiConfigVerify` | Done. Route: `aiConfigList`; editing uses a list-row dialog because Swagger has no detail endpoint. |
+| Basic configuration | System configuration | View and edit backend configuration data | `GET /ZoneAdmin/Common/getConfigDataList`, `POST /ZoneAdmin/Common/setConfigDataEdit` | Done. The platform device ID item is intentionally omitted from the form and from the save payload; other editable configuration items retain the existing behavior. |
 | System settings | Backend permission settings | Permissions, roles, menus, departments | Original function: `/ZoneAdmin/Jurisdiction/*` | Done. |
 | System settings | App version settings | App version upgrade | Original function: `/ZoneAdmin/AppVersion/*` | Done. |

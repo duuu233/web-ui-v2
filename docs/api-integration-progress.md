@@ -2,7 +2,7 @@
 
 > Document type: integration status tracker
 > Status: Tracking
-> Last verified: 2026-08-13
+> Last verified: 2026-08-28
 > Sources: current Swagger contract, API modules, routes, views, and documented live read-only checks
 
 Swagger source: https://api.boltfox.cn/swagger-ui.html#/
@@ -22,13 +22,23 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Product | 管理后台-产品相关接口 | Completed | Product, product FAQ, and user product list now use `/Product/*`. |
 | Login | 管理后台-登录 | Completed | Login request and token handling now match `/Passport/adminLogin`. |
 | Permission | 管理后台-权限 | Completed | UMS permission pages now align with `/Jurisdiction/*`; unsupported area route removed. |
-| Common | 管理后台-通用相关接口 | Completed | Home stats include bound-device count and order amount; config and upload use `/Common/*`; unsupported area/TMS common APIs removed. |
+| Common | 管理后台-通用相关接口 | Completed | Home stats include bound-device count and order amount; registration uses an ECharts column chart; config and upload use `/Common/*`; the order-revenue report frontend is ready but its backend contract is pending. |
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, status, token-account editing, and account logs align with `/User/*`. |
 | Goods | 管理后台-商品相关接口 | Completed | Added goods list/add/edit/detail/status pages and `/Goods/*` API wrappers. |
 | Public image library | 管理后台-公共图库相关接口 | Completed | Added image and category list/add/edit/detail/status pages and `/ProductImg/*` API wrappers. |
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers. |
 | AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers. |
+
+## Pending Integration
+
+### 首页订单收益报表
+
+Status: Frontend ready / Backend pending
+
+- The home page provides `近一周`, `近一个月`, and `近一年` selectors and a dedicated ECharts trend card.
+- No API wrapper is added before the backend path, parameters, units, and response contract are confirmed.
+- The reserved frontend view model is `{ queryDate, orderAmount }`. Until integration, the page displays an explicit pending-interface empty state instead of mock financial data.
 
 ## Completed Work
 
@@ -194,6 +204,7 @@ Notes:
 
 - Swagger was rechecked on 2026-08-12. Lists use the shared `pageIndex/pageSize/pageData/recordCount` contract and expose every documented query field.
 - The product image form submits the documented `categoryIdList`, `productIdList`, `img`, `imgThumb`, `title`, and `content` fields. Original uploads in add/edit mode call `/Common/setFileUpload` with query `isUploadThumb=1`; returned `urlThumb` becomes `imgThumb`, remains replaceable through the thumbnail upload field, and falls back to the original URL only when no thumbnail URL is available.
+- Applicable product/device selection is optional in public-image add/edit; omitting it submits an empty `productIdList` while category and image validation remain required.
 - AI configuration has no detail endpoint in Swagger, so editing uses the selected list row in a dedicated dialog.
 - The menu declaration keeps the sidebar-compatible two-level navigation shape and includes every operation permission code from the interface checklist.
 
@@ -413,6 +424,7 @@ Notes:
 - `FormData` POST requests now append `randomString`, `sign`, and `userToken` as multipart fields.
 - Upload components now submit backend `fileParam` form-data and continue to expose `{ name, url }[]` via `v-model`.
 - Home statistics now match Swagger fields `userCount`, `userBindProductCount`, `orderAmount`, `productCount`, and `productFaqCount`, with registration statistics loaded from `getStatisticsUser`.
+- Registration statistics are rendered as an ECharts column chart. The system-configuration page omits the platform device ID item from both the visible form and `setConfigDataEdit` payload.
 - Removed unsupported area settings API/page and old unsupported TMS statistics wrappers.
 
 Verification:

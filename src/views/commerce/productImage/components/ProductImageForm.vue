@@ -138,7 +138,9 @@ function handleOriginalImageUpdate(files) {
             <span class="section-index">03</span>
             <div>
               <h2 class="section-title">投放范围</h2>
-              <p class="section-description">设置图片所属分类以及可使用该图片的产品。</p>
+              <p class="section-description">
+                设置图片所属分类；适用产品可按投放需要选择。
+              </p>
             </div>
           </div>
 
@@ -163,7 +165,11 @@ function handleOriginalImageUpdate(files) {
               </el-select>
             </el-form-item>
 
-            <el-form-item class="form-field" label="适用产品" prop="productIdList">
+            <el-form-item
+              class="form-field"
+              label="适用产品（可选）"
+              prop="productIdList"
+            >
               <el-select
                 v-model="formData.productIdList"
                 class="field-control"
@@ -172,7 +178,7 @@ function handleOriginalImageUpdate(files) {
                 filterable
                 collapse-tags
                 :max-collapse-tags="3"
-                placeholder="请选择适用产品"
+                placeholder="请选择适用产品（可选）"
               >
                 <el-option
                   v-for="item in productOptions"

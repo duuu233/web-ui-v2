@@ -80,15 +80,6 @@ export function useProductImageForm(mode) {
         trigger: 'change'
       }
     ],
-    productIdList: [
-      {
-        required: true,
-        type: 'array',
-        min: 1,
-        message: '请选择至少一个适用产品',
-        trigger: 'change'
-      }
-    ],
     categoryIdList: [
       {
         required: true,

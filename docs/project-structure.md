@@ -2,7 +2,7 @@
 
 > 文档类型：当前架构说明
 > 状态：Active
-> 最后核验：2026-08-13
+> 最后核验：2026-08-28
 > 事实来源：当前目录、源码、路由配置与 CodeGraph
 
 本项目是 Vue 3 + Vite 后台管理系统。结构约定是：框架配置放在项目根目录，可复用 UI 放在 `src/components`，可复用组合式逻辑放在 `src/composables`，业务页面按模块放在 `src/views`。
@@ -89,6 +89,8 @@ src/views/
 ```
 
 用户列表相关页面位于 `src/views/sms/userList/`：列表页复用公共查询、工具栏和分页组件；`components/UserAccountEditor.vue` 负责可用星币编辑交互；`accountLogs.vue` 是账户操作日志的隐藏路由页面。
+
+首页报表位于 `src/views/home/`：`index.vue` 负责接口取数和页面编排，`components/AnalyticsChartCard.vue` 负责报表标题、周期切换和空态，`components/EChartCanvas.vue` 集中管理 ECharts 生命周期与响应式尺寸，`chartOptions.js` 负责把业务数据映射为柱状图或趋势图配置。
 
 命名约定：
 

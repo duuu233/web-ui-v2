@@ -2,7 +2,7 @@
 
 > 文档类型：当前项目上下文
 > 状态：Active
-> 最后核验：2026-08-13
+> 最后核验：2026-08-28
 > 适用范围：`web-ui-v2` 当前工作树
 > 事实来源：源码与 CodeGraph、`package.json`、环境配置、`docs/` 中的 Active 文档
 
@@ -16,7 +16,7 @@ Git 是办公室电脑、家庭电脑和远程 SSH 环境之间唯一共享的�
 
 - Vue 3.5，业务组件以 `<script setup>` 为主。
 - Vite 5，Vue Router 4（Hash 模式），Pinia。
-- Element Plus、vxe-table、SCSS、WangEditor。
+- Element Plus、vxe-table、Apache ECharts 6、SCSS、WangEditor。
 - Axios 请求层；Cookie 保存登录态；接口响应约定为 `{ retCode, retMsg, retData }`。
 - Node.js `>=18`。
 
@@ -86,12 +86,13 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 ## 6. 当前核心模块
 
 - 商品管理：商品列表、详情、新增、编辑和启禁用。
-- 首页统计：用户总数、绑定设备数、订单金额、产品数、常见问题数以及注册趋势。
+- 首页统计：用户总数、绑定设备数、订单金额、产品数、常见问题数；注册趋势使用 ECharts 柱状图。订单收益报表已提供近一周、近一个月、近一年的前端容器，接口未确定前显示明确空态且不使用模拟收益。
 - 用户管理：用户列表、详情、基础资料编辑、状态、星币账户调整与账户操作日志。
-- 图库管理：公共图库图片的列表、详情、新增、编辑和启禁用；新增/编辑原图时上传接口携带 `isUploadThumb=1`，并优先使用返回的 `urlThumb` 作为缩略图。
+- 图库管理：公共图库图片的列表、详情、新增、编辑和启禁用；新增/编辑原图时上传接口携带 `isUploadThumb=1`，并优先使用返回的 `urlThumb` 作为缩略图；适用产品/设备选择为非必填。
 - 图库分类：分类列表、详情、新增、编辑和启禁用。
 - 订单管理：订单列表与详情。
 - AI 配置：配置列表、编辑和启禁用。
+- 基础配置：系统配置继续使用 `/Common/getConfigDataList` 与 `/Common/setConfigDataEdit`，平台设备 ID 不在表单中展示，也不进入保存负载。
 - UMS/权限：员工、角色、菜单和授权关系。
 
 接口完成度以 [`docs/api-integration-progress.md`](docs/api-integration-progress.md) 为当前状态入口；接口清单以 [`docs/interface-list.md`](docs/interface-list.md) 为核对依据。
@@ -131,6 +132,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - 后台菜单与本地路由可能独立演进；新增页面后需要重新绑定角色权限并重新登录验证。
 - 请求签名和统一错误处理集中在请求层，修改的影响面很大。
 - Swagger、线上返回值和已有页面可能短期不一致，应在文档中标明核验日期与事实来源。
+- 首页订单收益接口的路径、参数、金额单位和响应结构尚未确定；确认契约前不得新增猜测性的 API 封装或模拟财务数据。
 - 仓库同时保留 `yarn.lock` 与 `pnpm-lock.yaml`；主包管理器尚未形成明确的仓库规则，不应擅自重写锁文件。
 - 支付请求使用独立请求地址，修改通用接口环境变量时不能默认覆盖支付链路。
 

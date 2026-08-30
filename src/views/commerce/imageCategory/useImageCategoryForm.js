@@ -11,6 +11,7 @@ import { invalidateList } from '@/composables/useListRefresh'
 const defaultForm = () => ({
   categoryId: null,
   categoryName: '',
+  language: 1,
   verify: null
 })
 
@@ -37,6 +38,7 @@ export function useImageCategoryForm(mode) {
   })
 
   const rules = {
+    language: [{ required: true, message: '请选择语言', trigger: 'change' }],
     categoryName: [
       { required: true, message: '请输入分类名称', trigger: 'blur' },
       { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
@@ -59,7 +61,10 @@ export function useImageCategoryForm(mode) {
     try {
       const response = await getImgCategoryDetail({ id })
       if (sequence !== requestSequence) return
-      Object.assign(formData, defaultForm(), response.retData || {})
+      const detail = response.retData || {}
+      Object.assign(formData, defaultForm(), detail, {
+        language: Number(detail.language) || 1
+      })
     } catch (error) {
       // 请求拦截器统一反馈接口错误。
     } finally {
@@ -83,7 +88,10 @@ export function useImageCategoryForm(mode) {
 
     submitting.value = true
     try {
-      const submitData = { categoryName: formData.categoryName.trim() }
+      const submitData = {
+        categoryName: formData.categoryName.trim(),
+        language: Number(formData.language)
+      }
       if (!isAdd.value) submitData.categoryId = Number(formData.categoryId)
 
       if (isAdd.value) await addImgCategory(submitData)

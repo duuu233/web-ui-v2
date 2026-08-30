@@ -1,6 +1,9 @@
 <script setup name="ImageCategoryForm">
 import PageHeader from '@/components/PageHeader/index.vue'
-import { getVerifyTagType } from '@/views/commerce/utils'
+import {
+  contentLanguageOptions,
+  getVerifyTagType
+} from '@/views/commerce/utils'
 import { useImageCategoryForm } from '../useImageCategoryForm'
 
 const props = defineProps({
@@ -52,6 +55,22 @@ const {
         label-position="top"
         size="default"
       >
+        <el-form-item label="语言" prop="language">
+          <el-select
+            v-model="formData.language"
+            class="field-control"
+            :disabled="isReadOnly"
+            placeholder="请选择语言"
+          >
+            <el-option
+              v-for="item in contentLanguageOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="分类名称" prop="categoryName">
           <el-input
             v-model="formData.categoryName"
@@ -120,6 +139,10 @@ const {
 
 .category-form {
   max-width: 560px;
+}
+
+.field-control {
+  width: 100%;
 }
 
 .form-actions {

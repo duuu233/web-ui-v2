@@ -10,6 +10,13 @@ export const languageOptions = [
   { value: 6, label: '葡萄牙语' }
 ]
 
+export const contentLanguageOptions = [
+  { value: 1, label: '英语' },
+  { value: 2, label: '简中' },
+  { value: 3, label: '繁中' },
+  { value: 4, label: '日文' }
+]
+
 export const orderStateOptions = [
   { value: 0, label: '未完成' },
   { value: 1, label: '已完成' },

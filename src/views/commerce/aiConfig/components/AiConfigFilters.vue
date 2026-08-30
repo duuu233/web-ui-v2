@@ -1,7 +1,10 @@
 <script setup name="AiConfigFilters">
 import { computed } from 'vue'
 import SearchPanel from '@/components/SearchPanel/index.vue'
-import { aiModelOptions, languageOptions } from '@/views/commerce/utils'
+import {
+  aiModelOptions,
+  contentLanguageOptions as languageOptions
+} from '@/views/commerce/utils'
 
 const keyword = defineModel('keyword', { type: String, default: '' })
 const language = defineModel('language', { type: Number, default: null })

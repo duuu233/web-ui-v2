@@ -14,6 +14,7 @@ const defaultForm = () => ({
   productImgId: null,
   title: '',
   content: '',
+  language: 1,
   imageFiles: [],
   thumbnailFiles: [],
   productIdList: [],
@@ -63,6 +64,7 @@ export function useProductImageForm(mode) {
   })
 
   const rules = {
+    language: [{ required: true, message: '请选择语言', trigger: 'change' }],
     title: [
       { required: true, message: '请输入图片标题', trigger: 'blur' },
       { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
@@ -98,6 +100,7 @@ export function useProductImageForm(mode) {
 
   function applyDetail(detail) {
     Object.assign(formData, defaultForm(), detail, {
+      language: Number(detail.language) || 1,
       imageFiles: fileFromUrl(detail.img, detail.title || '图库图片'),
       thumbnailFiles: fileFromUrl(detail.imgThumb, '图片缩略图'),
       productIdList: normalizeIdList(detail.productIdList, detail.productIds),
@@ -145,6 +148,7 @@ export function useProductImageForm(mode) {
     const submitData = {
       title: formData.title.trim(),
       content: formData.content.trim(),
+      language: Number(formData.language),
       img,
       imgThumb,
       productIdList: normalizeIdList(formData.productIdList),

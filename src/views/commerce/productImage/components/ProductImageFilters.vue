@@ -1,7 +1,7 @@
 <script setup name="ProductImageFilters">
 import { computed } from 'vue'
 import SearchPanel from '@/components/SearchPanel/index.vue'
-import { languageOptions } from '@/views/commerce/utils'
+import { contentLanguageOptions } from '@/views/commerce/utils'
 
 const keyword = defineModel('keyword', { type: String, default: '' })
 const language = defineModel('language', { type: Number, default: null })
@@ -48,7 +48,7 @@ const verifyOptions = [
         placeholder="全部语言"
       >
         <el-option
-          v-for="item in languageOptions"
+          v-for="item in contentLanguageOptions"
           :key="item.value"
           :label="item.label"
           :value="item.value"

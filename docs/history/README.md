@@ -2,7 +2,7 @@
 
 > 文档类型：历史记录规范与索引
 > 状态：Active
-> 最后核验：2026-08-28
+> 最后核验：2026-08-30
 > 事实来源：`AGENTS.md` 与项目文档治理约定
 
 本目录保存已经发生的集中修改、外部操作和跨环境交接。它补充 Git 提交，记录提交本身难以表达的背景、验证和未完成项，但不替代源码、提交历史或 Active 文档。
@@ -60,3 +60,4 @@ docs/history/
 - [`2026-08/2026-08-12-official-gallery-upload-thumbnail.md`](2026-08/2026-08-12-official-gallery-upload-thumbnail.md)：官方图库新增/编辑原图上传请求生成缩略图并提交返回地址。
 - [`2026-08/2026-08-13-user-account-statistics.md`](2026-08/2026-08-13-user-account-statistics.md)：首页新增绑定设备与订单金额统计，用户列表接入星币账户编辑、账户日志及对应后台权限。
 - [`2026-08/2026-08-28-home-reports-config-forms.md`](2026-08/2026-08-28-home-reports-config-forms.md)：首页接入 ECharts 注册柱状图并预留订单收益报表，同时调整图库设备必填和系统配置字段。
+- [`2026-08/2026-08-30-commerce-language-order-statistics.md`](2026-08/2026-08-30-commerce-language-order-statistics.md)：接入首页订单统计，并为商品、AI 配置、公共图库和图库分类补齐内容语种。

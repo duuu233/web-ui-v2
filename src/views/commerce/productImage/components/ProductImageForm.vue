@@ -1,7 +1,10 @@
 <script setup name="ProductImageForm">
 import PageHeader from '@/components/PageHeader/index.vue'
 import MultiUpload from '@/components/Upload/multiUpload.vue'
-import { getVerifyTagType } from '@/views/commerce/utils'
+import {
+  contentLanguageOptions,
+  getVerifyTagType
+} from '@/views/commerce/utils'
 import { useProductImageForm } from '../useProductImageForm'
 
 const props = defineProps({
@@ -104,6 +107,22 @@ function handleOriginalImageUpdate(files) {
           </div>
 
           <div class="form-grid">
+            <el-form-item class="form-field" label="语言" prop="language">
+              <el-select
+                v-model="formData.language"
+                class="field-control"
+                :disabled="isReadOnly"
+                placeholder="请选择语言"
+              >
+                <el-option
+                  v-for="item in contentLanguageOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+
             <el-form-item class="form-field" label="图片标题" prop="title">
               <el-input
                 v-model="formData.title"

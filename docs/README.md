@@ -2,7 +2,7 @@
 
 > 文档类型：文档治理入口
 > 状态：Active
-> 最后核验：2026-08-28
+> 最后核验：2026-08-30
 > 事实来源：当前源码、CodeGraph、项目配置与下列 Active 文档
 
 本文件是 `docs/` 的统一入口。根目录只保留执行规则 `AGENTS.md` 和当前 AI 快照 `AI_CONTEXT.md`；其他项目知识、流程和历史记录统一放在这里。
@@ -56,7 +56,7 @@ codegraph sync .
 
 历史记录使用 `history/YYYY-MM/YYYY-MM-DD-topic.md`。一项集中修改对应一份记录，不建立无限增长的单文件流水账。记录完成后保持冻结；若产生长期有效的结论，还要同步更新 AI_CONTEXT 或对应 Active 文档。
 
-最新记录：[`history/2026-08/2026-08-28-home-reports-config-forms.md`](history/2026-08/2026-08-28-home-reports-config-forms.md)（首页经营报表与配置表单调整）。
+最新记录：[`history/2026-08/2026-08-30-commerce-language-order-statistics.md`](history/2026-08/2026-08-30-commerce-language-order-statistics.md)（首页订单统计与管理端内容语种接入）。
 
 文档中不得出现 Token、签名、密码、Cookie、完整环境变量、个人数据或本机缓存内容。
 

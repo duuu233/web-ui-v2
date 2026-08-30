@@ -15,3 +15,11 @@ export function getStatisticsUser(params) {
     params
   })
 }
+
+export function getStatisticsOrder(params) {
+  return request({
+    url: '/Common/getStatisticsOrder',
+    method: 'get',
+    params
+  })
+}

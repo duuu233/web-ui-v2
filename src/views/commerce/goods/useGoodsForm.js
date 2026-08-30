@@ -13,6 +13,7 @@ import { invalidateList } from '@/composables/useListRefresh'
 const defaultForm = () => ({
   goodsId: null,
   goodsName: '',
+  language: 1,
   amount: null,
   num: 1,
   giveNum: 0,
@@ -49,6 +50,7 @@ export function useGoodsForm(mode) {
       { required: true, message: '请输入商品名称', trigger: 'blur' },
       { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
     ],
+    language: [{ required: true, message: '请选择语种', trigger: 'change' }],
     amount: [{ required: true, message: '请输入商品金额', trigger: 'change' }],
     num: [{ required: true, message: '请输入发放数量', trigger: 'change' }],
     giveNum: [{ required: true, message: '请输入赠送数量', trigger: 'change' }],
@@ -86,6 +88,7 @@ export function useGoodsForm(mode) {
   function buildSubmitData() {
     const submitData = {
       goodsName: formData.goodsName.trim(),
+      language: Number(formData.language),
       amount: Number(formData.amount),
       num: Number(formData.num),
       giveNum: Number(formData.giveNum),

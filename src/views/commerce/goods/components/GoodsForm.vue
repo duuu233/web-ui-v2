@@ -1,7 +1,11 @@
 <script setup name="GoodsForm">
 import { computed } from 'vue'
 import PageHeader from '@/components/PageHeader/index.vue'
-import { formatAmount, getVerifyTagType } from '@/views/commerce/utils'
+import {
+  contentLanguageOptions,
+  formatAmount,
+  getVerifyTagType
+} from '@/views/commerce/utils'
 import { useGoodsForm } from '../useGoodsForm'
 
 const props = defineProps({
@@ -66,6 +70,22 @@ const totalTokenCount = computed(
                 placeholder="例如：30 元 / 3000 Token"
                 show-word-limit
               />
+            </el-form-item>
+
+            <el-form-item class="form-field" label="语种" prop="language">
+              <el-select
+                v-model="formData.language"
+                class="form-select"
+                :disabled="isReadOnly"
+                placeholder="请选择语种"
+              >
+                <el-option
+                  v-for="item in contentLanguageOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
 
             <el-form-item class="form-field" label="商品金额" prop="amount">
@@ -240,6 +260,7 @@ const totalTokenCount = computed(
   grid-column: span 2;
 }
 
+.form-select,
 .number-input {
   width: 100%;
 }

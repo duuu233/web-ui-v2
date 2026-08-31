@@ -18,7 +18,7 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Module | Swagger tag | Status | Notes |
 | --- | --- | --- | --- |
 | APP version and app market | 管理后台-APP版本管理接口 | Completed | Current `appVersion` and `applicationStore` modules now use `/AppVersion/*`. |
-| Product version | 管理后台-产品版本控制接口 | Completed | Added `productVersion` API, list route, and detail route. |
+| Product version | 管理后台-固件版本控制接口 | Completed | Added `productVersion` API, list route, and detail route. |
 | Product | 管理后台-产品相关接口 | Completed | Product, product FAQ, and user product list now use `/Product/*`. |
 | Login | 管理后台-登录 | Completed | Login request and token handling now match `/Passport/adminLogin`. |
 | Permission | 管理后台-权限 | Completed | UMS permission pages now align with `/Jurisdiction/*`; unsupported area route removed. |
@@ -213,7 +213,7 @@ Verification:
 - `node --check` passed for `src/api/oss.js` and `useProductImageForm.js`, and `npm run build` passed after adding the official-gallery thumbnail upload flow on 2026-08-12.
 - Backend menu preview/write still requires `BOLTFOX_USER_TOKEN` in the target environment. Run `npm run menu:sync:commerce -- --apply --update` to add the new nodes and migrate the old product menu names.
 
-### 管理后台-产品版本控制接口
+### 管理后台-固件版本控制接口
 
 Status: Completed
 

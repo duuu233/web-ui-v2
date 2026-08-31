@@ -140,79 +140,37 @@ onActivated(init)
 
 <template>
   <div class="app-container">
-    <PageHeader
-      :title="route.query.type === 'edit' ? '编辑产品版本' : '新增产品版本'"
-    />
+    <PageHeader :title="route.query.type === 'edit' ? '编辑固件版本' : '新增固件版本'" />
 
     <el-card class="box-card">
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="rules"
-        label-width="140px"
-        size="small"
-      >
+      <el-form ref="formRef" :model="formData" :rules="rules" label-width="140px" size="small">
         <el-form-item label="产品" prop="productId">
-          <el-select
-            v-model="formData.productId"
-            class="input-width"
-            filterable
-            clearable
-            placeholder="请选择产品"
-          >
-            <el-option
-              v-for="item in productOptions"
-              :key="item.productId || item.id"
-              :label="item.productName"
-              :value="item.productId || item.id"
-            />
+          <el-select v-model="formData.productId" class="input-width" filterable clearable placeholder="请选择产品">
+            <el-option v-for="item in productOptions" :key="item.productId || item.id" :label="item.productName"
+              :value="item.productId || item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="版本号" prop="versionNumber">
-          <el-input
-            v-model="formData.versionNumber"
-            class="input-width"
-            placeholder="请输入版本号"
-            maxlength="100"
-            show-word-limit
-          />
+          <el-input v-model="formData.versionNumber" class="input-width" placeholder="请输入版本号" maxlength="100"
+            show-word-limit />
         </el-form-item>
         <el-form-item label="附件地址" prop="downloadPath">
-          <FileUpload
-            v-model="downloadFileList"
-            :max-count="1"
-            :max-size="0"
-            accept=".bin"
-          />
+          <FileUpload v-model="downloadFileList" :max-count="1" :max-size="0" accept=".bin" />
         </el-form-item>
         <el-form-item label="升级类型" prop="compulsory">
           <el-radio-group v-model="formData.compulsory">
-            <el-radio
-              v-for="item in compulsoryOptions"
-              :key="item.value"
-              :label="item.value"
-            >
+            <el-radio v-for="item in compulsoryOptions" :key="item.value" :label="item.value">
               {{ item.label }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="权重" prop="grade">
-          <el-input-number
-            v-model="formData.grade"
-            :min="0"
-            :max="2147483647"
-            :precision="0"
-            :controls="false"
-            class="input-width"
-          />
+          <el-input-number v-model="formData.grade" :min="0" :max="2147483647" :precision="0" :controls="false"
+            class="input-width" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="submitting" @click="submitForm"
-            >提交</el-button
-          >
-          <el-button @click="router.push({ name: 'productVersion' })"
-            >取消</el-button
-          >
+          <el-button type="primary" :loading="submitting" @click="submitForm">提交</el-button>
+          <el-button @click="router.push({ name: 'productVersion' })">取消</el-button>
         </el-form-item>
       </el-form>
     </el-card>

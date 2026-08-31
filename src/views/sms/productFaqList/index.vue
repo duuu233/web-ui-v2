@@ -12,12 +12,11 @@ import { getProductFaqList, setProductFaqVerify } from '@/api/productList'
 const router = useRouter()
 
 const languageOptions = [
-
+  { value: 0, label: '英语' },
   { value: 1, label: '英语' },
   { value: 2, label: '简中' },
   { value: 3, label: '繁中' },
-  { value: 4, label: '日文' },
- 
+  { value: 4, label: '日文' }
 ]
 
 const verifyOptions = [

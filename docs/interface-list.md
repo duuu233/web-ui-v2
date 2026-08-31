@@ -2,7 +2,7 @@
 
 > Document type: API contract checklist
 > Status: Active
-> Last verified: 2026-08-28
+> Last verified: 2026-08-31
 > Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
 
 Source:
@@ -13,6 +13,7 @@ Source:
 - Public image library, image category, and AI configuration Swagger contracts rechecked on 2026-08-12.
 - Home statistics and user account Swagger contracts plus live read-only samples rechecked on 2026-08-13.
 - Home report presentation and configuration-form behavior rechecked against the current frontend on 2026-08-28; no new backend contract was claimed.
+- List `language` filter values were clarified by the project owner on 2026-08-31.
 
 Comparison result:
 
@@ -24,6 +25,11 @@ Backend prefix:
 
 - Runtime API prefix is `/ZoneAdmin`.
 - Code API wrappers omit this prefix because `VITE_APP_API_PREFIX` supplies it through `src/utils/request.js`.
+
+List language filter contract:
+
+- Every list filter that submits `language` uses a frontend-fixed option set: `0=英语`, `1=英语`, `2=简中`, `3=繁中`, and `4=日文`.
+- The value `0` is a valid filter value and must not be treated as an empty selection.
 
 ## PC Admin Backend
 

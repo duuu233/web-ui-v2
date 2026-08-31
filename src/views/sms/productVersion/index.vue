@@ -138,7 +138,7 @@ function handleEdit(row) {
 }
 
 function handleDelete(row) {
-  ElMessageBox.confirm('是否删除该产品版本?', '提示', {
+  ElMessageBox.confirm('是否删除该固件版本?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
@@ -153,7 +153,7 @@ function handleDelete(row) {
 }
 
 function handleStatusChange(status, row) {
-  ElMessageBox.confirm('是否修改该产品版本状态?', '提示', {
+  ElMessageBox.confirm('是否修改该固件版本状态?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
@@ -184,83 +184,41 @@ useListRefreshOnActivated('productVersion', init)
   <div class="app-container">
     <SearchPanel :model="listQuery" @search="handleSearchList" @reset="handleResetSearch">
       <el-form-item label="版本号">
-        <el-input
-          v-model="listQuery.keyword"
-          class="input-width"
-          placeholder="请输入版本号"
-          clearable
-          maxlength="20"
-          show-word-limit
-        />
+        <el-input v-model="listQuery.keyword" class="input-width" placeholder="请输入版本号" clearable maxlength="20"
+          show-word-limit />
       </el-form-item>
       <el-form-item label="产品">
         <el-select v-model="listQuery.productId" clearable filterable placeholder="请选择产品" style="width: 180px">
-          <el-option
-            v-for="item in productOptions"
-            :key="item.productId || item.id"
-            :label="item.productName"
-            :value="item.productId || item.id"
-          />
+          <el-option v-for="item in productOptions" :key="item.productId || item.id" :label="item.productName"
+            :value="item.productId || item.id" />
         </el-select>
       </el-form-item>
       <el-form-item label="升级类型">
         <el-select v-model="listQuery.compulsory" clearable placeholder="请选择升级类型" style="width: 150px">
-          <el-option
-            v-for="item in compulsoryOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+          <el-option v-for="item in compulsoryOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="listQuery.verify" clearable placeholder="请选择状态" style="width: 120px">
-          <el-option
-            v-for="item in verifyOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+          <el-option v-for="item in verifyOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateList"
-          type="daterange"
-          unlink-panels
-          value-format="YYYY-MM-DD"
-          format="YYYY-MM-DD"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          style="width: 300px"
-        />
+        <el-date-picker v-model="dateList" type="daterange" unlink-panels value-format="YYYY-MM-DD" format="YYYY-MM-DD"
+          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" style="width: 300px" />
       </el-form-item>
     </SearchPanel>
 
-    <ListToolbar title="产品版本列表">
-      <el-button
-        v-permission="['Post_ProductVersion_AddProductVersion']"
-        size="small"
-        icon="Plus"
-        type="primary"
-        @click="handleAdd"
-      >
-        新增产品版本
+    <ListToolbar title="固件版本列表">
+      <el-button v-permission="['Post_ProductVersion_AddProductVersion']" size="small" icon="Plus" type="primary"
+        @click="handleAdd">
+        新增固件版本
       </el-button>
     </ListToolbar>
 
     <div class="table-container">
-      <vxe-table
-        :data="list"
-        :loading="listLoading"
-        border
-        round
-        stripe
-        :row-config="{ isHover: true }"
-        :column-config="{ resizable: true }"
-        max-height="560"
-      >
+      <vxe-table :data="list" :loading="listLoading" border round stripe :row-config="{ isHover: true }"
+        :column-config="{ resizable: true }" max-height="560">
         <vxe-column field="id" title="编号" width="90" align="center" />
         <vxe-column title="产品" min-width="150" align="center" show-overflow>
           <template #default="{ row }">{{ getProductName(row.productId) }}</template>
@@ -285,19 +243,11 @@ useListRefreshOnActivated('productVersion', init)
             </span>
           </template>
         </vxe-column>
-        <vxe-column
-          v-permission="['Post_ProductVersion_SetProductVersionVerify']"
-          title="是否启用"
-          width="110"
-          align="center"
-        >
+        <vxe-column v-permission="['Post_ProductVersion_SetProductVersionVerify']" title="是否启用" width="110"
+          align="center">
           <template #default="{ row }">
-            <el-switch
-              :model-value="row.verify"
-              :active-value="1"
-              :inactive-value="0"
-              @change="handleStatusChange($event, row)"
-            />
+            <el-switch :model-value="row.verify" :active-value="1" :inactive-value="0"
+              @change="handleStatusChange($event, row)" />
           </template>
         </vxe-column>
         <vxe-column title="创建时间" width="170" align="center">
@@ -309,20 +259,12 @@ useListRefreshOnActivated('productVersion', init)
         <vxe-column title="操作" width="170" align="center" fixed="right">
           <template #default="{ row }">
             <div class="handle-table-box">
-              <el-button
-                v-permission="['Post_ProductVersion_EditProductVersion']"
-                size="small"
-                type="primary"
-                @click="handleEdit(row)"
-              >
+              <el-button v-permission="['Post_ProductVersion_EditProductVersion']" size="small" type="primary"
+                @click="handleEdit(row)">
                 编辑
               </el-button>
-              <el-button
-                v-permission="['Post_ProductVersion_DeleteProductVersion']"
-                size="small"
-                type="danger"
-                @click="handleDelete(row)"
-              >
+              <el-button v-permission="['Post_ProductVersion_DeleteProductVersion']" size="small" type="danger"
+                @click="handleDelete(row)">
                 删除
               </el-button>
             </div>
@@ -331,13 +273,8 @@ useListRefreshOnActivated('productVersion', init)
       </vxe-table>
     </div>
 
-    <PaginationBar
-      v-model:current-page="listQuery.pageIndex"
-      v-model:page-size="listQuery.pageSize"
-      :total="total"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+    <PaginationBar v-model:current-page="listQuery.pageIndex" v-model:page-size="listQuery.pageSize" :total="total"
+      @size-change="handleSizeChange" @current-change="handleCurrentChange" />
   </div>
 </template>
 
@@ -345,6 +282,7 @@ useListRefreshOnActivated('productVersion', init)
 .enable_txt {
   color: var(--app-success);
 }
+
 .disable_txt {
   color: var(--app-danger);
 }

@@ -164,7 +164,7 @@ export const asyncRouterMap = [
         name: 'productVersion',
         component: () => import('@/views/sms/productVersion/index.vue'),
         meta: {
-          title: '产品版本',
+          title: '固件版本',
           icon: 'sms-flash'
         }
       },
@@ -173,7 +173,7 @@ export const asyncRouterMap = [
         name: 'productVersionDetail',
         component: () => import('@/views/sms/productVersion/detail.vue'),
         meta: {
-          title: '产品版本详情',
+          title: '固件版本详情',
           icon: 'sms-flash'
         },
         hidden: true

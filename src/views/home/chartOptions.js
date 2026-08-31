@@ -7,12 +7,6 @@ const brandMutedColor = '#f4e5d8'
 const successColor = '#2e7d4f'
 
 const numberFormatter = new Intl.NumberFormat('zh-CN')
-const currencyFormatter = new Intl.NumberFormat('zh-CN', {
-  style: 'currency',
-  currency: 'CNY',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 2
-})
 
 function normalizeChartData(list, valueKey) {
   if (!Array.isArray(list)) return { dates: [], values: [] }
@@ -118,8 +112,8 @@ export function createRegistrationBarOption(list) {
   }
 }
 
-export function createOrderRevenueOption(list) {
-  const { dates, values } = normalizeChartData(list, 'orderAmount')
+export function createOrderCountOption(list) {
+  const { dates, values } = normalizeChartData(list, 'orderCount')
 
   return {
     animationDuration: 560,
@@ -134,16 +128,16 @@ export function createOrderRevenueOption(list) {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'line' },
-      valueFormatter: value => currencyFormatter.format(Number(value) || 0)
+      valueFormatter: value => `${numberFormatter.format(Number(value) || 0)} 笔`
     },
     xAxis: {
       ...createCategoryAxis(dates),
       boundaryGap: false
     },
-    yAxis: createValueAxis(value => `¥${numberFormatter.format(value)}`),
+    yAxis: createValueAxis(value => numberFormatter.format(value)),
     series: [
       {
-        name: '订单收益',
+        name: '订单数量',
         type: 'line',
         data: values,
         smooth: 0.35,

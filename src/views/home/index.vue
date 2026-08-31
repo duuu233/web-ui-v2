@@ -1,11 +1,11 @@
 <script setup name="home">
 import { computed, onMounted, reactive, ref, shallowRef } from 'vue'
-import { getStatisticsUser, getUserCount } from '@/api/home'
+import { getStatisticsOrder, getStatisticsUser, getUserCount } from '@/api/home'
 import { getCookie } from '@/utils/support'
 import avatar from '@/assets/images/user.png'
 import AnalyticsChartCard from './components/AnalyticsChartCard.vue'
 import {
-  createOrderRevenueOption,
+  createOrderCountOption,
   createRegistrationBarOption
 } from './chartOptions'
 
@@ -14,9 +14,9 @@ const statsLoading = shallowRef(false)
 const statisticsLoading = shallowRef(false)
 const statisticsQueryType = shallowRef(0)
 const statisticsList = ref([])
-const orderRevenueLoading = shallowRef(false)
-const orderRevenueQueryType = shallowRef(0)
-const orderRevenueList = ref([])
+const orderStatisticsLoading = shallowRef(false)
+const orderStatisticsQueryType = shallowRef(0)
+const orderStatisticsList = ref([])
 
 const stats = reactive({
   userCount: '-',
@@ -67,8 +67,8 @@ const cards = computed(() => [
 const registrationChartOption = computed(() =>
   createRegistrationBarOption(statisticsList.value)
 )
-const orderRevenueChartOption = computed(() =>
-  createOrderRevenueOption(orderRevenueList.value)
+const orderStatisticsChartOption = computed(() =>
+  createOrderCountOption(orderStatisticsList.value)
 )
 
 function formatCount(value) {
@@ -102,16 +102,22 @@ async function loadRegistrationStats(queryType = statisticsQueryType.value) {
   }
 }
 
-function loadOrderRevenueStats() {
-  // 预留给后续订单收益接口的数据模型：[{ queryDate, orderAmount }]。
-  // 接口契约明确前保持空态，避免在管理后台展示模拟收益数据。
-  orderRevenueList.value = []
+async function loadOrderStatistics(queryType = orderStatisticsQueryType.value) {
+  orderStatisticsLoading.value = true
+  try {
+    const res = await getStatisticsOrder({
+      queryType: Number(queryType)
+    })
+    orderStatisticsList.value = Array.isArray(res.retData) ? res.retData : []
+  } finally {
+    orderStatisticsLoading.value = false
+  }
 }
 
 onMounted(() => {
   loadStats()
   loadRegistrationStats()
-  loadOrderRevenueStats()
+  loadOrderStatistics()
 })
 </script>
 
@@ -156,19 +162,17 @@ onMounted(() => {
       />
 
       <AnalyticsChartCard
-        v-model:range="orderRevenueQueryType"
-        title="订单收益报表"
-        eyebrow="ORDER REVENUE"
-        description="按订单日期查看收益变化趋势"
-        :option="orderRevenueChartOption"
-        :has-data="orderRevenueList.length > 0"
-        :loading="orderRevenueLoading"
-        empty-description="收益统计接口待接入"
-        status-label="接口待接入"
-        status-type="warning"
-        aria-label="订单收益趋势图"
+        v-model:range="orderStatisticsQueryType"
+        title="订单统计"
+        eyebrow="ORDER VOLUME"
+        description="按订单日期查看订单数量变化趋势"
+        :option="orderStatisticsChartOption"
+        :has-data="orderStatisticsList.length > 0"
+        :loading="orderStatisticsLoading"
+        empty-description="暂无订单数据"
+        aria-label="订单数量趋势图"
         accent="success"
-        @range-change="loadOrderRevenueStats"
+        @range-change="loadOrderStatistics"
       />
     </section>
   </div>

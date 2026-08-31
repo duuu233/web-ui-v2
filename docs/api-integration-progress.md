@@ -2,7 +2,7 @@
 
 > Document type: integration status tracker
 > Status: Tracking
-> Last verified: 2026-08-28
+> Last verified: 2026-08-30
 > Sources: current Swagger contract, API modules, routes, views, and documented live read-only checks
 
 Swagger source: https://api.boltfox.cn/swagger-ui.html#/
@@ -22,25 +22,48 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Product | 管理后台-产品相关接口 | Completed | Product, product FAQ, and user product list now use `/Product/*`. |
 | Login | 管理后台-登录 | Completed | Login request and token handling now match `/Passport/adminLogin`. |
 | Permission | 管理后台-权限 | Completed | UMS permission pages now align with `/Jurisdiction/*`; unsupported area route removed. |
-| Common | 管理后台-通用相关接口 | Completed | Home stats include bound-device count and order amount; registration uses an ECharts column chart; config and upload use `/Common/*`; the order-revenue report frontend is ready but its backend contract is pending. |
+| Common | 管理后台-通用相关接口 | Completed | Home stats include bound-device count and order amount; registration and order-count trends use ECharts; config and upload use `/Common/*`. |
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, status, token-account editing, and account logs align with `/User/*`. |
-| Goods | 管理后台-商品相关接口 | Completed | Added goods list/add/edit/detail/status pages and `/Goods/*` API wrappers. |
-| Public image library | 管理后台-公共图库相关接口 | Completed | Added image and category list/add/edit/detail/status pages and `/ProductImg/*` API wrappers. |
+| Goods | 管理后台-商品相关接口 | Completed | Added goods list/add/edit/detail/status pages and `/Goods/*` API wrappers; list/add/edit support content `language` values `1`–`4`. |
+| Public image library | 管理后台-公共图库相关接口 | Completed | Added image and category list/add/edit/detail/status pages and `/ProductImg/*` API wrappers; list/add/edit support content `language` values `1`–`4`. |
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers. |
-| AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers. |
+| AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers; list search supports content `language` values `1`–`4`. |
 
 ## Pending Integration
 
-### 首页订单收益报表
+No pending PC-admin interface remains from the 2026-08-30 change list.
 
-Status: Frontend ready / Backend pending
-
-- The home page provides `近一周`, `近一个月`, and `近一年` selectors and a dedicated ECharts trend card.
-- No API wrapper is added before the backend path, parameters, units, and response contract are confirmed.
-- The reserved frontend view model is `{ queryDate, orderAmount }`. Until integration, the page displays an explicit pending-interface empty state instead of mock financial data.
+The provided `/Client/Order/getGoodsList` `currencySymbol` output belongs to a user-facing client contract. This repository has no `/Client/*` API wrapper, caller, or storefront page, so the field must be consumed by the corresponding client project rather than being attached to the admin goods UI.
 
 ## Completed Work
+
+### 订单统计与内容语种增量
+
+Status: Completed
+
+Implemented API integration and parameter handling:
+
+- `GET /Common/getStatisticsOrder` with `queryType` values `0`, `1`, and `2`; the response view model is `{ queryDate, orderCount }[]`.
+- Goods list search plus add/edit payloads use `language`.
+- AI configuration list search uses `language`.
+- Public-image and image-category list search plus add/edit payloads use `language`.
+
+Shared language contract:
+
+- `1=英语`, `2=简中`, `3=繁中`, `4=日文` through `contentLanguageOptions`.
+- The existing 0–6 `languageOptions` remains unchanged for interfaces with a different contract.
+
+Notes:
+
+- Swagger was rechecked on 2026-08-30. The real public-image and category list paths are `/ProductImg/getProductImgList` and `/ProductImg/getImgCategoryList`; `/AiConfig/*` in the provided change list was treated as a documentation typo.
+- Swagger detail outputs for public images and image categories do not currently declare `language`. Forms use an actual returned value when available and otherwise fall back to English.
+- `/Client/Order/getGoodsList` and `currencySymbol` are outside this admin repository's call graph; no unused client wrapper or misleading admin display was added.
+
+Verification:
+
+- `npm run build` passed after the source changes.
+- `git diff --check` passed apart from Git's line-ending conversion warnings.
 
 ### 首页统计与用户账户管理增量
 
@@ -395,6 +418,7 @@ Status: Completed
 Implemented API wrappers:
 
 - `GET /Common/getConfigDataList`
+- `GET /Common/getStatisticsOrder`
 - `GET /Common/getStatisticsUser`
 - `GET /Common/getUserCount`
 - `POST /Common/setConfigDataEdit`
@@ -423,8 +447,8 @@ Notes:
 
 - `FormData` POST requests now append `randomString`, `sign`, and `userToken` as multipart fields.
 - Upload components now submit backend `fileParam` form-data and continue to expose `{ name, url }[]` via `v-model`.
-- Home statistics now match Swagger fields `userCount`, `userBindProductCount`, `orderAmount`, `productCount`, and `productFaqCount`, with registration statistics loaded from `getStatisticsUser`.
-- Registration statistics are rendered as an ECharts column chart. The system-configuration page omits the platform device ID item from both the visible form and `setConfigDataEdit` payload.
+- Home statistics now match Swagger fields `userCount`, `userBindProductCount`, `orderAmount`, `productCount`, and `productFaqCount`, with registration statistics loaded from `getStatisticsUser` and order counts loaded from `getStatisticsOrder`.
+- Registration statistics are rendered as an ECharts column chart and order counts as an ECharts trend line. The system-configuration page omits the platform device ID item from both the visible form and `setConfigDataEdit` payload.
 - Removed unsupported area settings API/page and old unsupported TMS statistics wrappers.
 
 Verification:

@@ -2,7 +2,7 @@
 
 > 文档类型：当前项目上下文
 > 状态：Active
-> 最后核验：2026-08-30
+> 最后核验：2026-09-01
 > 适用范围：`web-ui-v2` 当前工作树
 > 事实来源：源码与 CodeGraph、`package.json`、环境配置、`docs/` 中的 Active 文档
 
@@ -18,6 +18,7 @@ Git 是办公室电脑、家庭电脑和远程 SSH 环境之间唯一共享的�
 - Vite 5，Vue Router 4（Hash 模式），Pinia。
 - Element Plus、vxe-table、Apache ECharts 6、SCSS、WangEditor。
 - Axios 请求层；Cookie 保存登录态；接口响应约定为 `{ retCode, retMsg, retData }`。
+- 统一请求层对超过 200ms 的接口等待显示 Element Plus 全屏 Loading，文案为“等待接口 Loading 中……”，并发请求全部结束后才关闭；单个请求可用 `showLoading: false` 关闭。
 - Node.js `>=18`。
 
 ```bash
@@ -85,11 +86,11 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 
 ## 6. 当前核心模块
 
-- 商品管理：商品列表、详情、新增、编辑和启禁用；列表可按内容语种筛选，新增/编辑提交 `language`。
+- 商品管理：商品列表、详情、新增、编辑和启禁用；单条商品同时维护简中、英语、繁中和日文名称与金额，列表不再按 `language` 筛选。
 - 首页统计：用户总数、绑定设备数、订单金额、产品数、常见问题数；注册趋势使用 ECharts 柱状图，订单统计使用 `/Common/getStatisticsOrder` 和 ECharts 趋势图，均支持近一周、近一个月、近一年。
 - 用户管理：用户列表、详情、基础资料编辑、状态、星币账户调整与账户操作日志。
-- 图库管理：公共图库图片的列表、详情、新增、编辑和启禁用；列表可按内容语种筛选，新增/编辑提交 `language`；新增/编辑原图时上传接口携带 `isUploadThumb=1`，并优先使用返回的 `urlThumb` 作为缩略图；适用产品/设备选择为非必填。
-- 图库分类：分类列表、详情、新增、编辑和启禁用；列表可按内容语种筛选，新增/编辑提交 `language`。
+- 图库管理：公共图库图片的列表、详情、新增、编辑和启禁用；单条图片同时维护简中、英语、繁中和日文标题与说明，列表不再按 `language` 筛选；新增/编辑原图时上传接口携带 `isUploadThumb=1`，并优先使用返回的 `urlThumb` 作为缩略图；适用产品/设备选择为非必填。
+- 图库分类：分类列表、详情、新增、编辑和启禁用；单条分类同时维护简中、英语、繁中和日文名称，列表不再按 `language` 筛选。
 - 订单管理：订单列表与详情。
 - AI 配置：配置列表、编辑和启禁用；列表可按内容语种筛选。
 - 基础配置：系统配置继续使用 `/Common/getConfigDataList` 与 `/Common/setConfigDataEdit`，平台设备 ID 不在表单中展示，也不进入保存负载。
@@ -105,7 +106,8 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 4. 列表页优先复用项目现有公共组件和 composable，不为单个页面复制一套分页、刷新或查询状态。
 5. 修改 `src/utils/request.js`、用户 Store、权限指令或路由会影响多数模块，必须先用 CodeGraph 查看调用与影响范围。
 6. CodeGraph 描述当前源码结构；Markdown 负责产品契约、操作方法、决策原因和历史。二者不能互相替代。
-7. 商品、AI 配置、公共图库和图库分类的内容语种统一复用 `contentLanguageOptions`：`1=英语`、`2=简中`、`3=繁中`、`4=日文`；不要与面向其他接口的 `languageOptions`（0–6）混用。
+7. 商品、公共图库和图库分类已经改为单条记录同时提交四语种字段，不再提交或筛选 `language`；AI 配置等仍声明 `language` 的接口继续按各自契约使用语种选项，不能混用不同取值范围。
+8. 全局接口 Loading 由 `src/utils/request.js` 统一维护并发计数；页面不得自行创建另一套全屏请求遮罩。只有明确需要非阻塞后台刷新时才在请求配置中传 `showLoading: false`。
 
 ## 8. 开发与维护流程
 
@@ -133,8 +135,8 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - 后台菜单与本地路由可能独立演进；新增页面后需要重新绑定角色权限并重新登录验证。
 - 请求签名和统一错误处理集中在请求层，修改的影响面很大。
 - Swagger、线上返回值和已有页面可能短期不一致，应在文档中标明核验日期与事实来源。
-- Swagger 的公共图库图片和图库分类详情出参尚未声明 `language`；前端会回填实际响应字段，缺失时编辑表单回落为英语，仍需后端确认详情契约。
 - `/Client/Order/getGoodsList` 的 `currencySymbol` 属于用户端契约，本管理后台仓库没有该接口的 wrapper、调用链或展示页面；应在对应用户端项目消费，不能误接到管理端商品列表。
+- 图库分类繁中字段按当前后端契约拼写为 `categoryNameeFan`（双 `e`）；前端不能自行改成 `categoryNameFan`。
 - 仓库同时保留 `yarn.lock` 与 `pnpm-lock.yaml`；主包管理器尚未形成明确的仓库规则，不应擅自重写锁文件。
 - 支付请求使用独立请求地址，修改通用接口环境变量时不能默认覆盖支付链路。
 

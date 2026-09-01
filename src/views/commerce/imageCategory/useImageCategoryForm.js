@@ -11,7 +11,9 @@ import { invalidateList } from '@/composables/useListRefresh'
 const defaultForm = () => ({
   categoryId: null,
   categoryName: '',
-  language: 1,
+  categoryNameEnglish: '',
+  categoryNameeFan: '',
+  categoryNameJapanese: '',
   verify: null
 })
 
@@ -37,12 +39,16 @@ export function useImageCategoryForm(mode) {
     return isReadOnly.value ? '图库分类详情' : '编辑图库分类'
   })
 
+  const createNameRules = label => [
+    { required: true, message: `请输入${label}`, trigger: 'blur' },
+    { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+  ]
+
   const rules = {
-    language: [{ required: true, message: '请选择语言', trigger: 'change' }],
-    categoryName: [
-      { required: true, message: '请输入分类名称', trigger: 'blur' },
-      { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-    ]
+    categoryName: createNameRules('简中分类名称'),
+    categoryNameEnglish: createNameRules('英文分类名称'),
+    categoryNameeFan: createNameRules('繁中分类名称'),
+    categoryNameJapanese: createNameRules('日文分类名称')
   }
 
   function resetForm() {
@@ -62,9 +68,7 @@ export function useImageCategoryForm(mode) {
       const response = await getImgCategoryDetail({ id })
       if (sequence !== requestSequence) return
       const detail = response.retData || {}
-      Object.assign(formData, defaultForm(), detail, {
-        language: Number(detail.language) || 1
-      })
+      Object.assign(formData, defaultForm(), detail)
     } catch (error) {
       // 请求拦截器统一反馈接口错误。
     } finally {
@@ -90,7 +94,9 @@ export function useImageCategoryForm(mode) {
     try {
       const submitData = {
         categoryName: formData.categoryName.trim(),
-        language: Number(formData.language)
+        categoryNameEnglish: formData.categoryNameEnglish.trim(),
+        categoryNameeFan: formData.categoryNameeFan.trim(),
+        categoryNameJapanese: formData.categoryNameJapanese.trim()
       }
       if (!isAdd.value) submitData.categoryId = Number(formData.categoryId)
 

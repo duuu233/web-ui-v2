@@ -1,9 +1,6 @@
 <script setup name="ImageCategoryForm">
 import PageHeader from '@/components/PageHeader/index.vue'
-import {
-  contentLanguageOptions,
-  getVerifyTagType
-} from '@/views/commerce/utils'
+import { getVerifyTagType } from '@/views/commerce/utils'
 import { useImageCategoryForm } from '../useImageCategoryForm'
 
 const props = defineProps({
@@ -26,6 +23,21 @@ const {
   submitForm,
   backToList
 } = useImageCategoryForm(props.mode)
+
+const localizedNameFields = [
+  { locale: '简中', field: 'categoryName', placeholder: '例如：节日海报' },
+  {
+    locale: '英语',
+    field: 'categoryNameEnglish',
+    placeholder: 'Enter the category name'
+  },
+  { locale: '繁中', field: 'categoryNameeFan', placeholder: '請輸入繁中分類名稱' },
+  {
+    locale: '日文',
+    field: 'categoryNameJapanese',
+    placeholder: '日本語のカテゴリ名を入力してください'
+  }
+]
 </script>
 
 <template>
@@ -43,7 +55,7 @@ const {
         <span class="category-intro__mark">LIBRARY TAXONOMY</span>
         <h2 class="category-intro__title">组织公共图库内容</h2>
         <p class="category-intro__description">
-          分类名称会用于图库内容归档与前端筛选，请保持简洁且含义明确。
+          四语种分类名称会用于图库内容归档与前端展示，请保持简洁且含义明确。
         </p>
       </div>
 
@@ -55,28 +67,17 @@ const {
         label-position="top"
         size="default"
       >
-        <el-form-item label="语言" prop="language">
-          <el-select
-            v-model="formData.language"
-            class="field-control"
-            :disabled="isReadOnly"
-            placeholder="请选择语言"
-          >
-            <el-option
-              v-for="item in contentLanguageOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="分类名称" prop="categoryName">
+        <el-form-item
+          v-for="item in localizedNameFields"
+          :key="item.field"
+          :label="`分类名称（${item.locale}）`"
+          :prop="item.field"
+        >
           <el-input
-            v-model="formData.categoryName"
+            v-model="formData[item.field]"
             :disabled="isReadOnly"
             maxlength="20"
-            placeholder="例如：节日海报"
+            :placeholder="item.placeholder"
             show-word-limit
           />
         </el-form-item>

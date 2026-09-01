@@ -1,11 +1,7 @@
 <script setup name="GoodsForm">
 import { computed } from 'vue'
 import PageHeader from '@/components/PageHeader/index.vue'
-import {
-  contentLanguageOptions,
-  formatAmount,
-  getVerifyTagType
-} from '@/views/commerce/utils'
+import { formatAmount, getVerifyTagType } from '@/views/commerce/utils'
 import { useGoodsForm } from '../useGoodsForm'
 
 const props = defineProps({
@@ -32,6 +28,33 @@ const {
 const totalTokenCount = computed(
   () => Number(formData.num || 0) + Number(formData.giveNum || 0)
 )
+
+const localizedGoodsFields = [
+  {
+    locale: '简中',
+    nameField: 'goodsName',
+    amountField: 'amount',
+    placeholder: '例如：30 元 / 3000 Token'
+  },
+  {
+    locale: '英语',
+    nameField: 'goodsNameEnglish',
+    amountField: 'amountEnglish',
+    placeholder: 'Enter the English product name'
+  },
+  {
+    locale: '繁中',
+    nameField: 'goodsNameFan',
+    amountField: 'amountFan',
+    placeholder: '請輸入繁中商品名稱'
+  },
+  {
+    locale: '日文',
+    nameField: 'goodsNameJapanese',
+    amountField: 'amountJapanese',
+    placeholder: '日本語の商品名を入力してください'
+  }
+]
 </script>
 
 <template>
@@ -57,49 +80,43 @@ const totalTokenCount = computed(
             <span class="section-index">01</span>
             <div>
               <h2 class="section-title">商品基础信息</h2>
-              <p class="section-description">配置售价、Token 发放量与列表排序。</p>
+              <p class="section-description">配置四语种商品名称、对应售价、Token 发放量与列表排序。</p>
             </div>
           </div>
 
           <div class="form-grid">
-            <el-form-item class="form-field form-field--wide" label="商品名称" prop="goodsName">
-              <el-input
-                v-model="formData.goodsName"
-                :disabled="isReadOnly"
-                maxlength="30"
-                placeholder="例如：30 元 / 3000 Token"
-                show-word-limit
-              />
-            </el-form-item>
-
-            <el-form-item class="form-field" label="语种" prop="language">
-              <el-select
-                v-model="formData.language"
-                class="form-select"
-                :disabled="isReadOnly"
-                placeholder="请选择语种"
+            <template v-for="item in localizedGoodsFields" :key="item.locale">
+              <el-form-item
+                class="form-field"
+                :label="`商品名称（${item.locale}）`"
+                :prop="item.nameField"
               >
-                <el-option
-                  v-for="item in contentLanguageOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                <el-input
+                  v-model="formData[item.nameField]"
+                  :disabled="isReadOnly"
+                  maxlength="30"
+                  :placeholder="item.placeholder"
+                  show-word-limit
                 />
-              </el-select>
-            </el-form-item>
+              </el-form-item>
 
-            <el-form-item class="form-field" label="商品金额" prop="amount">
-              <el-input-number
-                v-model="formData.amount"
-                class="number-input"
-                :disabled="isReadOnly"
-                :min="0.01"
-                :max="99999999"
-                :precision="2"
-                :step="0.01"
-                controls-position="right"
-              />
-            </el-form-item>
+              <el-form-item
+                class="form-field"
+                :label="`商品金额（${item.locale}）`"
+                :prop="item.amountField"
+              >
+                <el-input-number
+                  v-model="formData[item.amountField]"
+                  class="number-input"
+                  :disabled="isReadOnly"
+                  :min="0.01"
+                  :max="99999999"
+                  :precision="2"
+                  :step="0.01"
+                  controls-position="right"
+                />
+              </el-form-item>
+            </template>
 
             <el-form-item class="form-field" label="基础 Token 数量" prop="num">
               <el-input-number
@@ -260,7 +277,6 @@ const totalTokenCount = computed(
   grid-column: span 2;
 }
 
-.form-select,
 .number-input {
   width: 100%;
 }

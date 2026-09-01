@@ -1,10 +1,8 @@
 <script setup name="ProductImageFilters">
 import { computed } from 'vue'
 import SearchPanel from '@/components/SearchPanel/index.vue'
-import { contentLanguageOptions } from '@/views/commerce/utils'
 
 const keyword = defineModel('keyword', { type: String, default: '' })
-const language = defineModel('language', { type: Number, default: null })
 const verify = defineModel('verify', { type: Number, default: null })
 const dateRange = defineModel('dateRange', { type: Array, default: () => [] })
 
@@ -12,7 +10,6 @@ const emit = defineEmits(['search', 'reset'])
 
 const filterModel = computed(() => ({
   keyword: keyword.value,
-  language: language.value,
   verify: verify.value,
   dateRange: dateRange.value
 }))
@@ -38,22 +35,6 @@ const verifyOptions = [
         placeholder="图片标题"
         show-word-limit
       />
-    </el-form-item>
-
-    <el-form-item label="语言">
-      <el-select
-        v-model="language"
-        class="filter-select"
-        clearable
-        placeholder="全部语言"
-      >
-        <el-option
-          v-for="item in contentLanguageOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
     </el-form-item>
 
     <el-form-item label="状态">
@@ -91,10 +72,6 @@ const verifyOptions = [
 <style scoped>
 .filter-input {
   width: 210px;
-}
-
-.filter-select {
-  width: 150px;
 }
 
 .filter-select--compact {

@@ -8,6 +8,13 @@ defineProps({
 })
 
 const emit = defineEmits(['edit', 'detail', 'toggle-status'])
+
+const localizedColumns = [
+  { locale: '简中', field: 'categoryName' },
+  { locale: '英语', field: 'categoryNameEnglish' },
+  { locale: '繁中', field: 'categoryNameeFan' },
+  { locale: '日文', field: 'categoryNameJapanese' }
+]
 </script>
 
 <template>
@@ -23,7 +30,14 @@ const emit = defineEmits(['edit', 'detail', 'toggle-status'])
       max-height="560"
     >
       <vxe-column field="categoryId" title="分类 ID" width="100" align="center" />
-      <vxe-column field="categoryName" title="分类名称" min-width="240" />
+      <vxe-column
+        v-for="item in localizedColumns"
+        :key="item.field"
+        :field="item.field"
+        :title="`分类名称（${item.locale}）`"
+        min-width="190"
+        show-overflow
+      />
       <vxe-column title="状态" width="110" align="center">
         <template #default="{ row }">
           <el-tag :type="getVerifyTagType(row.verify)" effect="light" round>

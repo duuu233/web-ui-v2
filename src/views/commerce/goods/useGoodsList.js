@@ -7,7 +7,6 @@ const defaultListQuery = () => ({
   pageIndex: 1,
   pageSize: 10,
   keyword: '',
-  language: null,
   verify: null
 })
 

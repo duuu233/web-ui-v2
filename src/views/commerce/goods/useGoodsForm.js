@@ -13,8 +13,13 @@ import { invalidateList } from '@/composables/useListRefresh'
 const defaultForm = () => ({
   goodsId: null,
   goodsName: '',
-  language: 1,
+  goodsNameEnglish: '',
+  goodsNameFan: '',
+  goodsNameJapanese: '',
   amount: null,
+  amountEnglish: null,
+  amountFan: null,
+  amountJapanese: null,
   num: 1,
   giveNum: 0,
   grade: 0,
@@ -45,13 +50,24 @@ export function useGoodsForm(mode) {
     return isReadOnly.value ? '商品详情' : '编辑商品'
   })
 
+  const createNameRules = label => [
+    { required: true, message: `请输入${label}`, trigger: 'blur' },
+    { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+  ]
+
+  const createAmountRules = label => [
+    { required: true, message: `请输入${label}`, trigger: 'change' }
+  ]
+
   const rules = {
-    goodsName: [
-      { required: true, message: '请输入商品名称', trigger: 'blur' },
-      { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-    ],
-    language: [{ required: true, message: '请选择语种', trigger: 'change' }],
-    amount: [{ required: true, message: '请输入商品金额', trigger: 'change' }],
+    goodsName: createNameRules('简中商品名称'),
+    goodsNameEnglish: createNameRules('英文商品名称'),
+    goodsNameFan: createNameRules('繁中商品名称'),
+    goodsNameJapanese: createNameRules('日文商品名称'),
+    amount: createAmountRules('简中商品金额'),
+    amountEnglish: createAmountRules('英文商品金额'),
+    amountFan: createAmountRules('繁中商品金额'),
+    amountJapanese: createAmountRules('日文商品金额'),
     num: [{ required: true, message: '请输入发放数量', trigger: 'change' }],
     giveNum: [{ required: true, message: '请输入赠送数量', trigger: 'change' }],
     grade: [{ required: true, message: '请输入商品权重', trigger: 'change' }],
@@ -88,8 +104,13 @@ export function useGoodsForm(mode) {
   function buildSubmitData() {
     const submitData = {
       goodsName: formData.goodsName.trim(),
-      language: Number(formData.language),
+      goodsNameEnglish: formData.goodsNameEnglish.trim(),
+      goodsNameFan: formData.goodsNameFan.trim(),
+      goodsNameJapanese: formData.goodsNameJapanese.trim(),
       amount: Number(formData.amount),
+      amountEnglish: Number(formData.amountEnglish),
+      amountFan: Number(formData.amountFan),
+      amountJapanese: Number(formData.amountJapanese),
       num: Number(formData.num),
       giveNum: Number(formData.giveNum),
       grade: Number(formData.grade),

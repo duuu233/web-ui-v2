@@ -38,7 +38,6 @@ function handleDetail(row) {
   <div class="app-container">
     <ImageCategoryFilters
       v-model:keyword="listQuery.keyword"
-      v-model:language="listQuery.language"
       v-model:verify="listQuery.verify"
       v-model:date-range="dateRange"
       @search="handleSearchList"

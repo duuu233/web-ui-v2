@@ -2,7 +2,7 @@
 
 > Document type: integration status tracker
 > Status: Tracking
-> Last verified: 2026-08-30
+> Last verified: 2026-09-01
 > Sources: current Swagger contract, API modules, routes, views, and documented live read-only checks
 
 Swagger source: https://api.boltfox.cn/swagger-ui.html#/
@@ -25,8 +25,8 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Common | 管理后台-通用相关接口 | Completed | Home stats include bound-device count and order amount; registration and order-count trends use ECharts; config and upload use `/Common/*`. |
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, status, token-account editing, and account logs align with `/User/*`. |
-| Goods | 管理后台-商品相关接口 | Completed | Added goods list/add/edit/detail/status pages and `/Goods/*` API wrappers; list/add/edit support content `language` values `1`–`4`. |
-| Public image library | 管理后台-公共图库相关接口 | Completed | Added image and category list/add/edit/detail/status pages and `/ProductImg/*` API wrappers; list/add/edit support content `language` values `1`–`4`. |
+| Goods | 管理后台-商品相关接口 | Completed | Goods list/add/edit remove `language`; one record now carries the base, English, Traditional Chinese, and Japanese names and amounts. |
+| Public image library | 管理后台-公共图库相关接口 | Completed | Public-image and image-category list/add/edit remove `language`; one record now carries all four language variants through `/ProductImg/*`. |
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers. |
 | AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers; list search supports content `language` values `1`–`4`. |
 
@@ -38,6 +38,28 @@ The provided `/Client/Order/getGoodsList` `currencySymbol` output belongs to a u
 
 ## Completed Work
 
+### 商品与公共图库四语种字段契约
+
+Status: Completed
+
+Implemented contract changes:
+
+- Goods list/add/edit no longer submit `language`; add/edit submit base `goodsName`/`amount` plus `goodsNameEnglish`, `goodsNameFan`, `goodsNameJapanese`, `amountEnglish`, `amountFan`, and `amountJapanese`, while the list renders all four variants.
+- Public-image list/add/edit no longer submit `language`; add/edit submit base `title`/`content` plus `titleEnglish`, `titleFan`, `titleJapanese`, `contentEnglish`, `contentFan`, and `contentJapanese`, while the list renders all four variants.
+- Image-category list/add/edit no longer submit `language`; add/edit submit base `categoryName` plus `categoryNameEnglish`, `categoryNameeFan`, and `categoryNameJapanese`, while the list renders all four variants. The double `e` in `categoryNameeFan` intentionally follows the supplied backend contract.
+- `/Client/Order/getGoodsList` adds `currencySymbol`, but this repository has no client API caller and therefore records the boundary without adding unused admin code.
+
+Path decision:
+
+- The supplied `/ZoneAdmin/AiConfig/getProductImgList` and `/ZoneAdmin/AiConfig/getImgCategoryList` paths are retained as documentation typos. Existing current contracts, wrappers, permissions, and pages use `/ZoneAdmin/ProductImg/getProductImgList` and `/ZoneAdmin/ProductImg/getImgCategoryList`.
+
+Verification:
+
+- `node --check` passed for the six changed goods/public-image/image-category composables.
+- `npm run build` passed on 2026-09-01.
+- `git diff --check` passed apart from Git line-ending conversion warnings.
+- `codegraph sync .` and `codegraph status .` completed with the index up to date.
+
 ### 订单统计与内容语种增量
 
 Status: Completed
@@ -45,11 +67,11 @@ Status: Completed
 Implemented API integration and parameter handling:
 
 - `GET /Common/getStatisticsOrder` with `queryType` values `0`, `1`, and `2`; the response view model is `{ queryDate, orderCount }[]`.
-- Goods list search plus add/edit payloads use `language`.
+- Goods list search plus add/edit payloads used `language` at that historical checkpoint and were superseded by the 2026-09-01 four-language-field contract above.
 - AI configuration list search uses `language`.
-- Public-image and image-category list search plus add/edit payloads use `language`.
+- Public-image and image-category list search plus add/edit payloads used `language` at that historical checkpoint and were superseded by the 2026-09-01 four-language-field contract above.
 
-Shared language contract:
+Shared language contract at that historical checkpoint (goods/gallery portions superseded above):
 
 - `1=英语`, `2=简中`, `3=繁中`, `4=日文` through `contentLanguageOptions`.
 - The existing 0–6 `languageOptions` remains unchanged for interfaces with a different contract.
@@ -57,7 +79,7 @@ Shared language contract:
 Notes:
 
 - Swagger was rechecked on 2026-08-30. The real public-image and category list paths are `/ProductImg/getProductImgList` and `/ProductImg/getImgCategoryList`; `/AiConfig/*` in the provided change list was treated as a documentation typo.
-- Swagger detail outputs for public images and image categories do not currently declare `language`. Forms use an actual returned value when available and otherwise fall back to English.
+- At that checkpoint, Swagger detail outputs for public images and image categories did not declare `language`; the 2026-09-01 contract removes the field from the corresponding forms.
 - `/Client/Order/getGoodsList` and `currencySymbol` are outside this admin repository's call graph; no unused client wrapper or misleading admin display was added.
 
 Verification:

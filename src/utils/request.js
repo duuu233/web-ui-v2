@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import md5 from 'js-md5'
 import { getToken, removeToken } from '@/utils/auth'
 
@@ -8,6 +8,48 @@ const apiOrigin = import.meta.env.VITE_APP_API_ORIGIN || ''
 const apiBaseURL = import.meta.env.DEV
   ? apiPrefix
   : `${apiOrigin.replace(/\/$/, '')}${apiPrefix}`
+const globalLoadingDelay = 200
+
+let pendingLoadingRequests = 0
+let globalLoadingTimer = null
+let globalLoadingInstance = null
+
+function openGlobalLoading() {
+  if (pendingLoadingRequests === 0 || globalLoadingInstance) return
+  globalLoadingInstance = ElLoading.service({
+    lock: true,
+    fullscreen: true,
+    text: '等待接口 Loading 中……',
+    background: 'rgba(15, 23, 42, 0.42)'
+  })
+}
+
+function startGlobalLoading(config) {
+  if (config.showLoading === false) return
+  config.__globalLoadingTracked = true
+  pendingLoadingRequests += 1
+
+  if (!globalLoadingTimer && !globalLoadingInstance) {
+    globalLoadingTimer = window.setTimeout(() => {
+      globalLoadingTimer = null
+      openGlobalLoading()
+    }, globalLoadingDelay)
+  }
+}
+
+function stopGlobalLoading(config) {
+  if (!config?.__globalLoadingTracked) return
+  config.__globalLoadingTracked = false
+  pendingLoadingRequests = Math.max(0, pendingLoadingRequests - 1)
+  if (pendingLoadingRequests > 0) return
+
+  if (globalLoadingTimer) {
+    window.clearTimeout(globalLoadingTimer)
+    globalLoadingTimer = null
+  }
+  globalLoadingInstance?.close()
+  globalLoadingInstance = null
+}
 
 function appendFormDataIfMissing(formData, key, value) {
   if (value === null || value === undefined || value === '') return
@@ -93,12 +135,15 @@ service.interceptors.request.use(
         }
       }
 
+      startGlobalLoading(config)
       return config
     } catch (error) {
       console.log('error', error)
+      return Promise.reject(error)
     }
   },
   (error) => {
+    stopGlobalLoading(error.config)
     console.log(error) // for debug
     return Promise.reject(error)
   }
@@ -107,6 +152,7 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
   (response) => {
+    stopGlobalLoading(response.config)
     // retCode 为非 200 时抛错
     const res = response.data
 
@@ -136,6 +182,7 @@ service.interceptors.response.use(
     }
   },
   (error) => {
+    stopGlobalLoading(error.config)
     console.log('err' + error) // for debug
     ElMessage({
       message: error.message,

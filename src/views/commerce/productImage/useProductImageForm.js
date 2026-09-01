@@ -13,8 +13,13 @@ import { invalidateList } from '@/composables/useListRefresh'
 const defaultForm = () => ({
   productImgId: null,
   title: '',
+  titleEnglish: '',
+  titleFan: '',
+  titleJapanese: '',
   content: '',
-  language: 1,
+  contentEnglish: '',
+  contentFan: '',
+  contentJapanese: '',
   imageFiles: [],
   thumbnailFiles: [],
   productIdList: [],
@@ -63,16 +68,25 @@ export function useProductImageForm(mode) {
     return isReadOnly.value ? '图库图片详情' : '编辑图库图片'
   })
 
+  const createTitleRules = label => [
+    { required: true, message: `请输入${label}`, trigger: 'blur' },
+    { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+  ]
+
+  const createContentRules = label => [
+    { required: true, message: `请输入${label}`, trigger: 'blur' },
+    { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: 'blur' }
+  ]
+
   const rules = {
-    language: [{ required: true, message: '请选择语言', trigger: 'change' }],
-    title: [
-      { required: true, message: '请输入图片标题', trigger: 'blur' },
-      { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-    ],
-    content: [
-      { required: true, message: '请输入图片说明', trigger: 'blur' },
-      { min: 1, max: 500, message: '长度在 1 到 500 个字符', trigger: 'blur' }
-    ],
+    title: createTitleRules('简中图片标题'),
+    titleEnglish: createTitleRules('英文图片标题'),
+    titleFan: createTitleRules('繁中图片标题'),
+    titleJapanese: createTitleRules('日文图片标题'),
+    content: createContentRules('简中图片说明'),
+    contentEnglish: createContentRules('英文图片说明'),
+    contentFan: createContentRules('繁中图片说明'),
+    contentJapanese: createContentRules('日文图片说明'),
     imageFiles: [
       {
         required: true,
@@ -100,7 +114,6 @@ export function useProductImageForm(mode) {
 
   function applyDetail(detail) {
     Object.assign(formData, defaultForm(), detail, {
-      language: Number(detail.language) || 1,
       imageFiles: fileFromUrl(detail.img, detail.title || '图库图片'),
       thumbnailFiles: fileFromUrl(detail.imgThumb, '图片缩略图'),
       productIdList: normalizeIdList(detail.productIdList, detail.productIds),
@@ -147,8 +160,13 @@ export function useProductImageForm(mode) {
     const imgThumb = formData.thumbnailFiles[0]?.url || imageFile?.urlThumb || img
     const submitData = {
       title: formData.title.trim(),
+      titleEnglish: formData.titleEnglish.trim(),
+      titleFan: formData.titleFan.trim(),
+      titleJapanese: formData.titleJapanese.trim(),
       content: formData.content.trim(),
-      language: Number(formData.language),
+      contentEnglish: formData.contentEnglish.trim(),
+      contentFan: formData.contentFan.trim(),
+      contentJapanese: formData.contentJapanese.trim(),
       img,
       imgThumb,
       productIdList: normalizeIdList(formData.productIdList),

@@ -2,7 +2,7 @@
 
 > 文档类型：当前架构说明
 > 状态：Active
-> 最后核验：2026-08-28
+> 最后核验：2026-09-01
 > 事实来源：当前目录、源码、路由配置与 CodeGraph
 
 本项目是 Vue 3 + Vite 后台管理系统。结构约定是：框架配置放在项目根目录，可复用 UI 放在 `src/components`，可复用组合式逻辑放在 `src/composables`，业务页面按模块放在 `src/views`。
@@ -30,6 +30,13 @@
 - 开发环境 axios 使用 `VITE_APP_API_PREFIX`，再由 Vite 代理到 `VITE_APP_API_ORIGIN`。
 - 生产环境 axios 会拼接 `VITE_APP_API_ORIGIN + VITE_APP_API_PREFIX`。
 - `VITE_APP_PROXY_TARGET` 是可选项；只有开发代理目标和 `VITE_APP_API_ORIGIN` 不一致时才需要配置。
+
+统一请求等待反馈：
+
+- `src/utils/request.js` 统一统计 Axios 并发请求；请求超过 200ms 时显示 Element Plus 全屏 Loading，文案为“等待接口 Loading 中……”。
+- 成功响应、业务错误、网络错误和超时都会减少计数；只有所有参与统计的请求结束后才关闭 Loading。
+- 默认所有 `src/api` 请求都参与统计。明确需要非阻塞后台刷新时，可在请求配置中传 `showLoading: false`，例如 `request({ url, method: 'get', showLoading: false })`。
+- 页面可以保留表格或表单自己的局部 `v-loading` 来表达组件状态，但不要再创建另一套全屏接口 Loading。
 
 ## src 目录
 

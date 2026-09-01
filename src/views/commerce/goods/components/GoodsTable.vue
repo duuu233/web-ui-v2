@@ -11,6 +11,13 @@ defineProps({
 })
 
 const emit = defineEmits(['edit', 'detail', 'toggle-status'])
+
+const localizedColumns = [
+  { locale: '简中', nameField: 'goodsName', amountField: 'amount' },
+  { locale: '英语', nameField: 'goodsNameEnglish', amountField: 'amountEnglish' },
+  { locale: '繁中', nameField: 'goodsNameFan', amountField: 'amountFan' },
+  { locale: '日文', nameField: 'goodsNameJapanese', amountField: 'amountJapanese' }
+]
 </script>
 
 <template>
@@ -27,15 +34,21 @@ const emit = defineEmits(['edit', 'detail', 'toggle-status'])
     >
       <vxe-column field="goodsId" title="商品 ID" width="90" align="center" />
       <vxe-column
-        field="goodsName"
-        title="商品名称"
-        min-width="190"
+        v-for="item in localizedColumns"
+        :key="item.locale"
+        :title="`${item.locale}商品`"
+        min-width="210"
         align="left"
-        show-overflow
-      />
-      <vxe-column title="商品金额" width="110" align="right">
+      >
         <template #default="{ row }">
-          <span class="amount-text">{{ formatAmount(row.amount) }}</span>
+          <div class="localized-goods">
+            <span class="localized-goods__name">
+              {{ row[item.nameField] || '-' }}
+            </span>
+            <span class="localized-goods__amount">
+              金额 {{ formatAmount(row[item.amountField]) }}
+            </span>
+          </div>
         </template>
       </vxe-column>
       <vxe-column field="num" title="基础数量" width="95" align="center" />
@@ -106,9 +119,24 @@ const emit = defineEmits(['edit', 'detail', 'toggle-status'])
 </template>
 
 <style scoped>
-.amount-text {
+.localized-goods {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.localized-goods__name {
+  overflow: hidden;
   color: var(--app-ink);
   font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.localized-goods__amount {
+  color: var(--app-text);
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 

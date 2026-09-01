@@ -8,6 +8,13 @@ defineProps({
 })
 
 const emit = defineEmits(['edit', 'detail', 'toggle-status'])
+
+const localizedColumns = [
+  { locale: '简中', titleField: 'title', contentField: 'content' },
+  { locale: '英语', titleField: 'titleEnglish', contentField: 'contentEnglish' },
+  { locale: '繁中', titleField: 'titleFan', contentField: 'contentFan' },
+  { locale: '日文', titleField: 'titleJapanese', contentField: 'contentJapanese' }
+]
 </script>
 
 <template>
@@ -41,7 +48,24 @@ const emit = defineEmits(['edit', 'detail', 'toggle-status'])
           <span v-else>-</span>
         </template>
       </vxe-column>
-      <vxe-column field="title" title="图片标题" min-width="170" show-overflow />
+      <vxe-column
+        v-for="item in localizedColumns"
+        :key="item.locale"
+        :title="`${item.locale}内容`"
+        min-width="220"
+        align="left"
+      >
+        <template #default="{ row }">
+          <div class="localized-content">
+            <span class="localized-content__title">
+              {{ row[item.titleField] || '-' }}
+            </span>
+            <span class="localized-content__description">
+              {{ row[item.contentField] || '-' }}
+            </span>
+          </div>
+        </template>
+      </vxe-column>
       <vxe-column
         field="categoryNames"
         title="图库分类"
@@ -54,7 +78,6 @@ const emit = defineEmits(['edit', 'detail', 'toggle-status'])
         min-width="170"
         show-overflow
       />
-      <vxe-column field="content" title="图片说明" min-width="220" show-overflow />
       <vxe-column title="状态" width="90" align="center">
         <template #default="{ row }">
           <el-tag :type="getVerifyTagType(row.verify)" effect="light" round>
@@ -125,6 +148,30 @@ const emit = defineEmits(['edit', 'detail', 'toggle-status'])
   justify-content: center;
   color: var(--app-muted);
   font-size: 11px;
+}
+
+.localized-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.localized-content__title,
+.localized-content__description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.localized-content__title {
+  color: var(--app-ink);
+  font-weight: 650;
+}
+
+.localized-content__description {
+  color: var(--app-text);
+  font-size: 12px;
 }
 
 .row-actions {

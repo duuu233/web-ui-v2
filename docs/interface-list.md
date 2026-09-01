@@ -2,7 +2,7 @@
 
 > Document type: API contract checklist
 > Status: Active
-> Last verified: 2026-08-31
+> Last verified: 2026-09-01
 > Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
 
 Source:
@@ -14,6 +14,7 @@ Source:
 - Home statistics and user account Swagger contracts plus live read-only samples rechecked on 2026-08-13.
 - Home report presentation and configuration-form behavior rechecked against the current frontend on 2026-08-28; no new backend contract was claimed.
 - List `language` filter values were clarified by the project owner on 2026-08-31.
+- Goods, public-image, and image-category multilingual contracts were replaced by the project owner on 2026-09-01; one record now carries all four language variants.
 
 Comparison result:
 
@@ -26,10 +27,15 @@ Backend prefix:
 - Runtime API prefix is `/ZoneAdmin`.
 - Code API wrappers omit this prefix because `VITE_APP_API_PREFIX` supplies it through `src/utils/request.js`.
 
-List language filter contract:
+Remaining list language filter contract:
 
-- Every list filter that submits `language` uses a frontend-fixed option set: `0=英语`, `1=英语`, `2=简中`, `3=繁中`, and `4=日文`.
+- List filters whose current contracts still declare `language` use the frontend-fixed option set: `0=英语`, `1=英语`, `2=简中`, `3=繁中`, and `4=日文`.
 - The value `0` is a valid filter value and must not be treated as an empty selection.
+- Goods, public-image, and image-category list/add/edit interfaces no longer submit `language`.
+
+Client boundary:
+
+- `GET /Client/Order/getGoodsList` adds output field `currencySymbol`. This is a user-facing client contract and has no wrapper or caller in this PC-admin repository.
 
 ## PC Admin Backend
 
@@ -53,9 +59,9 @@ List language filter contract:
 | Device version | Device version settings | Edit version | `POST /ZoneAdmin/ProductVersion/editProductVersion` | Done. |
 | Device version | Device version settings | Enable/disable version | `POST /ZoneAdmin/ProductVersion/setProductVersionVerify` | Done. |
 | Help management | Help content list | Upload/edit/delete by device dimension | Original interface set: `GET /ZoneAdmin/Product/getProductFaqList`, `GET /ZoneAdmin/Product/getProductFaqDetail`, `POST /ZoneAdmin/Product/addProductFaq`, `POST /ZoneAdmin/Product/editProductFaq`, `POST /ZoneAdmin/Product/setProductFaqVerify` | Done. |
-| Commerce | Goods management | Goods list, detail, add, edit, enable/disable | `GET /ZoneAdmin/Goods/getGoodsList`, `GET /ZoneAdmin/Goods/getGoodsDetail`, `POST /ZoneAdmin/Goods/addGoods`, `POST /ZoneAdmin/Goods/editGoods`, `POST /ZoneAdmin/Goods/setGoodsVerify` | Done. Routes: `goodsList`, `goodsListAdd`, `goodsListEdit`, `goodsListDetail`; list search and add/edit use content `language` values `1`–`4`. |
-| Product management | Public image library | Image list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getProductImgList`, `GET /ZoneAdmin/ProductImg/getProductImgDetail`, `POST /ZoneAdmin/ProductImg/addProductImg`, `POST /ZoneAdmin/ProductImg/editProductImg`, `POST /ZoneAdmin/ProductImg/setProductImgVerify` | Done. Routes: `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`; list search and add/edit use content `language` values `1`–`4`; the applicable-product/device selection is optional in add/edit and submits an empty `productIdList` when omitted. |
-| Product management | Image categories | Category list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getImgCategoryList`, `GET /ZoneAdmin/ProductImg/getImgCategoryDetail`, `POST /ZoneAdmin/ProductImg/addImgCategory`, `POST /ZoneAdmin/ProductImg/editImgCategory`, `POST /ZoneAdmin/ProductImg/setImgCategoryVerify` | Done. Routes: `imageCategoryList`, `imageCategoryAdd`, `imageCategoryEdit`, `imageCategoryDetail`; list search and add/edit use content `language` values `1`–`4`. |
+| Commerce | Goods management | Goods list, detail, add, edit, enable/disable | `GET /ZoneAdmin/Goods/getGoodsList`, `GET /ZoneAdmin/Goods/getGoodsDetail`, `POST /ZoneAdmin/Goods/addGoods`, `POST /ZoneAdmin/Goods/editGoods`, `POST /ZoneAdmin/Goods/setGoodsVerify` | Done. Routes: `goodsList`, `goodsListAdd`, `goodsListEdit`, `goodsListDetail`. List/add/edit remove `language`; one record carries base `goodsName`/`amount` plus `goodsNameEnglish`, `goodsNameFan`, `goodsNameJapanese`, `amountEnglish`, `amountFan`, and `amountJapanese`, and the list exposes all variants. |
+| Product management | Public image library | Image list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getProductImgList`, `GET /ZoneAdmin/ProductImg/getProductImgDetail`, `POST /ZoneAdmin/ProductImg/addProductImg`, `POST /ZoneAdmin/ProductImg/editProductImg`, `POST /ZoneAdmin/ProductImg/setProductImgVerify` | Done. Routes: `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`. List/add/edit remove `language`; one record carries base `title`/`content` plus the `English`, `Fan`, and `Japanese` variants, and the list exposes all variants. The applicable-product/device selection remains optional and submits an empty `productIdList` when omitted. The supplied `/AiConfig/getProductImgList` list path is treated as a documentation typo because the current module and backend contract use `/ProductImg/getProductImgList`. |
+| Product management | Image categories | Category list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getImgCategoryList`, `GET /ZoneAdmin/ProductImg/getImgCategoryDetail`, `POST /ZoneAdmin/ProductImg/addImgCategory`, `POST /ZoneAdmin/ProductImg/editImgCategory`, `POST /ZoneAdmin/ProductImg/setImgCategoryVerify` | Done. Routes: `imageCategoryList`, `imageCategoryAdd`, `imageCategoryEdit`, `imageCategoryDetail`. List/add/edit remove `language`; one record carries base `categoryName` plus `categoryNameEnglish`, contract-spelled `categoryNameeFan`, and `categoryNameJapanese`, and the list exposes all variants. The supplied `/AiConfig/getImgCategoryList` path is treated as a documentation typo because the current module and backend contract use `/ProductImg/getImgCategoryList`. |
 | Commerce | Order management | Order list and detail | `GET /ZoneAdmin/Order/getOrderList`, `GET /ZoneAdmin/Order/getOrderDetail` | Done. Routes: `orderList`, `orderListDetail`. |
 | AI configuration | AI cost configuration | List, edit, enable/disable | `GET /ZoneAdmin/AiConfig/getAiConfigList`, `POST /ZoneAdmin/AiConfig/editAiConfig`, `POST /ZoneAdmin/AiConfig/setAiConfigVerify` | Done. Route: `aiConfigList`; list search supports content `language` values `1`–`4`; editing uses a list-row dialog because Swagger has no detail endpoint. |
 | Basic configuration | System configuration | View and edit backend configuration data | `GET /ZoneAdmin/Common/getConfigDataList`, `POST /ZoneAdmin/Common/setConfigDataEdit` | Done. The platform device ID item is intentionally omitted from the form and from the save payload; other editable configuration items retain the existing behavior. |

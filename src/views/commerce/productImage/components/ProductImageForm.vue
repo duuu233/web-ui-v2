@@ -1,10 +1,7 @@
 <script setup name="ProductImageForm">
 import PageHeader from '@/components/PageHeader/index.vue'
 import MultiUpload from '@/components/Upload/multiUpload.vue'
-import {
-  contentLanguageOptions,
-  getVerifyTagType
-} from '@/views/commerce/utils'
+import { getVerifyTagType } from '@/views/commerce/utils'
 import { useProductImageForm } from '../useProductImageForm'
 
 const props = defineProps({
@@ -43,6 +40,13 @@ function handleOriginalImageUpdate(files) {
     ? [{ name: `${imageFile.name || '图库图片'}（缩略图）`, url: imageFile.urlThumb }]
     : []
 }
+
+const localizedContentFields = [
+  { locale: '简中', titleField: 'title', contentField: 'content' },
+  { locale: '英语', titleField: 'titleEnglish', contentField: 'contentEnglish' },
+  { locale: '繁中', titleField: 'titleFan', contentField: 'contentFan' },
+  { locale: '日文', titleField: 'titleJapanese', contentField: 'contentJapanese' }
+]
 </script>
 
 <template>
@@ -102,53 +106,48 @@ function handleOriginalImageUpdate(files) {
             <span class="section-index">02</span>
             <div>
               <h2 class="section-title">内容信息</h2>
-              <p class="section-description">标题用于检索，说明用于描述图片内容。</p>
+              <p class="section-description">同时维护简中、英语、繁中和日文标题与说明。</p>
             </div>
           </div>
 
-          <div class="form-grid">
-            <el-form-item class="form-field" label="语言" prop="language">
-              <el-select
-                v-model="formData.language"
-                class="field-control"
-                :disabled="isReadOnly"
-                placeholder="请选择语言"
-              >
-                <el-option
-                  v-for="item in contentLanguageOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-
-            <el-form-item class="form-field" label="图片标题" prop="title">
-              <el-input
-                v-model="formData.title"
-                :disabled="isReadOnly"
-                maxlength="30"
-                placeholder="请输入图片标题"
-                show-word-limit
-              />
-            </el-form-item>
-
-            <el-form-item
-              class="form-field form-field--wide"
-              label="图片说明"
-              prop="content"
+          <div class="localized-content-grid">
+            <div
+              v-for="item in localizedContentFields"
+              :key="item.locale"
+              class="localized-content-card"
             >
-              <el-input
-                v-model="formData.content"
-                :disabled="isReadOnly"
-                type="textarea"
-                :rows="5"
-                maxlength="500"
-                placeholder="请输入图片内容说明"
-                resize="vertical"
-                show-word-limit
-              />
-            </el-form-item>
+              <span class="localized-content-card__locale">{{ item.locale }}</span>
+              <el-form-item
+                class="form-field"
+                :label="`图片标题（${item.locale}）`"
+                :prop="item.titleField"
+              >
+                <el-input
+                  v-model="formData[item.titleField]"
+                  :disabled="isReadOnly"
+                  maxlength="30"
+                  :placeholder="`请输入${item.locale}图片标题`"
+                  show-word-limit
+                />
+              </el-form-item>
+
+              <el-form-item
+                class="form-field"
+                :label="`图片说明（${item.locale}）`"
+                :prop="item.contentField"
+              >
+                <el-input
+                  v-model="formData[item.contentField]"
+                  :disabled="isReadOnly"
+                  type="textarea"
+                  :rows="4"
+                  maxlength="500"
+                  :placeholder="`请输入${item.locale}图片内容说明`"
+                  resize="vertical"
+                  show-word-limit
+                />
+              </el-form-item>
+            </div>
           </div>
         </section>
 
@@ -282,6 +281,34 @@ function handleOriginalImageUpdate(files) {
   max-width: 920px;
 }
 
+.localized-content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 920px;
+}
+
+.localized-content-card {
+  position: relative;
+  padding: 22px 20px 4px;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  background: var(--app-surface-muted);
+}
+
+.localized-content-card__locale {
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  padding: 2px 8px;
+  border: 1px solid var(--brand-200);
+  border-radius: 999px;
+  background: var(--app-surface);
+  color: var(--brand-600);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .upload-field {
   min-height: 154px;
 }
@@ -305,7 +332,8 @@ function handleOriginalImageUpdate(files) {
 
 @media (max-width: 760px) {
   .upload-grid,
-  .form-grid {
+  .form-grid,
+  .localized-content-grid {
     grid-template-columns: 1fr;
   }
 

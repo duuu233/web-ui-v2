@@ -68,13 +68,7 @@ const localizedGoodsFields = [
     </PageHeader>
 
     <el-card v-loading="loading" class="goods-form-card" shadow="never">
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="rules"
-        label-position="top"
-        size="default"
-      >
+      <el-form ref="formRef" :model="formData" :rules="rules" label-position="top" size="default">
         <section class="form-section">
           <div class="section-heading">
             <span class="section-index">01</span>
@@ -86,83 +80,41 @@ const localizedGoodsFields = [
 
           <div class="form-grid">
             <template v-for="item in localizedGoodsFields" :key="item.locale">
-              <el-form-item
-                class="form-field"
-                :label="`商品名称（${item.locale}）`"
-                :prop="item.nameField"
-              >
-                <el-input
-                  v-model="formData[item.nameField]"
-                  :disabled="isReadOnly"
-                  maxlength="30"
-                  :placeholder="item.placeholder"
-                  show-word-limit
-                />
+              <el-form-item class="form-field" :label="`商品名称（${item.locale}）`" :prop="item.nameField">
+                <el-input v-model="formData[item.nameField]" :disabled="isReadOnly" maxlength="30"
+                  :placeholder="item.placeholder" show-word-limit />
               </el-form-item>
 
-              <el-form-item
-                class="form-field"
-                :label="`商品金额（${item.locale}）`"
-                :prop="item.amountField"
-              >
-                <el-input-number
-                  v-model="formData[item.amountField]"
-                  class="number-input"
-                  :disabled="isReadOnly"
-                  :min="0.01"
-                  :max="99999999"
-                  :precision="2"
-                  :step="0.01"
-                  controls-position="right"
-                />
+              <el-form-item class="form-field" :label="`商品金额（${item.locale}）`" :prop="item.amountField">
+                <el-input-number v-model="formData[item.amountField]" class="number-input" :disabled="isReadOnly"
+                  :min="0.01" :max="99999999" :precision="2" :step="0.01" controls-position="right" />
               </el-form-item>
             </template>
 
             <el-form-item class="form-field" label="基础 Token 数量" prop="num">
-              <el-input-number
-                v-model="formData.num"
-                class="number-input"
-                :disabled="isReadOnly"
-                :min="1"
-                :max="2147483647"
-                :precision="0"
-                controls-position="right"
-              />
+              <el-input-number v-model="formData.num" class="number-input" :disabled="isReadOnly" :min="1"
+                :max="2147483647" :precision="0" controls-position="right" />
             </el-form-item>
 
             <el-form-item class="form-field" label="赠送 Token 数量" prop="giveNum">
-              <el-input-number
-                v-model="formData.giveNum"
-                class="number-input"
-                :disabled="isReadOnly"
-                :min="0"
-                :max="2147483647"
-                :precision="0"
-                controls-position="right"
-              />
+              <el-input-number v-model="formData.giveNum" class="number-input" :disabled="isReadOnly" :min="0"
+                :max="2147483647" :precision="0" controls-position="right" />
             </el-form-item>
 
             <el-form-item class="form-field" label="商品权重" prop="grade">
-              <el-input-number
-                v-model="formData.grade"
-                class="number-input"
-                :disabled="isReadOnly"
-                :min="0"
-                :max="2147483647"
-                :precision="0"
-                controls-position="right"
-              />
+              <el-input-number v-model="formData.grade" class="number-input" :disabled="isReadOnly" :min="0"
+                :max="2147483647" :precision="0" controls-position="right" />
             </el-form-item>
           </div>
 
-          <div class="token-summary">
+          <!-- <div class="token-summary">
             <span class="token-summary__label">单次购买预计发放</span>
             <strong class="token-summary__value">{{ totalTokenCount }}</strong>
             <span class="token-summary__unit">Token</span>
             <span v-if="!isAdd" class="token-summary__meta">
               接口单价：{{ formatAmount(formData.unitPrice) }}
             </span>
-          </div>
+          </div> -->
         </section>
 
         <section class="form-section form-section--platform">
@@ -176,33 +128,20 @@ const localizedGoodsFields = [
 
           <div class="form-grid form-grid--platform">
             <el-form-item class="form-field" label="微信产品 ID" prop="wxProductId">
-              <el-input
-                v-model="formData.wxProductId"
-                :disabled="isReadOnly"
-                maxlength="100"
-                placeholder="请输入微信平台产品 ID"
-              />
+              <el-input v-model="formData.wxProductId" :disabled="isReadOnly" maxlength="100"
+                placeholder="请输入微信平台产品 ID" />
             </el-form-item>
 
             <el-form-item class="form-field" label="Apple 产品 ID" prop="appleProductId">
-              <el-input
-                v-model="formData.appleProductId"
-                :disabled="isReadOnly"
-                maxlength="100"
-                placeholder="请输入 Apple 平台产品 ID"
-              />
+              <el-input v-model="formData.appleProductId" :disabled="isReadOnly" maxlength="100"
+                placeholder="请输入 Apple 平台产品 ID" />
             </el-form-item>
           </div>
         </section>
 
         <div class="form-actions">
           <el-button @click="backToList">返回列表</el-button>
-          <el-button
-            v-if="!isReadOnly"
-            type="primary"
-            :loading="submitting"
-            @click="submitForm"
-          >
+          <el-button v-if="!isReadOnly" type="primary" :loading="submitting" @click="submitForm">
             {{ isAdd ? '创建商品' : '保存修改' }}
           </el-button>
         </div>

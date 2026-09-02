@@ -1,7 +1,8 @@
 <script setup name="OrderTable">
 import {
-  formatAmount,
+  formatCurrencyAmount,
   formatDateTime,
+  getCurrencyLabel,
   getOptionLabel,
   getOrderStateTagType,
   getPayStateTagType,
@@ -50,9 +51,11 @@ function getTerminalLabel(row) {
       <vxe-column field="orderNo" title="订单号" min-width="230" show-overflow />
       <vxe-column field="goodsName" title="商品名称" min-width="180" show-overflow />
       <vxe-column field="userId" title="用户 ID" width="90" align="center" />
-      <vxe-column title="金额" width="100" align="right">
+      <vxe-column title="金额" width="120" align="right">
         <template #default="{ row }">
-          <span class="amount-text">{{ formatAmount(row.amount) }}</span>
+          <span class="amount-text" :title="getCurrencyLabel(row.language)">
+            {{ formatCurrencyAmount(row.amount, row) }}
+          </span>
         </template>
       </vxe-column>
       <vxe-column field="num" title="数量" width="75" align="center" />

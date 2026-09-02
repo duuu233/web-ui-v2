@@ -58,6 +58,44 @@ export function formatAmount(value) {
   return Number.isFinite(amount) ? amount.toFixed(2) : String(value)
 }
 
+// 语种与结算币种的对应关系：简中结算人民币，英语和繁中结算美元，日文结算日元。
+// 人民币与日元的符号同为 ¥，日元加 JP 前缀避免列表中两种金额无法区分。
+const currencyByLanguage = {
+  0: { code: 'USD', symbol: '$', label: '美元' },
+  1: { code: 'USD', symbol: '$', label: '美元' },
+  2: { code: 'CNY', symbol: '¥', label: '人民币' },
+  3: { code: 'USD', symbol: '$', label: '美元' },
+  4: { code: 'JPY', symbol: 'JP¥', label: '日元' }
+}
+
+// 缺少语种时回落到基础字段使用的人民币口径。
+const defaultCurrency = currencyByLanguage[2]
+
+export function getCurrency(language) {
+  return currencyByLanguage[Number(language)] || defaultCurrency
+}
+
+export function getCurrencyLabel(language) {
+  return getCurrency(language).label
+}
+
+export function getCurrencySymbol(language) {
+  return getCurrency(language).symbol
+}
+
+// 金额前置币种符号；接口若直接返回 currencySymbol 则优先使用后端值。
+export function formatCurrencyAmount(value, source) {
+  const amount = formatAmount(value)
+  if (amount === '-') return amount
+
+  const record = source || {}
+  const symbol =
+    typeof record.currencySymbol === 'string' && record.currencySymbol.trim()
+      ? record.currencySymbol.trim()
+      : getCurrencySymbol(record.language)
+  return `${symbol}${amount}`
+}
+
 export function getVerifyTagType(value) {
   return Number(value) === 1 ? 'success' : 'info'
 }

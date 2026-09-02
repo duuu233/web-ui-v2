@@ -2,7 +2,7 @@
 
 > 文档类型：历史记录规范与索引
 > 状态：Active
-> 最后核验：2026-09-01
+> 最后核验：2026-09-02
 > 事实来源：`AGENTS.md` 与项目文档治理约定
 
 本目录保存已经发生的集中修改、外部操作和跨环境交接。它补充 Git 提交，记录提交本身难以表达的背景、验证和未完成项，但不替代源码、提交历史或 Active 文档。
@@ -64,3 +64,4 @@ docs/history/
 - [`2026-08/2026-08-31-list-language-filters.md`](2026-08/2026-08-31-list-language-filters.md)：统一所有列表页的前端固定语种筛选项，并明确 `language=0` 是有效筛选值。
 - [`2026-09/2026-09-01-commerce-multilingual-fields.md`](2026-09/2026-09-01-commerce-multilingual-fields.md)：商品、公共图库图片和图库分类移除 `language` 并改为单条记录同时维护四语种字段。
 - [`2026-09/2026-09-01-global-request-loading.md`](2026-09/2026-09-01-global-request-loading.md)：统一请求层为全站接口等待提供带文案的并发安全 Loading。
+- [`2026-09/2026-09-02-order-currency-goods-form-layout.md`](2026-09/2026-09-02-order-currency-goods-form-layout.md)：订单金额按语种前置币种符号，商品表单改为一行一组语种名称与金额并补充币种文字。

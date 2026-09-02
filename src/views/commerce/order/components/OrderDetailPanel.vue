@@ -1,7 +1,9 @@
 <script setup name="OrderDetailPanel">
+import { computed } from 'vue'
 import {
-  formatAmount,
+  formatCurrencyAmount,
   formatDateTime,
+  getCurrencyLabel,
   getOptionLabel,
   getOrderStateTagType,
   getPayStateTagType,
@@ -14,6 +16,11 @@ import {
 const props = defineProps({
   order: { type: Object, required: true }
 })
+
+const currencyLabel = computed(() => getCurrencyLabel(props.order.language))
+const orderAmountText = computed(
+  () => formatCurrencyAmount(props.order.amount, props.order)
+)
 
 function optionLabel(options, value) {
   return getOptionLabel(options, value)
@@ -43,8 +50,8 @@ function optionLabel(options, value) {
     <div class="metric-grid">
       <article class="metric-card">
         <span class="metric-card__label">订单金额</span>
-        <strong class="metric-card__value">{{ formatAmount(props.order.amount) }}</strong>
-        <span class="metric-card__hint">商品成交金额</span>
+        <strong class="metric-card__value">{{ orderAmountText }}</strong>
+        <span class="metric-card__hint">商品成交金额（{{ currencyLabel }}）</span>
       </article>
       <article class="metric-card">
         <span class="metric-card__label">支付状态</span>
@@ -132,7 +139,7 @@ function optionLabel(options, value) {
           <div class="goods-ticket__rule" />
           <div class="goods-ticket__row">
             <span>商品金额</span>
-            <strong class="goods-ticket__value">{{ formatAmount(props.order.amount) }}</strong>
+            <strong class="goods-ticket__value">{{ orderAmountText }}</strong>
           </div>
           <div class="goods-ticket__row">
             <span>发放数量</span>

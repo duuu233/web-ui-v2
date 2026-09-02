@@ -2,7 +2,7 @@
 
 > Document type: API contract checklist
 > Status: Active
-> Last verified: 2026-09-01
+> Last verified: 2026-09-02
 > Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
 
 Source:
@@ -36,6 +36,12 @@ Remaining list language filter contract:
 Client boundary:
 
 - `GET /Client/Order/getGoodsList` adds output field `currencySymbol`. This is a user-facing client contract and has no wrapper or caller in this PC-admin repository.
+
+Currency presentation (frontend display rule, confirmed by the project owner on 2026-09-02):
+
+- Language maps to settlement currency as `0`/`1=美元 (USD, $)`, `2=人民币 (CNY, ¥)`, `3=美元 (USD, $)`, and `4=日元 (JPY, JP¥)`; a missing or unknown language falls back to CNY because the base `amount` field carries the Simplified-Chinese price.
+- Order list and order detail prefix the amount with that symbol. When an order response carries a non-empty `currencySymbol`, the backend value wins over the language mapping.
+- The mapping lives in `src/views/commerce/utils.js` and is a display convention only; no request parameter or backend contract changed.
 
 ## PC Admin Backend
 

@@ -2,7 +2,7 @@
 
 > Document type: integration status tracker
 > Status: Tracking
-> Last verified: 2026-09-01
+> Last verified: 2026-09-03
 > Sources: current Swagger contract, API modules, routes, views, and documented live read-only checks
 
 Swagger source: https://api.boltfox.cn/swagger-ui.html#/
@@ -27,7 +27,7 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, status, token-account editing, and account logs align with `/User/*`. |
 | Goods | 管理后台-商品相关接口 | Completed | Goods list/add/edit remove `language`; one record now carries the base, English, Traditional Chinese, and Japanese names and amounts. |
 | Public image library | 管理后台-公共图库相关接口 | Completed | Public-image and image-category list/add/edit remove `language`; one record now carries all four language variants through `/ProductImg/*`. |
-| Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers. |
+| Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers; detail displays the backend `currencyName` with a language-based compatibility fallback. |
 | AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers; list search supports content `language` values `1`–`4`. |
 
 ## Pending Integration
@@ -37,6 +37,19 @@ No pending PC-admin interface remains from the 2026-08-30 change list.
 The provided `/Client/Order/getGoodsList` `currencySymbol` output belongs to a user-facing client contract. This repository has no `/Client/*` API wrapper, caller, or storefront page, so the field must be consumed by the corresponding client project rather than being attached to the admin goods UI.
 
 ## Completed Work
+
+### 订单详情币种名称字段
+
+Status: Completed
+
+Implemented contract change:
+
+- `GET /Order/getOrderDetail` now returns `currencyName` for display.
+- The order-detail amount card displays that backend currency name; missing or blank values fall back to the existing language-to-currency mapping so older responses remain readable.
+
+Verification:
+
+- See [`history/2026-09/2026-09-03-order-detail-currency-name.md`](history/2026-09/2026-09-03-order-detail-currency-name.md) for the commands actually run on 2026-09-03.
 
 ### 商品与公共图库四语种字段契约
 

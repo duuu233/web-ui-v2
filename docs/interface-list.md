@@ -2,7 +2,7 @@
 
 > Document type: API contract checklist
 > Status: Active
-> Last verified: 2026-09-02
+> Last verified: 2026-09-03
 > Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
 
 Source:
@@ -15,6 +15,7 @@ Source:
 - Home report presentation and configuration-form behavior rechecked against the current frontend on 2026-08-28; no new backend contract was claimed.
 - List `language` filter values were clarified by the project owner on 2026-08-31.
 - Goods, public-image, and image-category multilingual contracts were replaced by the project owner on 2026-09-01; one record now carries all four language variants.
+- The order-detail `currencyName` output contract was clarified by the project owner on 2026-09-03.
 
 Comparison result:
 
@@ -37,11 +38,12 @@ Client boundary:
 
 - `GET /Client/Order/getGoodsList` adds output field `currencySymbol`. This is a user-facing client contract and has no wrapper or caller in this PC-admin repository.
 
-Currency presentation (frontend display rule, confirmed by the project owner on 2026-09-02):
+Currency presentation (frontend display rules, last confirmed by the project owner on 2026-09-03):
 
 - Language maps to settlement currency as `0`/`1=美元 (USD, $)`, `2=人民币 (CNY, ¥)`, `3=美元 (USD, $)`, and `4=日元 (JPY, JP¥)`; a missing or unknown language falls back to CNY because the base `amount` field carries the Simplified-Chinese price.
 - Order list and order detail prefix the amount with that symbol. When an order response carries a non-empty `currencySymbol`, the backend value wins over the language mapping.
-- The mapping lives in `src/views/commerce/utils.js` and is a display convention only; no request parameter or backend contract changed.
+- Order detail displays the backend `currencyName` as the currency name. For compatibility with older responses, a missing or blank value falls back to the language-based currency label.
+- The language mapping lives in `src/views/commerce/utils.js` and remains a frontend display convention. The `currencyName` addition changes only the order-detail response contract; no request parameter changed.
 
 ## PC Admin Backend
 
@@ -68,7 +70,7 @@ Currency presentation (frontend display rule, confirmed by the project owner on 
 | Commerce | Goods management | Goods list, detail, add, edit, enable/disable | `GET /ZoneAdmin/Goods/getGoodsList`, `GET /ZoneAdmin/Goods/getGoodsDetail`, `POST /ZoneAdmin/Goods/addGoods`, `POST /ZoneAdmin/Goods/editGoods`, `POST /ZoneAdmin/Goods/setGoodsVerify` | Done. Routes: `goodsList`, `goodsListAdd`, `goodsListEdit`, `goodsListDetail`. List/add/edit remove `language`; one record carries base `goodsName`/`amount` plus `goodsNameEnglish`, `goodsNameFan`, `goodsNameJapanese`, `amountEnglish`, `amountFan`, and `amountJapanese`, and the list exposes all variants. |
 | Product management | Public image library | Image list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getProductImgList`, `GET /ZoneAdmin/ProductImg/getProductImgDetail`, `POST /ZoneAdmin/ProductImg/addProductImg`, `POST /ZoneAdmin/ProductImg/editProductImg`, `POST /ZoneAdmin/ProductImg/setProductImgVerify` | Done. Routes: `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`. List/add/edit remove `language`; one record carries base `title`/`content` plus the `English`, `Fan`, and `Japanese` variants, and the list exposes all variants. The applicable-product/device selection remains optional and submits an empty `productIdList` when omitted. The supplied `/AiConfig/getProductImgList` list path is treated as a documentation typo because the current module and backend contract use `/ProductImg/getProductImgList`. |
 | Product management | Image categories | Category list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getImgCategoryList`, `GET /ZoneAdmin/ProductImg/getImgCategoryDetail`, `POST /ZoneAdmin/ProductImg/addImgCategory`, `POST /ZoneAdmin/ProductImg/editImgCategory`, `POST /ZoneAdmin/ProductImg/setImgCategoryVerify` | Done. Routes: `imageCategoryList`, `imageCategoryAdd`, `imageCategoryEdit`, `imageCategoryDetail`. List/add/edit remove `language`; one record carries base `categoryName` plus `categoryNameEnglish`, contract-spelled `categoryNameeFan`, and `categoryNameJapanese`, and the list exposes all variants. The supplied `/AiConfig/getImgCategoryList` path is treated as a documentation typo because the current module and backend contract use `/ProductImg/getImgCategoryList`. |
-| Commerce | Order management | Order list and detail | `GET /ZoneAdmin/Order/getOrderList`, `GET /ZoneAdmin/Order/getOrderDetail` | Done. Routes: `orderList`, `orderListDetail`. |
+| Commerce | Order management | Order list and detail | `GET /ZoneAdmin/Order/getOrderList`, `GET /ZoneAdmin/Order/getOrderDetail` | Done. Routes: `orderList`, `orderListDetail`. Detail displays the response `currencyName` and falls back to the language-based currency label when absent. |
 | AI configuration | AI cost configuration | List, edit, enable/disable | `GET /ZoneAdmin/AiConfig/getAiConfigList`, `POST /ZoneAdmin/AiConfig/editAiConfig`, `POST /ZoneAdmin/AiConfig/setAiConfigVerify` | Done. Route: `aiConfigList`; list search supports content `language` values `1`–`4`; editing uses a list-row dialog because Swagger has no detail endpoint. |
 | Basic configuration | System configuration | View and edit backend configuration data | `GET /ZoneAdmin/Common/getConfigDataList`, `POST /ZoneAdmin/Common/setConfigDataEdit` | Done. The platform device ID item is intentionally omitted from the form and from the save payload; other editable configuration items retain the existing behavior. |
 | System settings | Backend permission settings | Permissions, roles, menus, departments | Original function: `/ZoneAdmin/Jurisdiction/*` | Done. |

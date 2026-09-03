@@ -17,7 +17,12 @@ const props = defineProps({
   order: { type: Object, required: true }
 })
 
-const currencyLabel = computed(() => getCurrencyLabel(props.order.language))
+const currencyName = computed(() => {
+  const backendCurrencyName = props.order.currencyName
+  return typeof backendCurrencyName === 'string' && backendCurrencyName.trim()
+    ? backendCurrencyName.trim()
+    : getCurrencyLabel(props.order.language)
+})
 const orderAmountText = computed(
   () => formatCurrencyAmount(props.order.amount, props.order)
 )
@@ -51,7 +56,7 @@ function optionLabel(options, value) {
       <article class="metric-card">
         <span class="metric-card__label">订单金额</span>
         <strong class="metric-card__value">{{ orderAmountText }}</strong>
-        <span class="metric-card__hint">商品成交金额（{{ currencyLabel }}）</span>
+        <span class="metric-card__hint">币种名称：{{ currencyName }}</span>
       </article>
       <article class="metric-card">
         <span class="metric-card__label">支付状态</span>

@@ -1,6 +1,7 @@
 import { shallowRef } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
+  deleteProductImg,
   getProductImgList,
   setProductImgVerify
 } from '@/api/productImage'
@@ -16,6 +17,7 @@ const defaultListQuery = () => ({
 export function useProductImageList() {
   const dateRange = shallowRef([])
   const changingId = shallowRef(null)
+  const deletingId = shallowRef(null)
   const pagedList = usePagedList({
     fetchList: getProductImgList,
     defaultQuery: defaultListQuery,
@@ -70,12 +72,36 @@ export function useProductImageList() {
     }
   }
 
+  async function handleDelete(row) {
+    try {
+      await ElMessageBox.confirm(
+        `确认永久删除图片“${row.title || row.productImgId}”吗？删除后将同时清理 OSS 文件，且无法恢复。`,
+        '删除图库图片',
+        {
+          confirmButtonText: '删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+      deletingId.value = row.productImgId
+      await deleteProductImg({ id: row.productImgId })
+      ElMessage.success('删除成功')
+      await pagedList.getList()
+    } catch (error) {
+      // 用户取消或请求拦截器已反馈错误。
+    } finally {
+      deletingId.value = null
+    }
+  }
+
   return {
     ...pagedList,
     dateRange,
     changingId,
+    deletingId,
     handleSearchList,
     handleResetSearch,
-    handleStatusChange
+    handleStatusChange,
+    handleDelete
   }
 }

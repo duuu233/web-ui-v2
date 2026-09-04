@@ -2,7 +2,7 @@
 
 > Document type: integration status tracker
 > Status: Tracking
-> Last verified: 2026-09-03
+> Last verified: 2026-09-04
 > Sources: current Swagger contract, API modules, routes, views, and documented live read-only checks
 
 Swagger source: https://api.boltfox.cn/swagger-ui.html#/
@@ -26,7 +26,7 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, status, token-account editing, and account logs align with `/User/*`. |
 | Goods | 管理后台-商品相关接口 | Completed | Goods list/add/edit remove `language`; one record now carries the base, English, Traditional Chinese, and Japanese names and amounts. |
-| Public image library | 管理后台-公共图库相关接口 | Completed | Public-image and image-category list/add/edit remove `language`; one record now carries all four language variants through `/ProductImg/*`. |
+| Public image library | 管理后台-公共图库相关接口 | Completed | Public-image and image-category list/add/edit remove `language`; one record carries all four language variants through `/ProductImg/*`. Public images support physical deletion through `deleteProductImg`, and the admin list displays `imgThumb` instead of the original image. |
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers; detail displays the backend `currencyName` with a language-based compatibility fallback. |
 | AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers; list search supports content `language` values `1`–`4`. |
 
@@ -37,6 +37,21 @@ No pending PC-admin interface remains from the 2026-08-30 change list.
 The provided `/Client/Order/getGoodsList` `currencySymbol` output belongs to a user-facing client contract. This repository has no `/Client/*` API wrapper, caller, or storefront page, so the field must be consumed by the corresponding client project rather than being attached to the admin goods UI.
 
 ## Completed Work
+
+### 官方图库物理删除与缩略图列表展示
+
+Status: Completed
+
+Implemented contract changes:
+
+- `POST /ProductImg/deleteProductImg` submits `{ id: productImgId }`; the backend physically deletes the record and cleans the associated OSS files.
+- The public-image list exposes a permission-controlled delete action and refreshes the current page after a successful deletion.
+- The public-image list image column displays `imgThumb` only; original-image `img` remains available to add/edit/detail flows but is no longer loaded by the list UI.
+- The commerce menu declaration includes `Post_ProductImg_DeleteProductImg`; it still requires a controlled menu sync and role binding in the target environment.
+
+Verification:
+
+- See [`history/2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md`](history/2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md) for the commands actually run on 2026-09-04.
 
 ### 订单详情币种名称字段
 

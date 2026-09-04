@@ -96,6 +96,14 @@ export const commerceMenuTree = [
             grade: 0,
             isNav: 0,
             isRefresh: 0
+          },
+          {
+            appName: '删除',
+            appCode: 'Post_ProductImg_DeleteProductImg',
+            appUrl: '#',
+            grade: 0,
+            isNav: 0,
+            isRefresh: 0
           }
         ]
       },

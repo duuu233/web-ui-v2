@@ -14,11 +14,13 @@ const {
   listLoading,
   dateRange,
   changingId,
+  deletingId,
   handleSearchList,
   handleResetSearch,
   handleSizeChange,
   handleCurrentChange,
-  handleStatusChange
+  handleStatusChange,
+  handleDelete
 } = useProductImageList()
 
 function handleAdd() {
@@ -60,9 +62,11 @@ function handleDetail(row) {
       :rows="list"
       :loading="listLoading"
       :changing-id="changingId"
+      :deleting-id="deletingId"
       @edit="handleEdit"
       @detail="handleDetail"
       @toggle-status="handleStatusChange"
+      @delete="handleDelete"
     />
 
     <PaginationBar

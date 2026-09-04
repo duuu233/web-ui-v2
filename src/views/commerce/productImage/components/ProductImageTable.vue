@@ -4,10 +4,11 @@ import { formatDateTime, getVerifyTagType } from '@/views/commerce/utils'
 defineProps({
   rows: { type: Array, default: () => [] },
   loading: { type: Boolean, default: false },
-  changingId: { type: [Number, String], default: null }
+  changingId: { type: [Number, String], default: null },
+  deletingId: { type: [Number, String], default: null }
 })
 
-const emit = defineEmits(['edit', 'detail', 'toggle-status'])
+const emit = defineEmits(['edit', 'detail', 'toggle-status', 'delete'])
 
 const localizedColumns = [
   { locale: '简中', titleField: 'title', contentField: 'content' },
@@ -30,13 +31,13 @@ const localizedColumns = [
       max-height="560"
     >
       <vxe-column field="productImgId" title="图片 ID" width="90" align="center" />
-      <vxe-column title="预览" width="92" align="center">
+      <vxe-column title="缩略图" width="92" align="center">
         <template #default="{ row }">
           <el-image
-            v-if="row.img"
+            v-if="row.imgThumb"
             class="image-preview"
-            :src="row.img"
-            :preview-src-list="[row.img]"
+            :src="row.imgThumb"
+            :preview-src-list="[row.imgThumb]"
             :alt="row.title || '图库图片'"
             fit="cover"
             preview-teleported
@@ -91,7 +92,7 @@ const localizedColumns = [
       <vxe-column title="更新时间" width="170" align="center">
         <template #default="{ row }">{{ formatDateTime(row.upTime) }}</template>
       </vxe-column>
-      <vxe-column title="操作" width="250" align="center" fixed="right">
+      <vxe-column title="操作" width="300" align="center" fixed="right">
         <template #default="{ row }">
           <div class="row-actions">
             <el-button
@@ -121,6 +122,16 @@ const localizedColumns = [
               @click="emit('toggle-status', row)"
             >
               {{ Number(row.verify) === 1 ? '禁用' : '启用' }}
+            </el-button>
+            <el-button
+              v-permission="['Post_ProductImg_DeleteProductImg']"
+              size="small"
+              type="danger"
+              :loading="deletingId === row.productImgId"
+              link
+              @click="emit('delete', row)"
+            >
+              删除
             </el-button>
           </div>
         </template>

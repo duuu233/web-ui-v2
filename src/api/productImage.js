@@ -36,6 +36,15 @@ export function editProductImg(data) {
   })
 }
 
+// 物理删除公共图库图片并清理 OSS 文件
+export function deleteProductImg(data) {
+  return request({
+    url: '/ProductImg/deleteProductImg',
+    method: 'post',
+    data
+  })
+}
+
 // 公共图库图片启用/禁用
 export function setProductImgVerify(data) {
   return request({

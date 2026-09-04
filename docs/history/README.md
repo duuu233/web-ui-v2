@@ -2,7 +2,7 @@
 
 > 文档类型：历史记录规范与索引
 > 状态：Active
-> 最后核验：2026-09-03
+> 最后核验：2026-09-04
 > 事实来源：`AGENTS.md` 与项目文档治理约定
 
 本目录保存已经发生的集中修改、外部操作和跨环境交接。它补充 Git 提交，记录提交本身难以表达的背景、验证和未完成项，但不替代源码、提交历史或 Active 文档。
@@ -66,3 +66,4 @@ docs/history/
 - [`2026-09/2026-09-01-global-request-loading.md`](2026-09/2026-09-01-global-request-loading.md)：统一请求层为全站接口等待提供带文案的并发安全 Loading。
 - [`2026-09/2026-09-02-order-currency-goods-form-layout.md`](2026-09/2026-09-02-order-currency-goods-form-layout.md)：订单金额按语种前置币种符号，商品表单改为一行一组语种名称与金额并补充币种文字。
 - [`2026-09/2026-09-03-order-detail-currency-name.md`](2026-09/2026-09-03-order-detail-currency-name.md)：订单详情展示后端新增的 `currencyName` 币种名称，并为旧响应保留语种回退。
+- [`2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md`](2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md)：官方图库列表新增物理删除操作，并改为只展示缩略图。

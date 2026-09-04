@@ -2,7 +2,7 @@
 
 > Document type: API contract checklist
 > Status: Active
-> Last verified: 2026-09-03
+> Last verified: 2026-09-04
 > Sources: manual module checklist, Swagger contracts, current API modules, and documented read-only samples
 
 Source:
@@ -16,10 +16,11 @@ Source:
 - List `language` filter values were clarified by the project owner on 2026-08-31.
 - Goods, public-image, and image-category multilingual contracts were replaced by the project owner on 2026-09-01; one record now carries all four language variants.
 - The order-detail `currencyName` output contract was clarified by the project owner on 2026-09-03.
+- Public-image physical deletion and list-thumbnail presentation were clarified by the project owner and rechecked against Swagger on 2026-09-04.
 
 Comparison result:
 
-- Current Swagger exposes 78 `/ZoneAdmin/*` backend endpoints.
+- The previously completed Swagger comparison exposed 78 `/ZoneAdmin/*` endpoints; the public-image delete endpoint was added afterward and was rechecked separately on 2026-09-04.
 - Local `src/api` already covered all current Swagger `/ZoneAdmin/*` endpoints at the time of comparison.
 - The manual checklist lists one newer route that current Swagger did not expose when checked: `/ZoneAdmin/ProductVersion/getUserDeviceVersionDetail`. The code follows the manual checklist for product version detail.
 
@@ -68,7 +69,7 @@ Currency presentation (frontend display rules, last confirmed by the project own
 | Device version | Device version settings | Enable/disable version | `POST /ZoneAdmin/ProductVersion/setProductVersionVerify` | Done. |
 | Help management | Help content list | Upload/edit/delete by device dimension | Original interface set: `GET /ZoneAdmin/Product/getProductFaqList`, `GET /ZoneAdmin/Product/getProductFaqDetail`, `POST /ZoneAdmin/Product/addProductFaq`, `POST /ZoneAdmin/Product/editProductFaq`, `POST /ZoneAdmin/Product/setProductFaqVerify` | Done. |
 | Commerce | Goods management | Goods list, detail, add, edit, enable/disable | `GET /ZoneAdmin/Goods/getGoodsList`, `GET /ZoneAdmin/Goods/getGoodsDetail`, `POST /ZoneAdmin/Goods/addGoods`, `POST /ZoneAdmin/Goods/editGoods`, `POST /ZoneAdmin/Goods/setGoodsVerify` | Done. Routes: `goodsList`, `goodsListAdd`, `goodsListEdit`, `goodsListDetail`. List/add/edit remove `language`; one record carries base `goodsName`/`amount` plus `goodsNameEnglish`, `goodsNameFan`, `goodsNameJapanese`, `amountEnglish`, `amountFan`, and `amountJapanese`, and the list exposes all variants. |
-| Product management | Public image library | Image list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getProductImgList`, `GET /ZoneAdmin/ProductImg/getProductImgDetail`, `POST /ZoneAdmin/ProductImg/addProductImg`, `POST /ZoneAdmin/ProductImg/editProductImg`, `POST /ZoneAdmin/ProductImg/setProductImgVerify` | Done. Routes: `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`. List/add/edit remove `language`; one record carries base `title`/`content` plus the `English`, `Fan`, and `Japanese` variants, and the list exposes all variants. The applicable-product/device selection remains optional and submits an empty `productIdList` when omitted. The supplied `/AiConfig/getProductImgList` list path is treated as a documentation typo because the current module and backend contract use `/ProductImg/getProductImgList`. |
+| Product management | Public image library | Image list, detail, add, edit, physical delete, enable/disable | `GET /ZoneAdmin/ProductImg/getProductImgList`, `GET /ZoneAdmin/ProductImg/getProductImgDetail`, `POST /ZoneAdmin/ProductImg/addProductImg`, `POST /ZoneAdmin/ProductImg/editProductImg`, `POST /ZoneAdmin/ProductImg/deleteProductImg`, `POST /ZoneAdmin/ProductImg/setProductImgVerify` | Done. Delete submits `{ id: productImgId }`, physically deletes the record, and cleans its OSS files. Routes: `productImageList`, `productImageAdd`, `productImageEdit`, `productImageDetail`. The list displays only `imgThumb` in its image column. List/add/edit remove `language`; one record carries base `title`/`content` plus the `English`, `Fan`, and `Japanese` variants, and the list exposes all variants. The applicable-product/device selection remains optional and submits an empty `productIdList` when omitted. The supplied `/AiConfig/getProductImgList` list path is treated as a documentation typo because the current module and backend contract use `/ProductImg/getProductImgList`. |
 | Product management | Image categories | Category list, detail, add, edit, enable/disable | `GET /ZoneAdmin/ProductImg/getImgCategoryList`, `GET /ZoneAdmin/ProductImg/getImgCategoryDetail`, `POST /ZoneAdmin/ProductImg/addImgCategory`, `POST /ZoneAdmin/ProductImg/editImgCategory`, `POST /ZoneAdmin/ProductImg/setImgCategoryVerify` | Done. Routes: `imageCategoryList`, `imageCategoryAdd`, `imageCategoryEdit`, `imageCategoryDetail`. List/add/edit remove `language`; one record carries base `categoryName` plus `categoryNameEnglish`, contract-spelled `categoryNameeFan`, and `categoryNameJapanese`, and the list exposes all variants. The supplied `/AiConfig/getImgCategoryList` path is treated as a documentation typo because the current module and backend contract use `/ProductImg/getImgCategoryList`. |
 | Commerce | Order management | Order list and detail | `GET /ZoneAdmin/Order/getOrderList`, `GET /ZoneAdmin/Order/getOrderDetail` | Done. Routes: `orderList`, `orderListDetail`. Detail displays the response `currencyName` and falls back to the language-based currency label when absent. |
 | AI configuration | AI cost configuration | List, edit, enable/disable | `GET /ZoneAdmin/AiConfig/getAiConfigList`, `POST /ZoneAdmin/AiConfig/editAiConfig`, `POST /ZoneAdmin/AiConfig/setAiConfigVerify` | Done. Route: `aiConfigList`; list search supports content `language` values `1`–`4`; editing uses a list-row dialog because Swagger has no detail endpoint. |

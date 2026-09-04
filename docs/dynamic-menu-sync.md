@@ -2,7 +2,7 @@
 
 > 文档类型：当前操作手册
 > 状态：Active
-> 最后核验：2026-08-13
+> 最后核验：2026-09-04
 > 事实来源：菜单同步脚本、路由、权限 Store 与后台接口契约
 
 本项目的页面可访问性由两部分共同决定：
@@ -56,7 +56,8 @@
 │  ├─ 新增 (Post_ProductImg_AddProductImg)
 │  ├─ 详情 (Get_ProductImg_GetProductImgDetail)
 │  ├─ 编辑 (Post_ProductImg_EditProductImg)
-│  └─ 启用/禁用 (Post_ProductImg_SetProductImgVerify)
+│  ├─ 启用/禁用 (Post_ProductImg_SetProductImgVerify)
+│  └─ 删除 (Post_ProductImg_DeleteProductImg)
 └─ 图库分类 (Get_ProductImg_GetImgCategoryList, appUrl=imageCategoryList)
    ├─ 新增 (Post_ProductImg_AddImgCategory)
    ├─ 详情 (Get_ProductImg_GetImgCategoryDetail)

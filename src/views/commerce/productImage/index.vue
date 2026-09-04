@@ -13,6 +13,8 @@ const {
   total,
   listLoading,
   dateRange,
+  categoryOptions,
+  categoryOptionsLoading,
   changingId,
   deletingId,
   handleSearchList,
@@ -40,8 +42,11 @@ function handleDetail(row) {
   <div class="app-container">
     <ProductImageFilters
       v-model:keyword="listQuery.keyword"
+      v-model:category-id="listQuery.categoryId"
       v-model:verify="listQuery.verify"
       v-model:date-range="dateRange"
+      :category-options="categoryOptions"
+      :category-loading="categoryOptionsLoading"
       @search="handleSearchList"
       @reset="handleResetSearch"
     />

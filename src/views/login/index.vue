@@ -104,7 +104,9 @@ function handleLogin() {
               placeholder="请输入登录账号"
             >
               <template #prefix>
-                <svg-icon icon-class="loginuser" class="login-prefix" />
+                <el-icon class="login-prefix" aria-hidden="true">
+                  <User />
+                </el-icon>
               </template>
             </el-input>
           </el-form-item>
@@ -120,7 +122,9 @@ function handleLogin() {
               @keyup.enter="handleLogin"
             >
               <template #prefix>
-                <svg-icon icon-class="loginpwd" class="login-prefix" />
+                <el-icon class="login-prefix" aria-hidden="true">
+                  <Lock />
+                </el-icon>
               </template>
             </el-input>
           </el-form-item>
@@ -145,8 +149,13 @@ function handleLogin() {
 
 <style scoped lang="scss">
 .login-prefix {
-  font-size: 16px;
-  color: var(--brand-500);
+  color: var(--app-text);
+  font-size: 17px;
+  transition: color 0.18s ease;
+}
+
+.login_input :deep(.el-input__wrapper.is-focus) .login-prefix {
+  color: var(--brand-600);
 }
 
 .login_content_bg {

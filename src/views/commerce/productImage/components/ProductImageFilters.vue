@@ -2,7 +2,13 @@
 import { computed } from 'vue'
 import SearchPanel from '@/components/SearchPanel/index.vue'
 
+const props = defineProps({
+  categoryOptions: { type: Array, default: () => [] },
+  categoryLoading: { type: Boolean, default: false }
+})
+
 const keyword = defineModel('keyword', { type: String, default: '' })
+const categoryId = defineModel('categoryId', { type: Number, default: null })
 const verify = defineModel('verify', { type: Number, default: null })
 const dateRange = defineModel('dateRange', { type: Array, default: () => [] })
 
@@ -10,6 +16,7 @@ const emit = defineEmits(['search', 'reset'])
 
 const filterModel = computed(() => ({
   keyword: keyword.value,
+  categoryId: categoryId.value,
   verify: verify.value,
   dateRange: dateRange.value
 }))
@@ -35,6 +42,24 @@ const verifyOptions = [
         placeholder="图片标题"
         show-word-limit
       />
+    </el-form-item>
+
+    <el-form-item label="图库分类">
+      <el-select
+        v-model="categoryId"
+        class="filter-select--category"
+        :loading="props.categoryLoading"
+        clearable
+        filterable
+        placeholder="全部分类"
+      >
+        <el-option
+          v-for="item in props.categoryOptions"
+          :key="item.categoryId"
+          :label="item.categoryName"
+          :value="item.categoryId"
+        />
+      </el-select>
     </el-form-item>
 
     <el-form-item label="状态">
@@ -72,6 +97,10 @@ const verifyOptions = [
 <style scoped>
 .filter-input {
   width: 210px;
+}
+
+.filter-select--category {
+  width: 180px;
 }
 
 .filter-select--compact {

@@ -1,7 +1,8 @@
-import { shallowRef } from 'vue'
+import { onMounted, shallowRef } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   deleteProductImg,
+  getImgCategoryList,
   getProductImgList,
   setProductImgVerify
 } from '@/api/productImage'
@@ -11,11 +12,14 @@ const defaultListQuery = () => ({
   pageIndex: 1,
   pageSize: 10,
   keyword: '',
+  categoryId: null,
   verify: null
 })
 
 export function useProductImageList() {
   const dateRange = shallowRef([])
+  const categoryOptions = shallowRef([])
+  const categoryOptionsLoading = shallowRef(false)
   const changingId = shallowRef(null)
   const deletingId = shallowRef(null)
   const pagedList = usePagedList({
@@ -25,6 +29,18 @@ export function useProductImageList() {
     reloadOnActivated: false,
     refreshKey: 'productImageList'
   })
+
+  async function loadCategoryOptions() {
+    categoryOptionsLoading.value = true
+    try {
+      const response = await getImgCategoryList({ pageIndex: 1, pageSize: 1000 })
+      categoryOptions.value = response.retData?.pageData || []
+    } catch (error) {
+      categoryOptions.value = []
+    } finally {
+      categoryOptionsLoading.value = false
+    }
+  }
 
   function applyDateRange() {
     if (dateRange.value?.length === 2) {
@@ -94,9 +110,13 @@ export function useProductImageList() {
     }
   }
 
+  onMounted(loadCategoryOptions)
+
   return {
     ...pagedList,
     dateRange,
+    categoryOptions,
+    categoryOptionsLoading,
     changingId,
     deletingId,
     handleSearchList,

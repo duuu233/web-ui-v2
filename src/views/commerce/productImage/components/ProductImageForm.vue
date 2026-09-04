@@ -206,6 +206,19 @@ const localizedContentFields = [
                 />
               </el-select>
             </el-form-item>
+
+            <el-form-item class="form-field" label="图片权重" prop="grade">
+              <el-input-number
+                v-model="formData.grade"
+                class="field-control"
+                :disabled="isReadOnly"
+                :min="-2147483648"
+                :max="2147483647"
+                :precision="0"
+                controls-position="right"
+              />
+              <p class="field-hint">请输入整数，数值越大排序越靠前。</p>
+            </el-form-item>
           </div>
         </section>
 

@@ -26,7 +26,7 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | User product image | 管理后台-用户产品图片控制接口 | Completed | Added `/UserProductImg/*` API wrappers, list route, and CRUD/status UI. |
 | User | 管理后台-用户相关接口 | Completed | User list, detail, edit, export, status, token-account editing, and account logs align with `/User/*`. |
 | Goods | 管理后台-商品相关接口 | Completed | Goods list/add/edit remove `language`; one record now carries the base, English, Traditional Chinese, and Japanese names and amounts. |
-| Public image library | 管理后台-公共图库相关接口 | Completed | Public-image and image-category list/add/edit remove `language`; one record carries all four language variants through `/ProductImg/*`. Public images support physical deletion through `deleteProductImg`, and the admin list displays `imgThumb` instead of the original image. |
+| Public image library | 管理后台-公共图库相关接口 | Completed | Public-image and image-category list/add/edit remove `language`; one record carries all four language variants through `/ProductImg/*`. Public-image add/edit also submit integer weight `grade`, and the shared add/edit/detail form displays it. Public images support physical deletion through `deleteProductImg`, and the admin list displays `imgThumb` instead of the original image. |
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers; detail displays the backend `currencyName` with a language-based compatibility fallback. |
 | AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers; list search supports content `language` values `1`–`4`. |
 
@@ -37,6 +37,20 @@ No pending PC-admin interface remains from the 2026-08-30 change list.
 The provided `/Client/Order/getGoodsList` `currencySymbol` output belongs to a user-facing client contract. This repository has no `/Client/*` API wrapper, caller, or storefront page, so the field must be consumed by the corresponding client project rather than being attached to the admin goods UI.
 
 ## Completed Work
+
+### 官网图库权重字段
+
+Status: Completed
+
+Implemented contract change:
+
+- Public-image add/edit submit the Swagger-declared `int32` field `grade`.
+- The shared add/edit/detail form displays the image weight as an integer; add mode defaults to `0`, and detail responses that omit the field fall back to `0` for compatibility.
+- The current Swagger `ProductImgDetailApiOut` still omits `grade`; the detail page consumes the field when the actual response provides it and otherwise uses the compatibility fallback.
+
+Verification:
+
+- See [`history/2026-09/2026-09-04-official-gallery-grade.md`](history/2026-09/2026-09-04-official-gallery-grade.md) for the commands actually run on 2026-09-04.
 
 ### 官方图库物理删除与缩略图列表展示
 

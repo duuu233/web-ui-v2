@@ -67,3 +67,4 @@ docs/history/
 - [`2026-09/2026-09-02-order-currency-goods-form-layout.md`](2026-09/2026-09-02-order-currency-goods-form-layout.md)：订单金额按语种前置币种符号，商品表单改为一行一组语种名称与金额并补充币种文字。
 - [`2026-09/2026-09-03-order-detail-currency-name.md`](2026-09/2026-09-03-order-detail-currency-name.md)：订单详情展示后端新增的 `currencyName` 币种名称，并为旧响应保留语种回退。
 - [`2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md`](2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md)：官方图库列表新增物理删除操作，并改为只展示缩略图。
+- [`2026-09/2026-09-04-official-gallery-grade.md`](2026-09/2026-09-04-official-gallery-grade.md)：官网图库新增、编辑和详情共用表单增加整数权重 `grade`。

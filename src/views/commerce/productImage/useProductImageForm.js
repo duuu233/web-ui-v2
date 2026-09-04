@@ -24,6 +24,7 @@ const defaultForm = () => ({
   thumbnailFiles: [],
   productIdList: [],
   categoryIdList: [],
+  grade: 0,
   verify: null
 })
 
@@ -104,7 +105,8 @@ export function useProductImageForm(mode) {
         message: '请选择至少一个图库分类',
         trigger: 'change'
       }
-    ]
+    ],
+    grade: [{ required: true, message: '请输入图片权重', trigger: 'change' }]
   }
 
   function resetForm() {
@@ -117,7 +119,8 @@ export function useProductImageForm(mode) {
       imageFiles: fileFromUrl(detail.img, detail.title || '图库图片'),
       thumbnailFiles: fileFromUrl(detail.imgThumb, '图片缩略图'),
       productIdList: normalizeIdList(detail.productIdList, detail.productIds),
-      categoryIdList: normalizeIdList(detail.categoryIdList, detail.categoryIds)
+      categoryIdList: normalizeIdList(detail.categoryIdList, detail.categoryIds),
+      grade: Number.isInteger(Number(detail.grade)) ? Number(detail.grade) : 0
     })
   }
 
@@ -170,7 +173,8 @@ export function useProductImageForm(mode) {
       img,
       imgThumb,
       productIdList: normalizeIdList(formData.productIdList),
-      categoryIdList: normalizeIdList(formData.categoryIdList)
+      categoryIdList: normalizeIdList(formData.categoryIdList),
+      grade: Number(formData.grade)
     }
 
     if (!isAdd.value) submitData.productImgId = Number(formData.productImgId)

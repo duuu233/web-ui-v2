@@ -71,3 +71,5 @@ codegraph sync .
 5. 更新本索引中的状态、职责或替代关系。
 
 本轮商品列表展示调整见 [2026-09-08 商品列表隐藏 Token 单价列](history/2026-09/2026-09-08-hide-goods-token-unit-price.md)。
+
+商品表单四语种划线价（原价）见 [2026-09-08 商品表单新增四语种划线价（原价）](history/2026-09/2026-09-08-goods-market-amount.md)；该记录同时登记了四处 import 大小写与文件名不符、会在 Linux 上中断构建的既有问题。

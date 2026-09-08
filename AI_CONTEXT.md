@@ -98,6 +98,8 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 
 接口完成度以 [`docs/api-integration-progress.md`](docs/api-integration-progress.md) 为当前状态入口；接口清单以 [`docs/interface-list.md`](docs/interface-list.md) 为核对依据。
 
+商品列表不展示 Token 单价列；接口字段及商品表单保持原有契约。
+
 ## 7. 重要设计约束
 
 1. `src/api/*.js` 默认只写业务路径，公共 `/ZoneAdmin` 前缀由环境和请求层统一处理。

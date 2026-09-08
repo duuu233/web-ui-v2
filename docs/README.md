@@ -69,3 +69,5 @@ codegraph sync .
 3. 修正负责该事实的 Active 文档。
 4. 若修正属于实质性变更，新增一份 Historical 记录说明范围和验证。
 5. 更新本索引中的状态、职责或替代关系。
+
+本轮商品列表展示调整见 [2026-09-08 商品列表隐藏 Token 单价列](history/2026-09/2026-09-08-hide-goods-token-unit-price.md)。

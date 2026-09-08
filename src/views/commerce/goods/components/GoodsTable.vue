@@ -53,9 +53,6 @@ const localizedColumns = [
       </vxe-column>
       <vxe-column field="num" title="基础数量" width="95" align="center" />
       <vxe-column field="giveNum" title="赠送数量" width="95" align="center" />
-      <vxe-column title="Token 单价" width="110" align="right">
-        <template #default="{ row }">{{ formatAmount(row.unitPrice) }}</template>
-      </vxe-column>
       <vxe-column field="grade" title="权重" width="80" align="center" />
       <vxe-column
         field="wxProductId"

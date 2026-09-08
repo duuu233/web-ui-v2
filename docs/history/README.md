@@ -69,3 +69,5 @@ docs/history/
 - [`2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md`](2026-09/2026-09-04-official-gallery-delete-thumbnail-list.md)：官方图库列表新增物理删除操作，并改为只展示缩略图。
 - [`2026-09/2026-09-04-official-gallery-grade.md`](2026-09/2026-09-04-official-gallery-grade.md)：官网图库新增、编辑和详情共用表单增加整数权重 `grade`。
 - [`2026-09/2026-09-04-official-gallery-category-filter.md`](2026-09/2026-09-04-official-gallery-category-filter.md)：官网图库列表新增图库分类筛选，并将所选分类作为 `categoryId` 传给列表接口。
+
+- [2026-09-08 商品列表隐藏 Token 单价列](2026-09/2026-09-08-hide-goods-token-unit-price.md)：隐藏列表列，并按用户指示提交已有 dist.zip 删除。

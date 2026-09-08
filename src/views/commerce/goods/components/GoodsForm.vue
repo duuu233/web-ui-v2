@@ -30,6 +30,7 @@ const localizedGoodsFields = [
     language: 2,
     nameField: 'goodsName',
     amountField: 'amount',
+    marketAmountField: 'marketAmount',
     placeholder: '例如：30 元 / 3000 Token'
   },
   {
@@ -37,6 +38,7 @@ const localizedGoodsFields = [
     language: 1,
     nameField: 'goodsNameEnglish',
     amountField: 'amountEnglish',
+    marketAmountField: 'marketAmountEnglish',
     placeholder: 'Enter the English product name'
   },
   {
@@ -44,6 +46,7 @@ const localizedGoodsFields = [
     language: 3,
     nameField: 'goodsNameFan',
     amountField: 'amountFan',
+    marketAmountField: 'marketAmountFan',
     placeholder: '請輸入繁中商品名稱'
   },
   {
@@ -51,6 +54,7 @@ const localizedGoodsFields = [
     language: 4,
     nameField: 'goodsNameJapanese',
     amountField: 'amountJapanese',
+    marketAmountField: 'marketAmountJapanese',
     placeholder: '日本語の商品名を入力してください'
   }
 ]
@@ -73,12 +77,12 @@ const localizedGoodsFields = [
             <span class="section-index">01</span>
             <div>
               <h2 class="section-title">商品基础信息</h2>
-              <p class="section-description">配置四语种商品名称、对应售价、Token 发放量与列表排序。</p>
+              <p class="section-description">配置四语种商品名称、对应售价与划线价（原价）、Token 发放量与列表排序。</p>
             </div>
           </div>
 
           <div class="form-rows">
-            <div v-for="item in localizedGoodsFields" :key="item.locale" class="form-row form-row--pair">
+            <div v-for="item in localizedGoodsFields" :key="item.locale" class="form-row form-row--localized">
               <el-form-item class="form-field" :label="`商品名称（${item.locale}）`" :prop="item.nameField">
                 <el-input v-model="formData[item.nameField]" :disabled="isReadOnly" maxlength="30"
                   :placeholder="item.placeholder" show-word-limit />
@@ -88,6 +92,14 @@ const localizedGoodsFields = [
                 <div class="amount-field">
                   <el-input-number v-model="formData[item.amountField]" class="number-input" :disabled="isReadOnly"
                     :min="0.01" :max="99999999" :precision="2" :step="0.01" controls-position="right" />
+                  <span class="amount-field__currency">{{ getCurrencyLabel(item.language) }}</span>
+                </div>
+              </el-form-item>
+
+              <el-form-item class="form-field" :label="`划线价（原价 / ${item.locale}）`" :prop="item.marketAmountField">
+                <div class="amount-field">
+                  <el-input-number v-model="formData[item.marketAmountField]" class="number-input" :disabled="isReadOnly"
+                    :min="0" :max="99999999" :precision="2" :step="0.01" controls-position="right" placeholder="未设置" />
                   <span class="amount-field__currency">{{ getCurrencyLabel(item.language) }}</span>
                 </div>
               </el-form-item>
@@ -205,10 +217,10 @@ const localizedGoodsFields = [
   font-size: 12px;
 }
 
-/* 每组表单独占一行；语种的名称与金额作为一组并排显示。 */
+/* 每个语种独占一行，名称、售价、原价并排展示；窄屏按字段换行。 */
 .form-rows {
   display: flex;
-  max-width: 840px;
+  max-width: 1080px;
   flex-direction: column;
 }
 
@@ -218,8 +230,8 @@ const localizedGoodsFields = [
   gap: 0 20px;
 }
 
-.form-row--pair {
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+.form-row--localized {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
 }
 
 .form-field {
@@ -253,12 +265,12 @@ const localizedGoodsFields = [
   background: var(--app-surface);
 }
 
-@media (max-width: 680px) {
+@media (max-width: 1000px) {
   .form-section {
     padding: 22px 18px;
   }
 
-  .form-row--pair {
+  .form-row--localized {
     grid-template-columns: minmax(0, 1fr);
   }
 }

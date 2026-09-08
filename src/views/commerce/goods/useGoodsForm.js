@@ -20,6 +20,10 @@ const defaultForm = () => ({
   amountEnglish: null,
   amountFan: null,
   amountJapanese: null,
+  marketAmount: null,
+  marketAmountEnglish: null,
+  marketAmountFan: null,
+  marketAmountJapanese: null,
   num: 1,
   giveNum: 0,
   grade: 0,
@@ -59,6 +63,19 @@ export function useGoodsForm(mode) {
     { required: true, message: `请输入${label}`, trigger: 'change' }
   ]
 
+  // 原价允许为空以兼容旧商品；0 是有效金额，不能用真假值判断。
+  const marketAmountRules = [{
+    validator: (_rule, value, callback) => {
+      if (value === null || value === undefined || value === '') return callback()
+      const amount = Number(value)
+      if (!Number.isFinite(amount) || amount < 0 || amount > 99999999) {
+        return callback(new Error('请输入 0 至 99999999 之间的原价'))
+      }
+      callback()
+    },
+    trigger: 'change'
+  }]
+
   const rules = {
     goodsName: createNameRules('简中商品名称'),
     goodsNameEnglish: createNameRules('英文商品名称'),
@@ -68,6 +85,10 @@ export function useGoodsForm(mode) {
     amountEnglish: createAmountRules('英文商品金额'),
     amountFan: createAmountRules('繁中商品金额'),
     amountJapanese: createAmountRules('日文商品金额'),
+    marketAmount: marketAmountRules,
+    marketAmountEnglish: marketAmountRules,
+    marketAmountFan: marketAmountRules,
+    marketAmountJapanese: marketAmountRules,
     num: [{ required: true, message: '请输入发放数量', trigger: 'change' }],
     giveNum: [{ required: true, message: '请输入赠送数量', trigger: 'change' }],
     grade: [{ required: true, message: '请输入商品权重', trigger: 'change' }],
@@ -101,6 +122,10 @@ export function useGoodsForm(mode) {
     }
   }
 
+  function optionalAmount(value) {
+    return value === null || value === undefined || value === '' ? null : Number(value)
+  }
+
   function buildSubmitData() {
     const submitData = {
       goodsName: formData.goodsName.trim(),
@@ -111,6 +136,10 @@ export function useGoodsForm(mode) {
       amountEnglish: Number(formData.amountEnglish),
       amountFan: Number(formData.amountFan),
       amountJapanese: Number(formData.amountJapanese),
+      marketAmount: optionalAmount(formData.marketAmount),
+      marketAmountEnglish: optionalAmount(formData.marketAmountEnglish),
+      marketAmountFan: optionalAmount(formData.marketAmountFan),
+      marketAmountJapanese: optionalAmount(formData.marketAmountJapanese),
       num: Number(formData.num),
       giveNum: Number(formData.giveNum),
       grade: Number(formData.grade),

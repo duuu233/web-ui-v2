@@ -18,6 +18,8 @@
 
 ## 当前文档
 
+构建产物约定：根目录 `dist.zip` 仅供本地打包或交付，已由 `.gitignore` 的 `/dist.zip` 排除，不纳入源码提交；现有本地文件保留。操作记录见 [2026-10-19 忽略本地打包文件](history/2026-10/2026-10-19-ignore-dist-archive.md)。
+
 | 文档 | 状态 | 职责 |
 | --- | --- | --- |
 | [`project-structure.md`](project-structure.md) | Active | 当前目录、分层和模块组织。 |

@@ -47,6 +47,10 @@ Currency presentation (frontend display rules, last confirmed by the project own
 - Order detail displays the backend `currencyName` as the currency name. For compatibility with older responses, a missing or blank value falls back to the language-based currency label.
 - The language mapping lives in `src/views/commerce/utils.js` and remains a frontend display convention. The `currencyName` addition changes only the order-detail response contract; no request parameter changed.
 
+## FPGA 固件版本（2026-10-21 核验）
+
+已接入 `/ZoneAdmin/ProductVersionFpga/` 下 `addProductVersionFpga`、`editProductVersionFpga`、`deleteProductVersionFpga`、`setProductVersionFpgaVerify`、`getProductVersionFpgaDetail`、`getProductVersionFpgaList` 六个接口。方法、字段、枚举和权限以 [FPGA 模块契约](product-version-fpga.md) 为准。列表、详情和产品选项通过线上只读验证；固件写操作通过本地模拟接口验证。此前其余接口条目的核验日期保持不变。
+
 ## PC Admin Backend
 
 | Area | Module | Feature | Interface / handling | Current status |

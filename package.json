@@ -9,7 +9,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "menu:sync:commerce": "node scripts/sync-admin-menu.mjs --scope=commerce",
-    "menu:sync:user-account": "node scripts/sync-admin-menu.mjs --scope=user-account"
+    "menu:sync:user-account": "node scripts/sync-admin-menu.mjs --scope=user-account",
+    "menu:sync:fpga": "node scripts/sync-admin-menu.mjs --scope=fpga-firmware",
+    "test:fpga": "node --test tests/product-version-fpga.test.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

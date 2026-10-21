@@ -24,13 +24,15 @@ export function usePagedList(options) {
     onError = () => {},
     immediate = true,
     reloadOnActivated = true,
-    refreshKey = ''
+    refreshKey = '',
+    latestRequestOnly = false
   } = options
 
   const listQuery = reactive(defaultQuery())
   const list = shallowRef([])
   const total = shallowRef(0)
   const listLoading = shallowRef(false)
+  let requestSequence = 0
 
   function resetQuery(extra = {}) {
     Object.keys(listQuery).forEach((key) => delete listQuery[key])
@@ -38,19 +40,21 @@ export function usePagedList(options) {
   }
 
   function getList() {
+    const sequence = ++requestSequence
     listLoading.value = true
     return fetchList(buildParams(listQuery))
       .then((response) => {
+        if (latestRequestOnly && sequence !== requestSequence) return response
         const result = mapResponse(response)
         list.value = result.list
         total.value = result.total
         return response
       })
       .catch((error) => {
-        onError(error)
+        if (!latestRequestOnly || sequence === requestSequence) onError(error)
       })
       .finally(() => {
-        listLoading.value = false
+        if (!latestRequestOnly || sequence === requestSequence) listLoading.value = false
       })
   }
 

@@ -56,6 +56,8 @@ docs/history/
 
 ## 索引
 
+- [2026-10-21 FPGA 固件版本模块](2026-10/2026-10-21-fpga-firmware.md)：新增六项接口、页面及自动化菜单，登记线上菜单与回归验证。
+
 - [`2026-10/2026-10-19-ignore-dist-archive.md`](2026-10/2026-10-19-ignore-dist-archive.md)：忽略根目录本地打包文件 `dist.zip`，保留文件，不提交产物内容。
 
 - [`2026-08/2026-08-12-ai-context-codegraph-maintenance.md`](2026-08/2026-08-12-ai-context-codegraph-maintenance.md)：建立项目专属 AI 上下文、文档入口与 CodeGraph/历史记录维护规则。

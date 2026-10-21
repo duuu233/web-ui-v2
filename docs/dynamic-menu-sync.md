@@ -86,6 +86,12 @@ AI配置 (#)
 
 账户日志页面使用本地隐藏路由 `userAccountLogs`，从用户列表工具栏或行操作进入；权限节点本身不展示为左侧菜单。
 
+## FPGA 固件独立范围
+
+`npm run menu:sync:fpga` 对应 `--scope=fpga-firmware`，只维护 FPGA 固件导航和五项操作权限。以旧固件列表编码 `Get_ProductVersion_GetProductVersionList` 的唯一父级为挂载点；缺失或出现多个父级就停止。在已有“产品管理”和“商品管理”并存时，此范围仍通过固件编码明确定位，不运行 commerce 范围，也不迁移旧分组。页面路由与字段见 [FPGA 模块契约](product-version-fpga.md)。
+
+预览后使用 `npm run menu:sync:fpga -- --apply` 新增缺失项。普通角色仍需绑定权限、重新登录。2026-10-21 实际新增节点 163–168，见 [操作记录](history/2026-10/2026-10-21-fpga-firmware.md)。
+
 ## 执行同步
 
 脚本不会把 token 写入代码、配置或日志。请把当前管理员 `userToken` 临时放在进程环境变量中。
@@ -120,7 +126,7 @@ npm run menu:sync:commerce -- --system-id=2 --apply
 脚本的安全特性：
 
 - 默认是只读预览，必须显式传 `--apply` 才写入。
-- `commerce` 与 `user-account` 是独立范围；执行其中一个不会遍历或修改另一个范围的节点。
+- `commerce`、`user-account` 与 `fpga-firmware` 是独立范围；执行其中一个不会遍历或修改其他范围的节点。
 - 在同一父节点下优先按 `appCode` 查重；编码为 `#` 的分组按 `appName` 查重。
 - “产品管理”声明兼容旧版顶级名称“商品管理”，升级时不会重复创建分组；传入 `--update` 后会完成名称迁移。
 - 每次创建父节点后重新读取权限树，以真实后端 ID 创建子节点。
@@ -161,7 +167,7 @@ npm run menu:sync:commerce -- --system-id=2 --apply
 5. 让受影响的角色在「角色管理 → 绑定权限」里重新勾选保留下来的节点，**退出重新登录**
    （顶部菜单、左侧菜单和 `getChildAppCodes` 都有缓存）。
 
-⚠️ **清理干净之前不要再跑 `--apply`**。`findMatchingChild` 对分组节点（`appCode` 为 `#`）
+⚠️ **清理干净之前不要对 commerce 范围运行 `--apply`**。`findMatchingChild` 对分组节点（`appCode` 为 `#`）
 是按 `[appName, ...aliases]` 在**后端返回的子节点顺序**里取第一个命中：两个分组同时存在时，
 命中哪一个取决于返回顺序，`--update` 有可能把**旧的那个**改名成「产品管理」，越弄越乱。
 旧分组删干净之后再跑一次只读预览（`npm run menu:sync:commerce`），应当显示全部节点已存在。

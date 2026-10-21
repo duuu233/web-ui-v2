@@ -24,6 +24,7 @@
 | --- | --- | --- |
 | [`project-structure.md`](project-structure.md) | Active | 当前目录、分层和模块组织。 |
 | [`interface-list.md`](interface-list.md) | Active | 已核对的管理后台接口清单与来源。 |
+| [`product-version-fpga.md`](product-version-fpga.md) | Active | FPGA 固件版本页面、六项接口、字段与权限契约。 |
 | [`dynamic-menu-sync.md`](dynamic-menu-sync.md) | Active | 后端动态菜单同步、验证和回滚流程。 |
 | [`api-integration-progress.md`](api-integration-progress.md) | Tracking | 当前接口接入进度与未完成项。 |
 | [`history/README.md`](history/README.md) | Active | 本地操作更新记录规则、模板与历史索引。 |
@@ -58,7 +59,9 @@ codegraph sync .
 
 历史记录使用 `history/YYYY-MM/YYYY-MM-DD-topic.md`。一项集中修改对应一份记录，不建立无限增长的单文件流水账。记录完成后保持冻结；若产生长期有效的结论，还要同步更新 AI_CONTEXT 或对应 Active 文档。
 
-最新记录：[`history/2026-09/2026-09-04-official-gallery-category-filter.md`](history/2026-09/2026-09-04-official-gallery-category-filter.md)（官网图库列表新增图库分类筛选，并将所选分类作为 `categoryId` 传给列表接口）。
+最新记录：[2026-10-21 FPGA 固件版本模块](history/2026-10/2026-10-21-fpga-firmware.md)（六项接口、独立菜单自动化与验证）。
+
+此前记录：[`history/2026-09/2026-09-04-official-gallery-category-filter.md`](history/2026-09/2026-09-04-official-gallery-category-filter.md)（官网图库列表新增图库分类筛选，并将所选分类作为 `categoryId` 传给列表接口）。
 
 文档中不得出现 Token、签名、密码、Cookie、完整环境变量、个人数据或本机缓存内容。
 

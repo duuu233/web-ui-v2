@@ -27,9 +27,11 @@ npm run build
 npm run preview
 npm run menu:sync:commerce -- --help
 npm run menu:sync:user-account -- --help
+npm run menu:sync:fpga -- --help
+npm run test:fpga
 ```
 
-仓库没有独立的 `test`、`lint` 或 `type-check` 脚本。修改后的最低验证是运行与改动相关的静态检查，并执行 `npm run build`；菜单同步脚本先预览，确认后才允许带 `--apply`。
+仓库提供 FPGA 定向回归命令 `test:fpga`，暂无全仓 `test`、`lint` 或 `type-check` 脚本。修改后的最低验证是运行与改动相关的静态检查，并执行 `npm run build`；菜单同步脚本先预览，确认后才允许带 `--apply`。
 
 ## 3. 运行环境
 
@@ -94,6 +96,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - 订单管理：订单列表与详情；金额按订单 `language` 前置币种符号（`¥` 人民币、`$` 美元、`JP¥` 日元），接口返回 `currencySymbol` 时优先使用后端值；订单详情优先展示后端 `currencyName` 币种名称，旧数据缺失该字段时按 `language` 回退。
 - AI 配置：配置列表、编辑和启禁用；列表可按内容语种筛选。
 - 基础配置：系统配置继续使用 `/Common/getConfigDataList` 与 `/Common/setConfigDataEdit`，平台设备 ID 不在表单中展示，也不进入保存负载。
+- FPGA 固件版本：产品管理下的独立列表、新增、编辑和只读详情；接入 `/ProductVersionFpga/*` 六项接口，支持固件上传、升级类型、权重、启禁用与删除。菜单使用独立 `fpga-firmware` 范围，字段和权限见 [`docs/product-version-fpga.md`](docs/product-version-fpga.md)。
 - UMS/权限：员工、角色、菜单和授权关系。
 
 接口完成度以 [`docs/api-integration-progress.md`](docs/api-integration-progress.md) 为当前状态入口；接口清单以 [`docs/interface-list.md`](docs/interface-list.md) 为核对依据。
@@ -134,7 +137,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 
 ## 9. 已知风险与待确认项
 
-- 项目暂无自动化测试、lint 和类型检查脚本，回归主要依赖构建与人工验证。
+- FPGA 模块有定向自动回归，其他模块暂无统一测试覆盖；全仓仍无 lint 和类型检查脚本。
 - 后台菜单与本地路由可能独立演进；新增页面后需要重新绑定角色权限并重新登录验证。
 - 请求签名和统一错误处理集中在请求层，修改的影响面很大。
 - Swagger、线上返回值和已有页面可能短期不一致，应在文档中标明核验日期与事实来源。
@@ -149,6 +152,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - [`docs/project-structure.md`](docs/project-structure.md)：当前目录与模块组织。
 - [`docs/interface-list.md`](docs/interface-list.md)：接口核对清单。
 - [`docs/api-integration-progress.md`](docs/api-integration-progress.md)：接口接入状态。
+- [`docs/product-version-fpga.md`](docs/product-version-fpga.md)：FPGA 固件页面、接口与权限。
 - [`docs/dynamic-menu-sync.md`](docs/dynamic-menu-sync.md)：动态菜单同步、验证和回滚。
 - [`docs/history/README.md`](docs/history/README.md)：本地操作更新记录规范与模板。
 

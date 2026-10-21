@@ -59,7 +59,9 @@ codegraph sync .
 
 历史记录使用 `history/YYYY-MM/YYYY-MM-DD-topic.md`。一项集中修改对应一份记录，不建立无限增长的单文件流水账。记录完成后保持冻结；若产生长期有效的结论，还要同步更新 AI_CONTEXT 或对应 Active 文档。
 
-最新记录：[2026-10-21 FPGA 固件版本模块](history/2026-10/2026-10-21-fpga-firmware.md)（六项接口、独立菜单自动化与验证）。
+最新记录：[2026-10-21 产品版本类型](history/2026-10/2026-10-21-product-version-type.md)（蓝牙/wifi 字段接入与保存后列表刷新）。
+
+此前记录：[2026-10-21 FPGA 固件版本模块](history/2026-10/2026-10-21-fpga-firmware.md)（六项接口、独立菜单自动化与验证）。
 
 此前记录：[`history/2026-09/2026-09-04-official-gallery-category-filter.md`](history/2026-09/2026-09-04-official-gallery-category-filter.md)（官网图库列表新增图库分类筛选，并将所选分类作为 `categoryId` 传给列表接口）。
 

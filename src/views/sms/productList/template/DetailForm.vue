@@ -5,8 +5,9 @@ import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 import { addProduct, editProduct, getProductDetail } from '@/api/productList'
 import { invalidateList } from '@/composables/useListRefresh'
-import MultiUpload from '@/components/Upload/MultiUpload.vue'
+import MultiUpload from '@/components/Upload/multiUpload.vue'
 import PageHeader from '@/components/PageHeader/index.vue'
+import { normalizeVersionType, versionTypeOptions, versionTypeText } from '../versionType'
 
 const props = defineProps({
   pageType: {
@@ -31,6 +32,7 @@ const screenTypeOptions = [
 const defaultForm = () => ({
   productId: null,
   productName: '',
+  versionType: null,
   productImg: [],
   shapeType: 0,
   screenType: 0,
@@ -60,6 +62,7 @@ const rules = {
       trigger: 'change'
     }
   ],
+  versionType: [{ required: true, type: 'enum', enum: [1, 2], message: '请选择版本类型', trigger: 'change' }],
   shapeType: [{ required: true, message: '请选择形状类型', trigger: 'change' }],
   screenType: [
     { required: true, message: '请选择屏幕方向', trigger: 'change' }
@@ -84,6 +87,7 @@ async function getData() {
     productImg: detail.productImg
       ? [{ url: detail.productImg, name: '产品图片' }]
       : [],
+    versionType: normalizeVersionType(detail.versionType),
     broadcastId: detail.broadcastId ?? '',
     carouselInterval: detail.carouselInterval ?? null,
     screenType: detail.screenType ?? 0,
@@ -95,6 +99,7 @@ async function getData() {
 function buildSubmitData() {
   const submitData = cloneDeep(formData)
   submitData.productImg = formData.productImg[0]?.url || ''
+  submitData.versionType = normalizeVersionType(formData.versionType)
   Object.keys(submitData).forEach(key => {
     if (
       submitData[key] === null ||
@@ -169,6 +174,23 @@ onActivated(() => {
             show-word-limit
             :disabled="pageType === 3"
           />
+        </el-form-item>
+
+        <el-form-item label="版本类型" prop="versionType">
+          <span v-if="pageType === 3">{{ versionTypeText(formData.versionType) }}</span>
+          <el-select
+            v-else
+            v-model="formData.versionType"
+            class="input-width"
+            placeholder="请选择版本类型"
+          >
+            <el-option
+              v-for="item in versionTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
         <el-form-item label="产品图片" prop="productImg">

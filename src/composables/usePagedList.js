@@ -79,7 +79,11 @@ export function usePagedList(options) {
     return getList()
   }
 
-  if (immediate) onMounted(getList)
+  if (immediate) onMounted(() => {
+    // The mount fetch already includes changes made before this instance existed.
+    consumeListInvalidation(refreshKey)
+    getList()
+  })
 
   if (reloadOnActivated || refreshKey) {
     let isInitialActivation = true
@@ -87,9 +91,9 @@ export function usePagedList(options) {
     onActivated(() => {
       if (isInitialActivation) {
         isInitialActivation = false
-        // onActivated also runs after the initial mount, which has already loaded the list.
+        // KeepAlive may start caching after mount, delaying the first activation until a return visit.
         const isInvalidated = consumeListInvalidation(refreshKey)
-        if (!immediate && (reloadOnActivated || isInvalidated)) getList()
+        if (isInvalidated || (!immediate && reloadOnActivated)) getList()
         return
       }
 

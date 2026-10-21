@@ -47,6 +47,12 @@ Currency presentation (frontend display rules, last confirmed by the project own
 - Order detail displays the backend `currencyName` as the currency name. For compatibility with older responses, a missing or blank value falls back to the language-based currency label.
 - The language mapping lives in `src/views/commerce/utils.js` and remains a frontend display convention. The `currencyName` addition changes only the order-detail response contract; no request parameter changed.
 
+## 产品版本类型（2026-10-21 核验）
+
+产品新增、编辑通过 `/ZoneAdmin/Product/addProduct`、`editProduct` 提交数字字段 `versionType`：`1=蓝牙版`、`2=wifi版`。`getProductList`、`getProductDetail` 返回同一字段；列表新增“版本类型”列，详情只读展示类型名称，共享表单新增必选项并在编辑时回填。数字字符串 `"1"/"2"` 归一化为数字；旧数据缺少或带不支持的值时显示“未设置”，新增/编辑须显式选择有效类型后保存。
+
+当前 Swagger 的列表查询参数仍是既有分页、关键词、日期和状态等参数，版本类型在本轮作为返回字段展示。API wrapper 沿用原接口，字段由现有请求层传递；无需新增菜单或操作权限。
+
 ## FPGA 固件版本（2026-10-21 核验）
 
 已接入 `/ZoneAdmin/ProductVersionFpga/` 下 `addProductVersionFpga`、`editProductVersionFpga`、`deleteProductVersionFpga`、`setProductVersionFpgaVerify`、`getProductVersionFpgaDetail`、`getProductVersionFpgaList` 六个接口。方法、字段、枚举和权限以 [FPGA 模块契约](product-version-fpga.md) 为准。列表、详情和产品选项通过线上只读验证；固件写操作通过本地模拟接口验证。此前其余接口条目的核验日期保持不变。

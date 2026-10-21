@@ -20,7 +20,7 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | APP version and app market | 管理后台-APP版本管理接口 | Completed | Current `appVersion` and `applicationStore` modules now use `/AppVersion/*`. |
 | FPGA product version | 管理后台-固件(fpga)版本控制接口 | Completed | Six `/ProductVersionFpga/*` APIs, list/add/edit/detail, upload, status and delete. Menu automation applied on 2026-10-21; live reads and mocked writes verified. See [module contract](product-version-fpga.md). |
 | Product version | 管理后台-固件版本控制接口 | Completed | Added `productVersion` API, list route, and detail route. |
-| Product | 管理后台-产品相关接口 | Completed | Product, product FAQ, and user product list now use `/Product/*`. |
+| Product | 管理后台-产品相关接口 | Completed | Product, product FAQ, and user product list now use `/Product/*`. Product add/edit submit numeric `versionType` (1 Bluetooth, 2 wifi); product list/detail display it, with explicit selection for legacy missing values (2026-10-21). |
 | Login | 管理后台-登录 | Completed | Login request and token handling now match `/Passport/adminLogin`. |
 | Permission | 管理后台-权限 | Completed | UMS permission pages now align with `/Jurisdiction/*`; unsupported area route removed. |
 | Common | 管理后台-通用相关接口 | Completed | Home stats include bound-device count and order amount; registration and order-count trends use ECharts; config and upload use `/Common/*`. |

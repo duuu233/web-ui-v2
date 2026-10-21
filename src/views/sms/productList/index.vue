@@ -8,6 +8,7 @@ import PaginationBar from '@/components/PaginationBar/index.vue'
 import { usePagedList, cleanQuery } from '@/composables/usePagedList'
 import { formatDate } from '@/utils/date'
 import { getProductList, setProductVerify } from '@/api/productList'
+import { versionTypeText } from './versionType'
 
 const router = useRouter()
 
@@ -174,6 +175,9 @@ function handleDetail(row) {
       >
         <vxe-column type="seq" title="编号" width="70" align="center" />
         <vxe-column field="productName" title="产品名称" min-width="140" align="center" show-overflow />
+        <vxe-column field="versionType" title="版本类型" width="110" align="center">
+          <template #default="{ row }">{{ versionTypeText(row.versionType) }}</template>
+        </vxe-column>
         <vxe-column field="shapeTypeMsg" title="形状" width="100" align="center" show-overflow />
         <vxe-column title="尺寸(cm)" width="120" align="center">
           <template #default="{ row }">{{ row.width || '-' }} x {{ row.height || '-' }}</template>

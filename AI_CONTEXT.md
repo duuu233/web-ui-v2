@@ -96,7 +96,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - 订单管理：订单列表与详情；金额按订单 `language` 前置币种符号（`¥` 人民币、`$` 美元、`JP¥` 日元），接口返回 `currencySymbol` 时优先使用后端值；订单详情优先展示后端 `currencyName` 币种名称，旧数据缺失该字段时按 `language` 回退。
 - AI 配置：配置列表、编辑和启禁用；列表可按内容语种筛选。
 - 基础配置：系统配置继续使用 `/Common/getConfigDataList` 与 `/Common/setConfigDataEdit`，平台设备 ID 不在表单中展示，也不进入保存负载。
-- 相框产品：新增/编辑必选 `versionType`（1=蓝牙版、2=wifi版），列表与详情显示类型名称；旧数据缺字段显示“未设置”，编辑后须明确选择。保存后的列表失效标记支持首次返回时才启用缓存的页面。
+- 相框产品：新增/编辑必选 `versionType`（1=蓝牙版、2=wifi版），列表与详情显示类型名称；旧数据缺字段显示“未设置”，编辑后须明确选择。保存后的列表失效标记支持首次返回时才启用缓存的页面。新增/编辑/详情另有选填文本 `sizeModel`（尺寸型号，如“3.6寸”），清空时提交空串；用户端直接展示该值。
 - FPGA 固件版本：产品管理下的独立列表、新增、编辑和只读详情；接入 `/ProductVersionFpga/*` 六项接口，支持固件上传、升级类型、权重、启禁用与删除。菜单使用独立 `fpga-firmware` 范围，字段和权限见 [`docs/product-version-fpga.md`](docs/product-version-fpga.md)。
 - UMS/权限：员工、角色、菜单和授权关系。
 

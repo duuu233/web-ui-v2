@@ -53,6 +53,10 @@ Currency presentation (frontend display rules, last confirmed by the project own
 
 当前 Swagger 的列表查询参数仍是既有分页、关键词、日期和状态等参数，版本类型在本轮作为返回字段展示。API wrapper 沿用原接口，字段由现有请求层传递；无需新增菜单或操作权限。
 
+## 产品尺寸型号（2026-10-23 核验）
+
+公开 Swagger 的 `ProductAddApiIn`（`addProduct` / `editProduct` 入参）与 `ProductDetailApiOut`、`ProductApiOut` 均新增字符串字段 `sizeModel`，说明为“尺寸型号：例3.6寸”。共享表单在“尺寸(cm)”下方新增选填输入框“尺寸型号”，新增、编辑可填写，详情只读回填；提交时去掉首尾空白，清空后仍提交空串，保证编辑能把旧值清掉。用户端设备列表、详情接口同样下发该字段，由小程序与 App 直接展示，后台不做换算。列表未新增列。
+
 ## FPGA 固件版本（2026-10-21 核验）
 
 已接入 `/ZoneAdmin/ProductVersionFpga/` 下 `addProductVersionFpga`、`editProductVersionFpga`、`deleteProductVersionFpga`、`setProductVersionFpgaVerify`、`getProductVersionFpgaDetail`、`getProductVersionFpgaList` 六个接口。方法、字段、枚举和权限以 [FPGA 模块契约](product-version-fpga.md) 为准。列表、详情和产品选项通过线上只读验证；固件写操作通过本地模拟接口验证。此前其余接口条目的核验日期保持不变。

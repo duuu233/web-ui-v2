@@ -38,6 +38,7 @@ const defaultForm = () => ({
   screenType: 0,
   width: null,
   height: null,
+  sizeModel: '',
   broadcastId: '',
   carouselInterval: null,
   rotationDegree: 0,
@@ -88,6 +89,7 @@ async function getData() {
       ? [{ url: detail.productImg, name: '产品图片' }]
       : [],
     versionType: normalizeVersionType(detail.versionType),
+    sizeModel: detail.sizeModel ?? '',
     broadcastId: detail.broadcastId ?? '',
     carouselInterval: detail.carouselInterval ?? null,
     screenType: detail.screenType ?? 0,
@@ -109,6 +111,8 @@ function buildSubmitData() {
       delete submitData[key]
     }
   })
+  // 尺寸型号选填：清空后也要提交空串，否则编辑时后端保留旧值
+  submitData.sizeModel = (formData.sizeModel || '').trim()
   return submitData
 }
 
@@ -257,6 +261,16 @@ onActivated(() => {
               />
             </el-form-item>
           </div>
+        </el-form-item>
+
+        <el-form-item label="尺寸型号" prop="sizeModel">
+          <el-input
+            v-model="formData.sizeModel"
+            class="input-width"
+            placeholder="例：3.6寸"
+            clearable
+            :disabled="pageType === 3"
+          />
         </el-form-item>
 
         <el-form-item label="广播ID" prop="broadcastId">

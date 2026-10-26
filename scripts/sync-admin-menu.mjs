@@ -248,7 +248,23 @@ export const fpgaFirmwareMenuNodes = [{
   ].map(([appName, appCode]) => ({ appName, appCode, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }))
 }]
 
+export const productDeviceMenuNodes = [{
+  appName: '产品设备', appCode: 'Get_ProductDevice_GetProductDeviceList',
+  appUrl: 'productDevice', grade: 0, isNav: 1, isRefresh: 0,
+  children: [
+    ['详情', 'Get_ProductDevice_GetProductDeviceDetail'],
+    ['新增', 'Post_ProductDevice_AddProductDevice'],
+    ['编辑', 'Post_ProductDevice_EditProductDevice'],
+    ['启用/禁用', 'Post_ProductDevice_SetProductDeviceVerify']
+  ].map(([appName, appCode]) => ({ appName, appCode, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }))
+}]
+
 const menuScopes = {
+  'product-device': {
+    label: '产品设备（仅本模块）',
+    parentOfCode: 'Get_Product_ProductList',
+    nodes: productDeviceMenuNodes
+  },
   'fpga-firmware': {
     label: 'FPGA固件版本（仅新模块）',
     parentOfCode: 'Get_ProductVersion_GetProductVersionList',
@@ -317,7 +333,7 @@ function printHelp() {
   BOLTFOX_MENU_SCOPE   可选，默认 commerce
 
 参数：
-  --scope=<scope>      同步范围：commerce、user-account 或 fpga-firmware
+  --scope=<scope>      同步范围：commerce、user-account、fpga-firmware 或 product-device
   --apply              实际新增缺失节点；省略时只预览
   --update             同时更新已存在但配置漂移的节点（必须搭配 --apply）
   --system-id=<id>     覆盖系统 ID
@@ -437,7 +453,7 @@ function findParentsByChildCode(root, code) {
 function resolveScopeParent(root, scope) {
   if (scope.parentOfCode) {
     const parents = findParentsByChildCode(root, scope.parentOfCode)
-    if (parents.length !== 1) throw new Error('固件模块父级不存在或不唯一，停止同步')
+    if (parents.length !== 1) throw new Error('同步模块父级不存在或不唯一，停止同步')
     return parents[0]
   }
   if (!scope.parentCode) return root

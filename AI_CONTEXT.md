@@ -29,6 +29,8 @@ npm run menu:sync:commerce -- --help
 npm run menu:sync:user-account -- --help
 npm run menu:sync:fpga -- --help
 npm run test:fpga
+npm run menu:sync:product-device -- --help
+npm run test:product-device
 ```
 
 仓库提供 FPGA 定向回归命令 `test:fpga`，暂无全仓 `test`、`lint` 或 `type-check` 脚本。修改后的最低验证是运行与改动相关的静态检查，并执行 `npm run build`；菜单同步脚本先预览，确认后才允许带 `--apply`。
@@ -97,6 +99,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - AI 配置：配置列表、编辑和启禁用；列表可按内容语种筛选。
 - 基础配置：系统配置继续使用 `/Common/getConfigDataList` 与 `/Common/setConfigDataEdit`，平台设备 ID 不在表单中展示，也不进入保存负载。
 - 相框产品：新增/编辑必选 `versionType`（1=蓝牙版、2=wifi版），列表与详情显示类型名称；旧数据缺字段显示“未设置”，编辑后须明确选择。保存后的列表失效标记支持首次返回时才启用缓存的页面。新增/编辑/详情另有选填文本 `sizeModel`（尺寸型号，如“3.6寸”），清空时提交空串；用户端直接展示该值。
+- 产品设备：产品管理下的列表、新增、编辑、详情及启禁用，接入 `/ProductDevice/*` 五项接口。产品选择强制WiFi版本（`versionType=2`），编辑主键为 `pDeviceId`、详情和启禁用使用 `id`；产品列表另有版本类型筛选。独立菜单范围 `product-device`，当前契约见 [`docs/product-device.md`](docs/product-device.md)。
 - FPGA 固件版本：产品管理下的独立列表、新增、编辑和只读详情；接入 `/ProductVersionFpga/*` 六项接口，支持固件上传、升级类型、权重、启禁用与删除。菜单使用独立 `fpga-firmware` 范围，字段和权限见 [`docs/product-version-fpga.md`](docs/product-version-fpga.md)。
 - UMS/权限：员工、角色、菜单和授权关系。
 
@@ -153,6 +156,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - [`docs/project-structure.md`](docs/project-structure.md)：当前目录与模块组织。
 - [`docs/interface-list.md`](docs/interface-list.md)：接口核对清单。
 - [`docs/api-integration-progress.md`](docs/api-integration-progress.md)：接口接入状态。
+- [`docs/product-device.md`](docs/product-device.md)：产品设备接口、WiFi产品和菜单。
 - [`docs/product-version-fpga.md`](docs/product-version-fpga.md)：FPGA 固件页面、接口与权限。
 - [`docs/dynamic-menu-sync.md`](docs/dynamic-menu-sync.md)：动态菜单同步、验证和回滚。
 - [`docs/history/README.md`](docs/history/README.md)：本地操作更新记录规范与模板。

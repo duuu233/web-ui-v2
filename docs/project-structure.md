@@ -146,3 +146,7 @@ src/views/
 - `src/views/ums/admin/index.vue`
 - `src/views/ums/menuList/index.vue`
 - `src/views/ums/role/index.vue`
+
+## 产品设备模块（2026-10-26）
+
+`src/api/productDevice.js` 封装五项接口；`src/views/sms/productDevice/index.vue` 组合搜索、工具栏、表格和分页。`components/ProductDeviceFilters.vue` 管理筛选模型与搜索/重置事件，`ProductDeviceTable.vue` 接收行数据和加载状态并上报详情/编辑/启禁用事件，`ProductDeviceEditor.vue` 接收mode与recordId，复用新增/编辑/只读详情。`useProductDeviceList.js` 组合公共分页及状态变更，`model.js` 维护主键、提交字段和WiFi产品分页选择。模块契约见 [产品设备](product-device.md)。

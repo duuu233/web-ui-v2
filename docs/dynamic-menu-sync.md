@@ -92,6 +92,10 @@ AI配置 (#)
 
 预览后使用 `npm run menu:sync:fpga -- --apply` 新增缺失项。普通角色仍需绑定权限、重新登录。2026-10-21 实际新增节点 163–168，见 [操作记录](history/2026-10/2026-10-21-fpga-firmware.md)。
 
+## 产品设备独立范围
+
+`npm run menu:sync:product-device` 对应 `--scope=product-device`，仅维护“产品设备”导航和详情、新增、编辑、启禁用四项操作。按 `Get_Product_ProductList` 定位唯一父级；父级缺失或歧义就停止。预览后传 `-- --apply` 新增，重复执行不重复创建，不修改其他范围。2026-10-26 系统1产品管理108下新增169–173，具体契约与验证见 [产品设备](product-device.md)。
+
 ## 执行同步
 
 脚本不会把 token 写入代码、配置或日志。请把当前管理员 `userToken` 临时放在进程环境变量中。
@@ -126,7 +130,7 @@ npm run menu:sync:commerce -- --system-id=2 --apply
 脚本的安全特性：
 
 - 默认是只读预览，必须显式传 `--apply` 才写入。
-- `commerce`、`user-account` 与 `fpga-firmware` 是独立范围；执行其中一个不会遍历或修改其他范围的节点。
+- `commerce`、`user-account`、`fpga-firmware` 与 `product-device` 是独立范围；执行其中一个不会遍历或修改其他范围的节点。
 - 在同一父节点下优先按 `appCode` 查重；编码为 `#` 的分组按 `appName` 查重。
 - “产品管理”声明兼容旧版顶级名称“商品管理”，升级时不会重复创建分组；传入 `--update` 后会完成名称迁移。
 - 每次创建父节点后重新读取权限树，以真实后端 ID 创建子节点。

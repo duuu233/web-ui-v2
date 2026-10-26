@@ -51,11 +51,15 @@ Currency presentation (frontend display rules, last confirmed by the project own
 
 产品新增、编辑通过 `/ZoneAdmin/Product/addProduct`、`editProduct` 提交数字字段 `versionType`：`1=蓝牙版`、`2=wifi版`。`getProductList`、`getProductDetail` 返回同一字段；列表新增“版本类型”列，详情只读展示类型名称，共享表单新增必选项并在编辑时回填。数字字符串 `"1"/"2"` 归一化为数字；旧数据缺少或带不支持的值时显示“未设置”，新增/编辑须显式选择有效类型后保存。
 
-当前 Swagger 的列表查询参数仍是既有分页、关键词、日期和状态等参数，版本类型在本轮作为返回字段展示。API wrapper 沿用原接口，字段由现有请求层传递；无需新增菜单或操作权限。
+2026-10-26 新增列表筛选 `versionType`（1蓝牙，2WiFi），清空/重置省略该参数。Swagger目前误标成第二个 `verify`，按产品明确口径及线上只读验证使用 `versionType`。产品设备选择器强制请求2，其他选择器维持原行为。
 
 ## 产品尺寸型号（2026-10-23 核验）
 
 公开 Swagger 的 `ProductAddApiIn`（`addProduct` / `editProduct` 入参）与 `ProductDetailApiOut`、`ProductApiOut` 均新增字符串字段 `sizeModel`，说明为“尺寸型号：例3.6寸”。共享表单在“尺寸(cm)”下方新增选填输入框“尺寸型号”，新增、编辑可填写，详情只读回填；提交时去掉首尾空白，清空后仍提交空串，保证编辑能把旧值清掉。用户端设备列表、详情接口同样下发该字段，由小程序与 App 直接展示，后台不做换算。列表未新增列。
+
+## 产品设备（2026-10-26 核验）
+
+新增 `/ProductDevice/` 下列表、详情、添加、编辑和启禁用五项接口与页面，菜单169–173已创建。编辑提交 `pDeviceId`，详情/启禁用提交 `id`，产品选择仅WiFi。完整字段、权限及Swagger差异见 [产品设备契约](product-device.md)。业务读接口线上核验，业务写操作仅模拟验证。
 
 ## FPGA 固件版本（2026-10-21 核验）
 

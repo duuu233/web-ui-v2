@@ -8,7 +8,7 @@ import PaginationBar from '@/components/PaginationBar/index.vue'
 import { usePagedList, cleanQuery } from '@/composables/usePagedList'
 import { formatDate } from '@/utils/date'
 import { getProductList, setProductVerify } from '@/api/productList'
-import { versionTypeText } from './versionType'
+import { versionTypeOptions, versionTypeText } from './versionType'
 
 const router = useRouter()
 
@@ -21,7 +21,8 @@ const defaultListQuery = () => ({
   pageIndex: 1,
   pageSize: 10,
   keyword: null,
-  verify: null
+  verify: null,
+  versionType: null
 })
 
 const dateList = shallowRef([])
@@ -134,6 +135,8 @@ function handleDetail(row) {
           />
         </el-select>
       </el-form-item>
+
+      <el-form-item label="版本类型"><el-select v-model="listQuery.versionType" clearable placeholder="全部版本" style="width: 150px"><el-option v-for="item in versionTypeOptions" :key="item.value" :label="item.label" :value="item.value" /></el-select></el-form-item>
 
       <el-form-item label="创建时间">
         <el-date-picker

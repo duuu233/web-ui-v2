@@ -179,6 +179,33 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'productDevice',
+        name: 'productDevice',
+        component: () => import('@/views/sms/productDevice/index.vue'),
+        meta: { title: '产品设备', icon: 'sms-flash' }
+      },
+      {
+        path: 'productDeviceAdd',
+        name: 'productDeviceAdd',
+        component: () => import('@/views/sms/productDevice/add.vue'),
+        meta: { title: '新增产品设备', icon: 'sms-flash' },
+        hidden: true
+      },
+      {
+        path: 'productDeviceEdit',
+        name: 'productDeviceEdit',
+        component: () => import('@/views/sms/productDevice/edit.vue'),
+        meta: { title: '编辑产品设备', icon: 'sms-flash' },
+        hidden: true
+      },
+      {
+        path: 'productDeviceDetail',
+        name: 'productDeviceDetail',
+        component: () => import('@/views/sms/productDevice/detail.vue'),
+        meta: { title: '产品设备详情', icon: 'sms-flash' },
+        hidden: true
+      },
+      {
         path: 'productVersionFpga',
         name: 'productVersionFpga',
         component: () => import('@/views/sms/productVersionFpga/index.vue'),

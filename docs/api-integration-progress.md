@@ -18,6 +18,7 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Module | Swagger tag | Status | Notes |
 | --- | --- | --- | --- |
 | APP version and app market | 管理后台-APP版本管理接口 | Completed | Current `appVersion` and `applicationStore` modules now use `/AppVersion/*`. |
+| Product device | 管理后台-产品设备接口 | Completed | Five APIs, list/add/edit/detail/status, WiFi-only product selection, independent menu scope applied 2026-10-26. Product-list versionType filter supported. Live reads and mocked writes verified; see [contract](product-device.md). |
 | FPGA product version | 管理后台-固件(fpga)版本控制接口 | Completed | Six `/ProductVersionFpga/*` APIs, list/add/edit/detail, upload, status and delete. Menu automation applied on 2026-10-21; live reads and mocked writes verified. See [module contract](product-version-fpga.md). |
 | Product version | 管理后台-固件版本控制接口 | Completed | Added `productVersion` API, list route, and detail route. |
 | Product | 管理后台-产品相关接口 | Completed | Product, product FAQ, and user product list now use `/Product/*`. Product add/edit submit numeric `versionType` (1 Bluetooth, 2 wifi); product list/detail display it, with explicit selection for legacy missing values (2026-10-21). Add/edit/detail also carry the optional free-text `sizeModel` (e.g. 3.6寸) (2026-10-23). |

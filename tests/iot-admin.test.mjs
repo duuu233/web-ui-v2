@@ -142,3 +142,27 @@ test('paging keeps total during loading and failed refresh; switching source cle
     app.unmount(); app = null; assert.equal(requests[3].signal.aborted, true)
   } finally { app?.unmount(); demoMode.value = originalMode; demoScenario.value = originalScenario; await vite.close() }
 })
+
+test('real sidebar keeps the device menu active on IoT detail while ordinary routes retain exact matching', async () => {
+  const { createSSRApp } = await import('vue')
+  const { renderToString } = await import('vue/server-renderer')
+  const { createRouter, createMemoryHistory } = await import('vue-router')
+  const { createPinia } = await import('pinia')
+  const vite = await createViteServer({ server: { middlewareMode: true }, optimizeDeps: { noDiscovery: true, include: [] }, logLevel: 'silent' })
+  try {
+    const { default: Sidebar } = await vite.ssrLoadModule('/src/layout/components/Sidebar.vue')
+    const { useAppStore } = await vite.ssrLoadModule('/src/store/modules/app.js')
+    const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/iot/devices', name: 'iotDevices', component: { render: () => null } }, { path: '/iot/devices/:deviceNo', name: 'iotDeviceDetail', meta: { activeMenu: 'iotDevices' }, component: { render: () => null } }, { path: '/home', name: 'home', component: { render: () => null } }] })
+    const pinia = createPinia()
+    useAppStore(pinia).$patch({ sidebarRight: [{ menuName: 'IoT监控', childs: [{ menuName: '设备管理', menuUrl: 'iotDevices' }, { menuName: '首页', menuUrl: 'home' }] }] })
+    const app = createSSRApp({ render: () => h(Sidebar) }).use(pinia).use(router)
+    await router.push('/iot/devices/A0B1C2000001'); await router.isReady()
+    const detail = await renderToString(app)
+    assert.match(detail, /class="[^"]*clickedNav[^"]*"[^>]*>设备管理/)
+    assert.doesNotMatch(detail, /class="[^"]*clickedNav[^"]*"[^>]*>首页/)
+    await router.push('/home')
+    const home = await renderToString(app)
+    assert.match(home, /class="[^"]*clickedNav[^"]*"[^>]*>首页/)
+    assert.doesNotMatch(home, /class="[^"]*clickedNav[^"]*"[^>]*>设备管理/)
+  } finally { await vite.close() }
+})

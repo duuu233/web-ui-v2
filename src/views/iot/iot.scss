@@ -59,3 +59,6 @@
   @media (max-width: 700px) { .iot-heading, .iot-subnav, .iot-summary, .iot-overview-band { flex-direction: column; align-items: flex-start; } .iot-stat-grid, .iot-detail-grid { grid-template-columns: 1fr; } .iot-data-note { flex-wrap: wrap; } .iot-filter-device { width: 220px; } }
 }
 .iot-log-full { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.8; padding: 18px; background: #f6f6f3; border-radius: 8px; }
+
+// Only the active IoT view uses the requested 220px rail; the existing mobile shell stays collapsed.
+@media (min-width: 769px) { .app-wrapper:has(.iot-page) { --shell-sidebar-width: 220px; } }

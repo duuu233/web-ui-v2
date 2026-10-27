@@ -58,7 +58,7 @@ const hideSubItemList = [
 ]
 
 function isActive(name) {
-  return route.name === name
+  return route.name === name || route.meta.activeMenu === name
 }
 </script>
 

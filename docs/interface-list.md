@@ -65,6 +65,10 @@ Currency presentation (frontend display rules, last confirmed by the project own
 
 已接入 `/ZoneAdmin/ProductVersionFpga/` 下 `addProductVersionFpga`、`editProductVersionFpga`、`deleteProductVersionFpga`、`setProductVersionFpgaVerify`、`getProductVersionFpgaDetail`、`getProductVersionFpgaList` 六个接口。方法、字段、枚举和权限以 [FPGA 模块契约](product-version-fpga.md) 为准。列表、详情和产品选项通过线上只读验证；固件写操作通过本地模拟接口验证。此前其余接口条目的核验日期保持不变。
 
+## IoT只读管理端（2026-10-27）
+
+独立源站`https://iot.boltfox.cn`，GET `/admin/stats`、`/admin/device/list`、`/admin/device/detail`、`/admin/log/list` 已接入四个页面，线上只读核验通过。响应为`code/msg/data`；不使用ZoneAdmin userToken或签名，启用鉴权后使用X-Internal-Token。列表用page/size，offline=false有效。字段、界面与环境配置见[IoT契约](iot-admin.md)。
+
 ## PC Admin Backend
 
 | Area | Module | Feature | Interface / handling | Current status |

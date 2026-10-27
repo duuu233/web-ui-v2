@@ -259,7 +259,18 @@ export const productDeviceMenuNodes = [{
   ].map(([appName, appCode]) => ({ appName, appCode, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }))
 }]
 
+export const iotMonitoringMenuNodes = [{
+  appName: 'IoT监控', appCode: '#', appUrl: '#', grade: 2, isNav: 1, isRefresh: 0,
+  children: [
+    { appName: '概览', appCode: 'Get_IotAdmin_Stats', appUrl: 'iotDashboard', grade: 3, isNav: 1, isRefresh: 0 },
+    { appName: '设备管理', appCode: 'Get_IotAdmin_DeviceList', appUrl: 'iotDevices', grade: 2, isNav: 1, isRefresh: 0,
+      children: [{ appName: '设备详情', appCode: 'Get_IotAdmin_DeviceDetail', appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }] },
+    { appName: '日志查询', appCode: 'Get_IotAdmin_LogList', appUrl: 'iotLogs', grade: 1, isNav: 1, isRefresh: 0 }
+  ]
+}]
+
 const menuScopes = {
+  'iot-monitoring': { label: 'IoT只读监控', parentCode: null, nodes: iotMonitoringMenuNodes },
   'product-device': {
     label: '产品设备（仅本模块）',
     parentOfCode: 'Get_Product_ProductList',
@@ -333,7 +344,7 @@ function printHelp() {
   BOLTFOX_MENU_SCOPE   可选，默认 commerce
 
 参数：
-  --scope=<scope>      同步范围：commerce、user-account、fpga-firmware 或 product-device
+  --scope=<scope>      同步范围：commerce、user-account、fpga-firmware、product-device 或 iot-monitoring
   --apply              实际新增缺失节点；省略时只预览
   --update             同时更新已存在但配置漂移的节点（必须搭配 --apply）
   --system-id=<id>     覆盖系统 ID

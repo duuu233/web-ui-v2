@@ -13,7 +13,9 @@
     "menu:sync:fpga": "node scripts/sync-admin-menu.mjs --scope=fpga-firmware",
     "test:fpga": "node --test tests/product-version-fpga.test.mjs",
     "menu:sync:product-device": "node scripts/sync-admin-menu.mjs --scope=product-device",
-    "test:product-device": "node --test tests/product-device.test.mjs"
+    "test:product-device": "node --test tests/product-device.test.mjs",
+    "test:iot": "node --test tests/iot-admin.test.mjs",
+    "menu:sync:iot": "node scripts/sync-admin-menu.mjs --scope=iot-monitoring"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

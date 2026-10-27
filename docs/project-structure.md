@@ -150,3 +150,7 @@ src/views/
 ## 产品设备模块（2026-10-26）
 
 `src/api/productDevice.js` 封装五项接口；`src/views/sms/productDevice/index.vue` 组合搜索、工具栏、表格和分页。`components/ProductDeviceFilters.vue` 管理筛选模型与搜索/重置事件，`ProductDeviceTable.vue` 接收行数据和加载状态并上报详情/编辑/启禁用事件，`ProductDeviceEditor.vue` 接收mode与recordId，复用新增/编辑/只读详情。`useProductDeviceList.js` 组合公共分页及状态变更，`model.js` 维护主键、提交字段和WiFi产品分页选择。模块契约见 [产品设备](product-device.md)。
+
+## IoT只读监控（2026-10-27）
+
+`src/api/iotAdminClient.js`为四条GET端点提供独立协议/鉴权/超时处理；`src/views/iot/`包含四个路由页面、纯模型与合成数据、来源适配和可取消资源/列表逻辑。`components/`分别负责模块页头/环境、错误、筛选、状态、影子和日志表格，页面组合组件与业务状态；不改公共ZoneAdmin请求实例。详见[IoT契约](iot-admin.md)。

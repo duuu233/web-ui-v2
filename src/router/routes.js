@@ -55,6 +55,15 @@ export const constantRouterMap = [
 
 export const asyncRouterMap = [
   {
+    path: '/iot', component: Layout, redirect: '/iot/dashboard', name: 'iot', meta: { title: 'IoT监控' },
+    children: [
+      { path: 'dashboard', name: 'iotDashboard', component: () => import('@/views/iot/dashboard.vue'), meta: { title: 'IoT概览', icon: 'home' } },
+      { path: 'devices', name: 'iotDevices', component: () => import('@/views/iot/devices.vue'), meta: { title: 'IoT设备管理', icon: 'sms-flash' } },
+      { path: 'devices/:deviceNo', name: 'iotDeviceDetail', props: true, component: () => import('@/views/iot/detail.vue'), hidden: true, meta: { title: 'IoT设备详情', icon: 'sms-flash' } },
+      { path: 'logs', name: 'iotLogs', component: () => import('@/views/iot/logs.vue'), meta: { title: 'IoT日志查询', icon: 'sms-flash' } }
+    ]
+  },
+  {
     path: '/sms',
     component: Layout,
     redirect: '/sms/userList',

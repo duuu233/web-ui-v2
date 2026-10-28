@@ -29,10 +29,13 @@ const screenTypeOptions = [
   { value: 1, label: '横屏' }
 ]
 
+const renderModeOptions = ['esp32', 'fpga16']
+
 const defaultForm = () => ({
   productId: null,
   productName: '',
   versionType: null,
+  renderMode: '',
   productImg: [],
   shapeType: 0,
   screenType: 0,
@@ -64,6 +67,7 @@ const rules = {
     }
   ],
   versionType: [{ required: true, type: 'enum', enum: [1, 2], message: '请选择版本类型', trigger: 'change' }],
+  renderMode: [{ required: true, message: '请选择渲染模式', trigger: 'change' }],
   shapeType: [{ required: true, message: '请选择形状类型', trigger: 'change' }],
   screenType: [
     { required: true, message: '请选择屏幕方向', trigger: 'change' }
@@ -89,6 +93,7 @@ async function getData() {
       ? [{ url: detail.productImg, name: '产品图片' }]
       : [],
     versionType: normalizeVersionType(detail.versionType),
+    renderMode: detail.renderMode ?? '',
     sizeModel: detail.sizeModel ?? '',
     broadcastId: detail.broadcastId ?? '',
     carouselInterval: detail.carouselInterval ?? null,
@@ -111,6 +116,8 @@ function buildSubmitData() {
       delete submitData[key]
     }
   })
+  // 渲染模式只对 wifi 版有意义，蓝牙版不提交
+  if (submitData.versionType !== 2) delete submitData.renderMode
   // 尺寸型号选填：清空后也要提交空串，否则编辑时后端保留旧值
   submitData.sizeModel = (formData.sizeModel || '').trim()
   return submitData
@@ -193,6 +200,27 @@ onActivated(() => {
               :key="item.value"
               :label="item.label"
               :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item
+          v-if="normalizeVersionType(formData.versionType) === 2"
+          label="渲染模式"
+          prop="renderMode"
+        >
+          <span v-if="pageType === 3">{{ formData.renderMode || '未设置' }}</span>
+          <el-select
+            v-else
+            v-model="formData.renderMode"
+            class="input-width"
+            placeholder="请选择渲染模式"
+          >
+            <el-option
+              v-for="item in renderModeOptions"
+              :key="item"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-form-item>

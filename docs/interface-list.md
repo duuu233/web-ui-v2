@@ -57,6 +57,10 @@ Currency presentation (frontend display rules, last confirmed by the project own
 
 公开 Swagger 的 `ProductAddApiIn`（`addProduct` / `editProduct` 入参）与 `ProductDetailApiOut`、`ProductApiOut` 均新增字符串字段 `sizeModel`，说明为“尺寸型号：例3.6寸”。共享表单在“尺寸(cm)”下方新增选填输入框“尺寸型号”，新增、编辑可填写，详情只读回填；提交时去掉首尾空白，清空后仍提交空串，保证编辑能把旧值清掉。用户端设备列表、详情接口同样下发该字段，由小程序与 App 直接展示，后台不做换算。列表未新增列。
 
+## 产品渲染模式（2026-10-28 核验）
+
+公开 Swagger 的 `ProductAddApiIn`、`ProductDetailApiOut`、`ProductApiOut` 新增字符串字段 `renderMode`，说明为“渲染模式：esp32,fpga16”。共享表单在“版本类型”下方新增下拉框“渲染模式”，选项 `esp32`、`fpga16`，提交原值。仅 wifi 版（`versionType=2`）显示且必选；蓝牙版隐藏、不校验，提交时不带该字段。详情只读显示原值，wifi 版缺值显示“未设置”，编辑须选择后才能保存。用户端产品接口（`ClientProductApiOut`、`ClientUserProductDetailApiOut`）同样下发该字段，由小程序原样透传给设备播放接口，后台不做换算。列表未新增列。
+
 ## 产品设备（2026-10-26 核验）
 
 新增 `/ProductDevice/` 下列表、详情、添加、编辑和启禁用五项接口与页面，菜单169–173已创建。编辑提交 `pDeviceId`，详情/启禁用提交 `id`，产品选择仅WiFi。完整字段、权限及Swagger差异见 [产品设备契约](product-device.md)。业务读接口线上核验，业务写操作仅模拟验证。

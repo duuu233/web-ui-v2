@@ -61,7 +61,9 @@ codegraph sync .
 
 历史记录使用 `history/YYYY-MM/YYYY-MM-DD-topic.md`。一项集中修改对应一份记录，不建立无限增长的单文件流水账。记录完成后保持冻结；若产生长期有效的结论，还要同步更新 AI_CONTEXT 或对应 Active 文档。
 
-最新记录：[2026-10-27 IoT监控](history/2026-10/2026-10-27-iot-admin.md)（四页、真实只读接口、演示与菜单）。
+最新记录：[2026-10-28 产品渲染模式](history/2026-10/2026-10-28-product-render-mode.md)（wifi版必选 `renderMode`，蓝牙版隐藏不提交）。
+
+此前记录：[2026-10-27 IoT监控](history/2026-10/2026-10-27-iot-admin.md)（四页、真实只读接口、演示与菜单）。
 
 此前记录：[2026-10-26 产品设备模块](history/2026-10/2026-10-26-product-device.md)（五项接口、WiFi产品筛选及菜单自动新增）。
 

@@ -96,7 +96,11 @@ AI配置 (#)
 
 `npm run menu:sync:product-device` 对应 `--scope=product-device`，仅维护“产品设备”导航和详情、新增、编辑、启禁用四项操作。按 `Get_Product_ProductList` 定位唯一父级；父级缺失或歧义就停止。预览后传 `-- --apply` 新增，重复执行不重复创建，不修改其他范围。2026-10-26 系统1产品管理108下新增169–173，具体契约与验证见 [产品设备](product-device.md)。
 
-## IoT监控独立范围
+## IoT管理独立范围（原 IoT监控）
+
+2026-11-12 起范围包含 IoT管理（`aliases` 认旧名）、概览、设备管理（产品设备）、设备监控、日志查询。脚本遇到同编码节点挂在别的父级下时：预览标「待移动」，`--apply` 不带 `--update` 停止，`--apply --update` 按原 id 移动（子节点跟随），不会新建重复节点。
+
+### 旧说明（2026-10-27）
 
 `npm run menu:sync:iot` 对应 `--scope=iot-monitoring`，只预览IoT监控分组及概览、设备管理、详情、日志共5个节点。获得菜单变更授权后才追加 `-- --apply`。本轮用户单独授权后系统1新增174–178；不更新原模块、不绑定角色。IoT API自身不消费后台userToken，该Token仅供此菜单脚本调用ZoneAdmin使用。页面与接口见[IoT监控](iot-admin.md)。
 

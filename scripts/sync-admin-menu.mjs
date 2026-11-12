@@ -248,9 +248,10 @@ export const fpgaFirmwareMenuNodes = [{
   ].map(([appName, appCode]) => ({ appName, appCode, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }))
 }]
 
+// 2026-11-12：原「产品设备」改名「设备管理」，从产品管理挪到 IoT管理 分组（排在概览之后）
 export const productDeviceMenuNodes = [{
-  appName: '产品设备', appCode: 'Get_ProductDevice_GetProductDeviceList',
-  appUrl: 'productDevice', grade: 0, isNav: 1, isRefresh: 0,
+  appName: '设备管理', appCode: 'Get_ProductDevice_GetProductDeviceList',
+  appUrl: 'productDevice', grade: 3, isNav: 1, isRefresh: 0,
   children: [
     ['详情', 'Get_ProductDevice_GetProductDeviceDetail'],
     ['新增', 'Post_ProductDevice_AddProductDevice'],
@@ -259,21 +260,24 @@ export const productDeviceMenuNodes = [{
   ].map(([appName, appCode]) => ({ appName, appCode, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }))
 }]
 
+// 2026-11-12：分组「IoT监控」改名「IoT管理」（aliases 认旧名）；原「设备管理」（IoT 设备只读列表）改名「设备监控」；
+// 产品设备并入本组改名「设备管理」。顺序：概览 → 设备管理 → 设备监控 → 日志查询
 export const iotMonitoringMenuNodes = [{
-  appName: 'IoT监控', appCode: '#', appUrl: '#', grade: 2, isNav: 1, isRefresh: 0,
+  appName: 'IoT管理', aliases: ['IoT监控'], appCode: '#', appUrl: '#', grade: 2, isNav: 1, isRefresh: 0,
   children: [
-    { appName: '概览', appCode: 'Get_IotAdmin_Stats', appUrl: 'iotDashboard', grade: 3, isNav: 1, isRefresh: 0 },
-    { appName: '设备管理', appCode: 'Get_IotAdmin_DeviceList', appUrl: 'iotDevices', grade: 2, isNav: 1, isRefresh: 0,
+    { appName: '概览', appCode: 'Get_IotAdmin_Stats', appUrl: 'iotDashboard', grade: 4, isNav: 1, isRefresh: 0 },
+    ...productDeviceMenuNodes,
+    { appName: '设备监控', appCode: 'Get_IotAdmin_DeviceList', appUrl: 'iotDevices', grade: 2, isNav: 1, isRefresh: 0,
       children: [{ appName: '设备详情', appCode: 'Get_IotAdmin_DeviceDetail', appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }] },
     { appName: '日志查询', appCode: 'Get_IotAdmin_LogList', appUrl: 'iotLogs', grade: 1, isNav: 1, isRefresh: 0 }
   ]
 }]
 
 const menuScopes = {
-  'iot-monitoring': { label: 'IoT只读监控', parentCode: null, nodes: iotMonitoringMenuNodes },
+  'iot-monitoring': { label: 'IoT管理（概览、设备管理、设备监控、日志）', parentCode: null, nodes: iotMonitoringMenuNodes },
   'product-device': {
-    label: '产品设备（仅本模块）',
-    parentOfCode: 'Get_Product_ProductList',
+    label: '设备管理（原产品设备，仅本模块，挂在 IoT管理 分组下）',
+    parentOfCode: 'Get_IotAdmin_Stats',
     nodes: productDeviceMenuNodes
   },
   'fpga-firmware': {
@@ -484,6 +488,19 @@ function findMatchingChild(parent, expected) {
   return children.find(node => acceptedNames.includes(node.appName)) || null
 }
 
+// 同编码节点挂在别的父级下（如产品设备从产品管理挪到 IoT管理）：返回 [节点, 父级]；不唯一时停止，避免挪错
+function findElsewhereByCode(root, parentId, expected) {
+  if (expected.appCode === '#') return null
+  const matches = []
+  const visit = (node, parent) => {
+    if (node.appCode === expected.appCode && parent && Number(parent.id) !== Number(parentId)) matches.push([node, parent])
+    for (const child of node.childs || []) visit(child, node)
+  }
+  visit(root, null)
+  if (matches.length > 1) throw new Error(`权限编码 ${expected.appCode} 在多个父级下存在，停止同步`)
+  return matches[0] || null
+}
+
 function normalizedUrl(value) {
   if (value === null || value === undefined) return ''
   if (["''", '""', '“”', '‘’'].includes(String(value))) return ''
@@ -515,13 +532,15 @@ function printPreview(parent, expectedNodes, depth = 0) {
   for (const expected of expectedNodes) {
     const existing = parent ? findMatchingChild(parent, expected) : null
     const indent = '  '.repeat(depth)
-    const marker = existing ? '存在' : '待新增'
-    const drift = existing ? getDrift(existing, expected) : []
+    const elsewhere = !existing && previewRoot ? findElsewhereByCode(previewRoot, parent?.id, expected) : null
+    const marker = existing ? '存在' : elsewhere ? `待移动（现挂在 ${elsewhere[1].appName || elsewhere[1].id} 下，需 --apply --update）` : '待新增'
+    const drift = existing ? getDrift(existing, expected) : elsewhere ? getDrift(elsewhere[0], expected) : []
     const driftText = drift.length ? `（配置差异：${drift.join(', ')}）` : ''
     console.log(`${indent}- [${marker}] ${expected.appName} <${expected.appCode}>${driftText}`)
-    printPreview(existing, expected.children || [], depth + 1)
+    printPreview(existing || elsewhere?.[0], expected.children || [], depth + 1)
   }
 }
+let previewRoot = null
 
 async function waitForCreatedNode(client, options, parentId, expected) {
   for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -547,7 +566,15 @@ async function syncNode(client, options, parentId, expected, depth, stats) {
 
   const indent = '  '.repeat(depth)
   let current = findMatchingChild(parent, expected)
-  if (!current) {
+  const elsewhere = current ? null : findElsewhereByCode(root, parentId, expected)
+  if (elsewhere) {
+    // 已在别的父级下：只在 --update 时整节点挪过来（子节点跟着走），否则停止，不建重复节点
+    if (!options.update) throw new Error(`${expected.appName} <${expected.appCode}> 现挂在 ${elsewhere[1].appName || elsewhere[1].id} 下，需 --apply --update 才会移动`)
+    await client.saveMenu(buildPayload(expected, parentId, options.systemId, Number(elsewhere[0].id)))
+    current = await waitForCreatedNode(client, options, parentId, expected)
+    stats.updated += 1
+    console.log(`${indent}↪ 已移动 ${expected.appName}（原父级 ${elsewhere[1].appName || elsewhere[1].id}）`)
+  } else if (!current) {
     await client.saveMenu(buildPayload(expected, parentId, options.systemId))
     current = await waitForCreatedNode(client, options, parentId, expected)
     stats.created += 1
@@ -594,6 +621,7 @@ async function main() {
   console.log(`执行模式：${options.apply ? '写入' : '只读预览'}`)
 
   if (!options.apply) {
+    previewRoot = root
     printPreview(scopeParent, scope.nodes)
     console.log('\n未写入任何数据。确认后追加 --apply 执行。')
     return

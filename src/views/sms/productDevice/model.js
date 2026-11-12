@@ -21,7 +21,7 @@ export function buildDevicePayload(form, id) {
   const payload = { productId, deviceId }
   if (id !== undefined) {
     payload.pDeviceId = parseDeviceId(id)
-    if (payload.pDeviceId === null) throw new Error('产品设备主键无效')
+    if (payload.pDeviceId === null) throw new Error('设备主键无效')
   }
   return payload
 }

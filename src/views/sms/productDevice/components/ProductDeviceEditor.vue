@@ -11,7 +11,7 @@ import { defaultDevice, buildDevicePayload, parseDeviceId, recordId as getRecord
 const props = defineProps({ mode: { type: String, required: true }, recordId: { type: [String, Number], default: null } })
 const router = useRouter()
 const readonly = computed(() => props.mode === 'detail')
-const title = computed(() => ({ add: '新增产品设备', edit: '编辑产品设备', detail: '产品设备详情' })[props.mode] || '产品设备')
+const title = computed(() => ({ add: '新增设备', edit: '编辑设备', detail: '设备详情' })[props.mode] || '设备管理')
 const formRef = ref(null)
 const form = reactive(defaultDevice())
 const products = ref([])
@@ -37,7 +37,7 @@ async function initialize() {
   formRef.value?.clearValidate()
   if (!['add', 'edit', 'detail'].includes(props.mode)) { loadError.value = '页面模式无效'; return }
   const id = parseDeviceId(props.recordId)
-  if (props.mode !== 'add' && id === null) { loadError.value = '产品设备记录ID无效，请从列表重新进入'; return }
+  if (props.mode !== 'add' && id === null) { loadError.value = '设备记录ID无效，请从列表重新进入'; return }
   loading.value = true
   try {
     const [options, response] = await Promise.all([

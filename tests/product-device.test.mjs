@@ -57,9 +57,10 @@ test('five API wrappers preserve HTTP methods, ID names and verify=0', async () 
   } finally { await vite.close(); delete globalThis.__deviceApiMock }
 })
 
+// 2026-11-12 有意改动：产品设备改名「设备管理」并挂到 IoT管理 分组（按组内「概览」Get_IotAdmin_Stats 定位父级），原产品管理父级判据挪到这里
 test('product-device menu previews, creates five nodes once and rejects ambiguous parents', async () => {
-  const productCode = 'Get_Product_ProductList'
-  const tree = [{ id: 0, childs: [{ id: 108, appName: '产品管理', appCode: '#', childs: [{ id: 109, appCode: productCode, childs: [] }] }, { id: 133, appName: '商品管理', appCode: '#', childs: [] }] }]
+  const productCode = 'Get_IotAdmin_Stats'
+  const tree = [{ id: 0, childs: [{ id: 174, appName: 'IoT管理', appCode: '#', childs: [{ id: 175, appCode: productCode, childs: [] }] }, { id: 133, appName: '商品管理', appCode: '#', childs: [] }] }]
   const baseline = structuredClone(tree)
   const writes = []
   let nextId = 900
@@ -86,7 +87,7 @@ test('product-device menu previews, creates five nodes once and rejects ambiguou
   try {
     assert.equal((await run()).code, 0); assert.equal(writes.length, 0)
     const first = await run('--apply'); assert.equal(first.code, 0, first.output); assert.equal(writes.length, 5)
-    assert.equal(writes[0].appName, '产品设备'); assert.equal(writes[0].parentId, 108); assert.equal(writes[0].appUrl, 'productDevice')
+    assert.equal(writes[0].appName, '设备管理'); assert.equal(writes[0].parentId, 174); assert.equal(writes[0].appUrl, 'productDevice')
     assert.ok(writes.slice(1).every(x => x.parentId === 900 && x.isNav === 0 && x.appUrl === '#'))
     const second = await run('--apply'); assert.equal(second.code, 0, second.output); assert.equal(writes.length, 5)
     assert.deepEqual(tree[0].childs[0].childs[0], baseline[0].childs[0].childs[0]); assert.deepEqual(tree[0].childs[1], baseline[0].childs[1])

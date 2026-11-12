@@ -12,7 +12,7 @@ let timer
 function start() { if (!timer) { clock.value = shanghaiTime(); timer = setInterval(() => { clock.value = shanghaiTime() }, 1000) } }
 function stop() { clearInterval(timer); timer = null }
 onMounted(start); onActivated(start); onDeactivated(stop); onBeforeUnmount(stop)
-const links = [{ name: 'iotDashboard', label: '概览' }, { name: 'iotDevices', label: '设备管理' }, { name: 'iotLogs', label: '日志查询' }]
+const links = [{ name: 'iotDashboard', label: '概览' }, { name: 'iotDevices', label: '设备监控' }, { name: 'iotLogs', label: '日志查询' }]
 </script>
 
 <template>

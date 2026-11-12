@@ -107,7 +107,8 @@ test('mock covers all categories, paginates logs, includes time boundaries and s
   } finally { await vite.close() }
 })
 
-test('IoT menu scope previews and idempotently creates only its own five nodes', async () => {
+// 2026-11-12 有意改动：分组改名 IoT管理，产品设备并入本组（设备管理 + 4 个操作），原设备管理改名设备监控 → 新建共 10 个节点
+test('IoT menu scope previews and idempotently creates only its own ten nodes', async () => {
   const tree = [{ id: 0, childs: [{ id: 108, appName: '产品管理', appCode: '#', childs: [] }] }], writes = []
   const baseline = structuredClone(tree[0].childs[0]); let nextId = 900
   const find = (nodes, id) => { for (const node of nodes) { if (node.id === id) return node; const match = find(node.childs || [], id); if (match) return match } }
@@ -118,8 +119,50 @@ test('IoT menu scope previews and idempotently creates only its own five nodes',
   })
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
   async function run(...flags) { const child = spawn(process.execPath, [fileURLToPath(new URL('../scripts/sync-admin-menu.mjs', import.meta.url)), '--scope=iot-monitoring', '--api-base=http://127.0.0.1:' + server.address().port, ...flags], { windowsHide: true, env: { ...process.env, BOLTFOX_USER_TOKEN: 'local-test-only' } }); let output = ''; child.stdout.on('data', x => { output += x }); child.stderr.on('data', x => { output += x }); const code = await new Promise((resolve, reject) => { child.on('error', reject); child.on('close', resolve) }); return { code, output } }
-  try { assert.equal((await run()).code, 0); assert.equal(writes.length, 0); const first = await run('--apply'); assert.equal(first.code, 0, first.output); assert.equal(writes.length, 5); assert.equal(writes[0].appName, 'IoT监控'); assert.equal(writes[0].parentId, 0); assert.deepEqual(writes.filter(x => x.isNav === 1).map(x => x.appUrl), ['#', 'iotDashboard', 'iotDevices', 'iotLogs']); assert.equal((await run('--apply')).code, 0); assert.equal(writes.length, 5); assert.deepEqual(tree[0].childs[0], baseline) }
+  try { assert.equal((await run()).code, 0); assert.equal(writes.length, 0); const first = await run('--apply'); assert.equal(first.code, 0, first.output); assert.equal(writes.length, 10); assert.equal(writes[0].appName, 'IoT管理'); assert.equal(writes[0].parentId, 0); assert.deepEqual(writes.filter(x => x.isNav === 1).map(x => x.appUrl), ['#', 'iotDashboard', 'productDevice', 'iotDevices', 'iotLogs']); assert.deepEqual(writes.filter(x => x.isNav === 1).map(x => x.appName), ['IoT管理', '概览', '设备管理', '设备监控', '日志查询']); assert.equal((await run('--apply')).code, 0); assert.equal(writes.length, 10); assert.deepEqual(tree[0].childs[0], baseline) }
   finally { await new Promise(resolve => server.close(resolve)) }
+})
+
+test('IoT menu scope renames the group and moves the existing product-device node instead of duplicating it', async () => {
+  const product = { id: 169, appName: '产品设备', appCode: 'Get_ProductDevice_GetProductDeviceList', appUrl: 'productDevice', grade: 0, isNav: 1, isRefresh: 0, parentId: 108, childs: [
+    { id: 170, appName: '详情', appCode: 'Get_ProductDevice_GetProductDeviceDetail', appUrl: '#', grade: 0, isNav: 0, isRefresh: 0, parentId: 169, childs: [] }
+  ] }
+  const tree = [{ id: 0, childs: [
+    { id: 108, appName: '产品管理', appCode: '#', childs: [product] },
+    { id: 174, appName: 'IoT监控', appCode: '#', appUrl: '#', grade: 2, isNav: 1, isRefresh: 0, parentId: 0, childs: [
+      { id: 175, appName: '概览', appCode: 'Get_IotAdmin_Stats', appUrl: 'iotDashboard', grade: 3, isNav: 1, isRefresh: 0, parentId: 174, childs: [] },
+      { id: 176, appName: '设备管理', appCode: 'Get_IotAdmin_DeviceList', appUrl: 'iotDevices', grade: 2, isNav: 1, isRefresh: 0, parentId: 174, childs: [
+        { id: 177, appName: '设备详情', appCode: 'Get_IotAdmin_DeviceDetail', appUrl: '#', grade: 0, isNav: 0, isRefresh: 0, parentId: 176, childs: [] }] },
+      { id: 178, appName: '日志查询', appCode: 'Get_IotAdmin_LogList', appUrl: 'iotLogs', grade: 1, isNav: 1, isRefresh: 0, parentId: 174, childs: [] }
+    ] }
+  ] }], writes = []
+  let nextId = 900
+  const find = (nodes, id) => { for (const node of nodes) { if (node.id === id) return node; const match = find(node.childs || [], id); if (match) return match } }
+  const parentOf = (nodes, id) => { for (const node of nodes) { if ((node.childs || []).some(child => child.id === id)) return node; const match = parentOf(node.childs || [], id); if (match) return match } }
+  const server = createHttpServer(async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    if (req.method === 'POST') {
+      let text = ''; for await (const chunk of req) text += chunk
+      const { randomString, sign, userToken, ...payload } = JSON.parse(text); writes.push(payload)
+      if (payload.id) { const node = find(tree, payload.id), from = parentOf(tree, payload.id); from.childs = from.childs.filter(child => child.id !== payload.id); Object.assign(node, payload); find(tree, payload.parentId).childs.push(node) }
+      else find(tree, payload.parentId).childs.push({ ...payload, id: nextId++, childs: [] })
+      res.end(JSON.stringify({ retCode: 200, retData: true }))
+    } else res.end(JSON.stringify({ retCode: 200, retData: tree }))
+  })
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+  async function run(...flags) { const child = spawn(process.execPath, [fileURLToPath(new URL('../scripts/sync-admin-menu.mjs', import.meta.url)), '--scope=iot-monitoring', '--api-base=http://127.0.0.1:' + server.address().port, ...flags], { windowsHide: true, env: { ...process.env, BOLTFOX_USER_TOKEN: 'local-test-only' } }); let output = ''; child.stdout.on('data', x => { output += x }); child.stderr.on('data', x => { output += x }); const code = await new Promise((resolve, reject) => { child.on('error', reject); child.on('close', resolve) }); return { code, output } }
+  try {
+    const preview = await run(); assert.equal(preview.code, 0, preview.output); assert.match(preview.output, /待移动/); assert.equal(writes.length, 0)
+    const noUpdate = await run('--apply'); assert.equal(noUpdate.code, 1); assert.match(noUpdate.output, /--apply --update/); assert.ok(writes.every(x => x.appCode !== 'Get_ProductDevice_GetProductDeviceList'), '不带 --update 不移动、不新建重复节点')
+    writes.length = 0
+    const applied = await run('--apply', '--update'); assert.equal(applied.code, 0, applied.output)
+    const moved = writes.find(x => x.appCode === 'Get_ProductDevice_GetProductDeviceList')
+    assert.deepEqual([moved.id, moved.parentId, moved.appName, moved.grade], [169, 174, '设备管理', 3])
+    assert.ok(!writes.some(x => x.id === 0 && x.appCode === 'Get_ProductDevice_GetProductDeviceList'))
+    assert.equal(find(tree, 174).appName, 'IoT管理'); assert.equal(find(tree, 176).appName, '设备监控'); assert.equal(find(tree, 175).grade, 4)
+    assert.deepEqual(find(tree, 108).childs, []); assert.equal(find(tree, 169).childs[0].id, 170, '子节点跟着挪')
+    writes.length = 0; assert.equal((await run('--apply', '--update')).code, 0); assert.equal(writes.length, 0, '再跑一次没有变化')
+  } finally { await new Promise(resolve => server.close(resolve)) }
 })
 
 test('paging keeps total during loading and failed refresh; switching source clears old data', async () => {

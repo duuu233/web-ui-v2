@@ -55,11 +55,11 @@ export const constantRouterMap = [
 
 export const asyncRouterMap = [
   {
-    path: '/iot', component: Layout, redirect: '/iot/dashboard', name: 'iot', meta: { title: 'IoT监控' },
+    path: '/iot', component: Layout, redirect: '/iot/dashboard', name: 'iot', meta: { title: 'IoT管理' },
     children: [
       { path: 'dashboard', name: 'iotDashboard', component: () => import('@/views/iot/dashboard.vue'), meta: { title: 'IoT概览', icon: 'home' } },
-      { path: 'devices', name: 'iotDevices', component: () => import('@/views/iot/devices.vue'), meta: { title: 'IoT设备管理', icon: 'sms-flash' } },
-      { path: 'devices/:deviceNo', name: 'iotDeviceDetail', props: true, component: () => import('@/views/iot/detail.vue'), hidden: true, meta: { title: 'IoT设备详情', icon: 'sms-flash', activeMenu: 'iotDevices' } },
+      { path: 'devices', name: 'iotDevices', component: () => import('@/views/iot/devices.vue'), meta: { title: '设备监控', icon: 'sms-flash' } },
+      { path: 'devices/:deviceNo', name: 'iotDeviceDetail', props: true, component: () => import('@/views/iot/detail.vue'), hidden: true, meta: { title: '设备监控详情', icon: 'sms-flash', activeMenu: 'iotDevices' } },
       { path: 'logs', name: 'iotLogs', component: () => import('@/views/iot/logs.vue'), meta: { title: 'IoT日志查询', icon: 'sms-flash' } }
     ]
   },
@@ -191,27 +191,27 @@ export const asyncRouterMap = [
         path: 'productDevice',
         name: 'productDevice',
         component: () => import('@/views/sms/productDevice/index.vue'),
-        meta: { title: '产品设备', icon: 'sms-flash' }
+        meta: { title: '设备管理', icon: 'sms-flash' }
       },
       {
         path: 'productDeviceAdd',
         name: 'productDeviceAdd',
         component: () => import('@/views/sms/productDevice/add.vue'),
-        meta: { title: '新增产品设备', icon: 'sms-flash' },
+        meta: { title: '新增设备', icon: 'sms-flash' },
         hidden: true
       },
       {
         path: 'productDeviceEdit',
         name: 'productDeviceEdit',
         component: () => import('@/views/sms/productDevice/edit.vue'),
-        meta: { title: '编辑产品设备', icon: 'sms-flash' },
+        meta: { title: '编辑设备', icon: 'sms-flash' },
         hidden: true
       },
       {
         path: 'productDeviceDetail',
         name: 'productDeviceDetail',
         component: () => import('@/views/sms/productDevice/detail.vue'),
-        meta: { title: '产品设备详情', icon: 'sms-flash' },
+        meta: { title: '设备详情', icon: 'sms-flash' },
         hidden: true
       },
       {

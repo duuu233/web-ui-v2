@@ -14,7 +14,7 @@ function open(row, logs = false) { try { const deviceNo = normalizeDeviceNo(row.
 function cellClick({ row, column }) { if (column.field !== '_actions') open(row) }
 </script>
 <template>
-  <IotPage title="设备管理" subtitle="按设备号和在线状态定位设备，查看状态与日志" :loading="loading" :updated-at="updatedAt" @refresh="load">
+  <IotPage title="设备监控" subtitle="按设备号和在线状态定位设备，查看状态与日志" :loading="loading" :updated-at="updatedAt" @refresh="load">
     <IotFilters v-model="draft" kind="devices" @search="search" @reset="reset" />
     <el-alert v-if="validationError" :title="validationError" type="warning" :closable="false" class="iot-error" />
     <IotError :error="error" @retry="load" />

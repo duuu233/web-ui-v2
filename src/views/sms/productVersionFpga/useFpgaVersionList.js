@@ -3,6 +3,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { getProductList } from '@/api/productList'
 import { cleanQuery, usePagedList } from '@/composables/usePagedList'
 import { getProductVersionFpgaList, deleteProductVersionFpga, setProductVersionFpgaVerify } from '@/api/productVersionFpga'
+import { fpgaProducts } from './model'
 
 export function useFpgaVersionList() {
   const dateRange = ref([])
@@ -11,7 +12,7 @@ export function useFpgaVersionList() {
   const listError = ref(false)
   const busyId = ref(null)
   const paged = usePagedList({
-    defaultQuery: () => ({ pageIndex: 1, pageSize: 10, keyword: '', productId: null, compulsory: null, verify: null }),
+    defaultQuery: () => ({ pageIndex: 1, pageSize: 10, keyword: '', productId: null, verify: null }),
     fetchList: getProductVersionFpgaList,
     mapResponse: response => {
       listError.value = false
@@ -25,6 +26,8 @@ export function useFpgaVersionList() {
     try { const response = await getProductList({ pageIndex: 1, pageSize: 1000 }); products.value = response.retData?.pageData || []; productError.value = false }
     catch { productError.value = true }
   }
+  // 筛选只列 fpga16 产品；产品名映射仍用全部产品，旧记录挂在别的产品上也能显示名称
+  const filterProducts = computed(() => fpgaProducts(products.value))
   const productNames = computed(() => new Map(products.value.map(item => [String(item.productId ?? item.id), item.productName])))
   function productName(id) { return productNames.value.get(String(id)) || '产品 #' + id }
   function reset() { dateRange.value = []; return paged.handleResetSearch() }
@@ -34,7 +37,7 @@ export function useFpgaVersionList() {
     const verify = Number(row.verify) === 1 ? 0 : 1
     const action = remove ? '删除' : verify === 1 ? '启用' : '禁用'
     try {
-      await ElMessageBox.confirm('确认' + action + ' FPGA 固件版本“' + row.versionNumber + '”吗？' + (remove ? '删除后该版本将不再出现在列表中。' : ''), action + '确认', { type: 'warning', confirmButtonText: action, cancelButtonText: '取消' })
+      await ElMessageBox.confirm('确认' + action + ' FPGA版本“' + row.versionNumber + '”吗？' + (remove ? '删除后该版本将不再出现在列表中。' : ''), action + '确认', { type: 'warning', confirmButtonText: action, cancelButtonText: '取消' })
       const response = remove ? await deleteProductVersionFpga({ id: row.id }) : await setProductVersionFpgaVerify({ id: row.id, verify })
       if (response.retData === false) throw new Error(action + '未成功')
       ElMessage.success(action + '成功')
@@ -44,5 +47,5 @@ export function useFpgaVersionList() {
     finally { busyId.value = null }
   }
   onMounted(loadProducts)
-  return { ...paged, dateRange, products, productError, listError, busyId, productName, loadProducts, reset, mutate }
+  return { ...paged, dateRange, products, filterProducts, productError, listError, busyId, productName, loadProducts, reset, mutate }
 }

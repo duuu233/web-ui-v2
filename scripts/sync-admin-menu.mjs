@@ -236,8 +236,9 @@ export const userAccountMenuNodes = [
   }
 ]
 
+// 2026-11-13：「FPGA固件版本」改名「FPGA版本」（已有节点用 --apply --update 改名）
 export const fpgaFirmwareMenuNodes = [{
-  appName: 'FPGA固件版本', appCode: 'Get_ProductVersionFpga_GetProductVersionFpgaList',
+  appName: 'FPGA版本', appCode: 'Get_ProductVersionFpga_GetProductVersionFpgaList',
   appUrl: 'productVersionFpga', grade: 0, isNav: 1, isRefresh: 0,
   children: [
     ['详情', 'Get_ProductVersionFpga_GetProductVersionFpgaDetail'],

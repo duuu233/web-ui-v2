@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { createServer as createViteServer } from 'vite'
 import { createSSRApp, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
-import { parseVersionId, buildVersionPayload, safeDownloadUrl } from '../src/views/sms/productVersionFpga/model.js'
+import { parseVersionId, buildVersionPayload, safeDownloadUrl, isFpgaProduct, fpgaProducts, DEFAULT_COMPULSORY } from '../src/views/sms/productVersionFpga/model.js'
 
 test('FPGA contract keeps grade=0, omits output/auth fields and validates IDs', () => {
   const form = { productId: '7', versionNumber: ' v1.2 ', downloadPath: ' https://example.com/fpga.bin ', compulsory: '4', grade: 0, verify: 1, adminId: 88, id: 99 }
@@ -17,6 +17,17 @@ test('FPGA contract keeps grade=0, omits output/auth fields and validates IDs', 
   assert.equal(parseVersionId('2147483647'), 2147483647)
   for (const url of ['javascript:alert(1)', 'data:text/html,<b>x</b>', '5654', '//example.com/a']) assert.equal(safeDownloadUrl(url), '')
   assert.equal(safeDownloadUrl('https://example.com/fpga.bin'), 'https://example.com/fpga.bin')
+})
+
+test('2026-11-13: upgrade type hidden and always sent as 4; only fpga16 products are selectable', () => {
+  assert.equal(DEFAULT_COMPULSORY, 4)
+  const base = { productId: 7, versionNumber: 'v1', downloadPath: 'https://example.com/a.bin', grade: 0 }
+  assert.equal(buildVersionPayload({ ...base, compulsory: 1 }).compulsory, 4, 'form value is ignored')
+  assert.equal(buildVersionPayload(base).compulsory, 4, 'no upgrade-type field on the form')
+  assert.equal(isFpgaProduct({ renderMode: 'fpga16' }), true)
+  assert.equal(isFpgaProduct({ renderMode: ' FPGA16 ' }), true)
+  for (const renderMode of ['esp32', '', null, undefined]) assert.equal(isFpgaProduct({ renderMode }), false)
+  assert.deepEqual(fpgaProducts([{ productId: 19, renderMode: 'esp32' }, { productId: 20, renderMode: 'fpga16' }, { productId: 1 }]).map(item => item.productId), [20])
 })
 
 test('latest-only paging ignores stale success and errors while default remains compatible', async () => {

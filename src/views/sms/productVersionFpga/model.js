@@ -1,7 +1,12 @@
-export const compulsoryOptions = [
-  { value: 1, label: '强制升级' }, { value: 2, label: '强提示升级' },
-  { value: 3, label: '弱提示升级' }, { value: 4, label: '不提示升级' }
-]
+// 2026-11-13：页面去掉「升级类型」，新增 / 编辑一律提交 4 = 不提示升级（接口 compulsory 仍必填）
+export const DEFAULT_COMPULSORY = 4
+// 2026-11-13：只有渲染模式 = fpga16 的产品才有 FPGA 版本
+export function isFpgaProduct(product) {
+  return String(product?.renderMode ?? '').trim().toLowerCase() === 'fpga16'
+}
+export function fpgaProducts(rows) {
+  return (rows || []).filter(isFpgaProduct)
+}
 export const verifyOptions = [{ value: 1, label: '启用' }, { value: 0, label: '禁用' }]
 export const permission = {
   list: 'Get_ProductVersionFpga_GetProductVersionFpgaList',
@@ -18,12 +23,12 @@ export function parseVersionId(value) {
   return Number.isInteger(id) && id > 0 && id <= 2147483647 ? id : null
 }
 export function defaultVersion() {
-  return { productId: null, versionNumber: '', downloadPath: '', compulsory: null, grade: 0 }
+  return { productId: null, versionNumber: '', downloadPath: '', grade: 0 }
 }
 export function buildVersionPayload(form, id) {
   const payload = {
     productId: Number(form.productId), versionNumber: form.versionNumber.trim(),
-    downloadPath: form.downloadPath.trim(), compulsory: Number(form.compulsory), grade: Number(form.grade)
+    downloadPath: form.downloadPath.trim(), compulsory: DEFAULT_COMPULSORY, grade: Number(form.grade)
   }
   if (id !== undefined) payload.id = parseVersionId(id)
   return payload
@@ -35,7 +40,4 @@ export function safeDownloadUrl(value) {
 export function fileName(value) {
   const last = String(value || '').split(/[?#]/)[0].split('/').pop() || '固件文件'
   try { return decodeURIComponent(last) } catch { return last }
-}
-export function compulsoryText(value) {
-  return compulsoryOptions.find(item => item.value === Number(value))?.label || '未知类型'
 }

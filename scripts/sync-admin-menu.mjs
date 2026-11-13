@@ -236,7 +236,7 @@ export const userAccountMenuNodes = [
   }
 ]
 
-// 2026-11-13：「FPGA固件版本」改名「优雅刷新管理」（中间一度叫 FPGA版本），并随「固件版本」一起移到一级菜单「固件管理」（grade 1，排在固件版本之后）
+// 2026-11-13：「FPGA固件版本」改名「优雅刷新管理」（中间一度叫 FPGA版本），并随「固件版本」一起移到一级菜单「OTA管理」（grade 1，排在固件版本之后）
 export const fpgaFirmwareMenuNodes = [{
   appName: '优雅刷新管理', appCode: 'Get_ProductVersionFpga_GetProductVersionFpgaList',
   appUrl: 'productVersionFpga', grade: 1, isNav: 1, isRefresh: 0,
@@ -290,11 +290,11 @@ export const intimgMenuNodes = [{
   ]
 }]
 
-// 2026-11-13：一级菜单「固件管理」，固件版本（原在产品管理下，id 120）与优雅刷新管理（id 163）按原 id 移入；
+// 2026-11-13：一级菜单「OTA管理」（建时叫「固件管理」，aliases 认旧名），固件版本（原在产品管理下，id 120）与优雅刷新管理（id 163）按原 id 移入；
 // 已存在的节点在别的父级下时需 --apply --update 才移动（子节点跟随）
 const action = (appName, appCode, children) => ({ appName, appCode, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0, ...(children ? { children } : {}) })
 export const firmwareMenuNodes = [{
-  appName: '固件管理', appCode: '#', appUrl: '#', grade: 4, isNav: 1, isRefresh: 0,
+  appName: 'OTA管理', aliases: ['固件管理'], appCode: '#', appUrl: '#', grade: 4, isNav: 1, isRefresh: 0,
   children: [
     {
       appName: '固件版本', appCode: 'Get_ProductVersion_GetProductVersionList', appUrl: 'productVersion', grade: 2, isNav: 1, isRefresh: 0,
@@ -312,7 +312,7 @@ export const firmwareMenuNodes = [{
 }]
 
 const menuScopes = {
-  firmware: { label: '固件管理（固件版本、优雅刷新管理）', parentCode: null, nodes: firmwareMenuNodes },
+  firmware: { label: 'OTA管理（固件版本、优雅刷新管理）', parentCode: null, nodes: firmwareMenuNodes },
   intimg: { label: '内置图管理（槽位、设备状态、推送任务、设备锁）', parentCode: null, nodes: intimgMenuNodes },
   'iot-monitoring': { label: 'IoT管理（概览、设备管理、设备监控、日志）', parentCode: null, nodes: iotMonitoringMenuNodes },
   'product-device': {
@@ -321,7 +321,7 @@ const menuScopes = {
     nodes: productDeviceMenuNodes
   },
   'fpga-firmware': {
-    label: '优雅刷新管理（原 FPGA固件版本；按固件版本定位父级，现为一级菜单「固件管理」）',
+    label: '优雅刷新管理（原 FPGA固件版本；按固件版本定位父级，现为一级菜单「OTA管理」）',
     parentOfCode: 'Get_ProductVersion_GetProductVersionList',
     nodes: fpgaFirmwareMenuNodes
   },

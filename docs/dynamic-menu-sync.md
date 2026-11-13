@@ -96,9 +96,9 @@ AI配置 (#)
 
 `npm run menu:sync:product-device` 对应 `--scope=product-device`，仅维护“产品设备”导航和详情、新增、编辑、启禁用四项操作。按 `Get_Product_ProductList` 定位唯一父级；父级缺失或歧义就停止。预览后传 `-- --apply` 新增，重复执行不重复创建，不修改其他范围。2026-10-26 系统1产品管理108下新增169–173，具体契约与验证见 [产品设备](product-device.md)。
 
-## 固件管理范围（2026-11-13）
+## OTA管理范围（2026-11-13）
 
-`npm run menu:sync:firmware` 对应 `--scope=firmware`：系统根下一级菜单「固件管理」（grade 4），含「固件版本」（`Get_ProductVersion_GetProductVersionList`，grade 2，详情 / 添加 / 编辑 / 启禁用 / 删除）与「优雅刷新管理」（原 FPGA固件版本，grade 1，范围同 `fpga-firmware`）。两个导航原挂在产品管理 108 下，2026-11-13 用户授权后新建分组 191，并按原 id 把 120、163 移入（子节点跟随），163 同时改名「优雅刷新管理」；产品管理剩产品列表、常见问题、图库管理、图库分类。`fpga-firmware` 范围仍按固件版本定位父级（现为 191）。
+`npm run menu:sync:firmware` 对应 `--scope=firmware`：系统根下一级菜单「OTA管理」（grade 4；建时名「固件管理」，同日改名，脚本 aliases 认旧名），含「固件版本」（`Get_ProductVersion_GetProductVersionList`，grade 2，详情 / 添加 / 编辑 / 启禁用 / 删除）与「优雅刷新管理」（原 FPGA固件版本，grade 1，范围同 `fpga-firmware`）。两个导航原挂在产品管理 108 下，2026-11-13 用户授权后新建分组 191，并按原 id 把 120、163 移入（子节点跟随），163 同时改名「优雅刷新管理」；产品管理剩产品列表、常见问题、图库管理、图库分类。`fpga-firmware` 范围仍按固件版本定位父级（现为 191）。
 
 ## 内置图管理独立范围
 

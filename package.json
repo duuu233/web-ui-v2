@@ -17,7 +17,8 @@
     "test:iot": "node --test tests/iot-admin.test.mjs",
     "menu:sync:iot": "node scripts/sync-admin-menu.mjs --scope=iot-monitoring",
     "test:intimg": "node --test tests/intimg-admin.test.mjs",
-    "menu:sync:intimg": "node scripts/sync-admin-menu.mjs --scope=intimg"
+    "menu:sync:intimg": "node scripts/sync-admin-menu.mjs --scope=intimg",
+    "menu:sync:firmware": "node scripts/sync-admin-menu.mjs --scope=firmware"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

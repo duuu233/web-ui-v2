@@ -236,10 +236,10 @@ export const userAccountMenuNodes = [
   }
 ]
 
-// 2026-11-13：「FPGA固件版本」改名「优雅刷新管理」（中间一度叫 FPGA版本；已有节点用 --apply --update 改名）
+// 2026-11-13：「FPGA固件版本」改名「优雅刷新管理」（中间一度叫 FPGA版本），并随「固件版本」一起移到一级菜单「固件管理」（grade 1，排在固件版本之后）
 export const fpgaFirmwareMenuNodes = [{
   appName: '优雅刷新管理', appCode: 'Get_ProductVersionFpga_GetProductVersionFpgaList',
-  appUrl: 'productVersionFpga', grade: 0, isNav: 1, isRefresh: 0,
+  appUrl: 'productVersionFpga', grade: 1, isNav: 1, isRefresh: 0,
   children: [
     ['详情', 'Get_ProductVersionFpga_GetProductVersionFpgaDetail'],
     ['新增', 'Post_ProductVersionFpga_AddProductVersionFpga'],
@@ -290,7 +290,29 @@ export const intimgMenuNodes = [{
   ]
 }]
 
+// 2026-11-13：一级菜单「固件管理」，固件版本（原在产品管理下，id 120）与优雅刷新管理（id 163）按原 id 移入；
+// 已存在的节点在别的父级下时需 --apply --update 才移动（子节点跟随）
+const action = (appName, appCode, children) => ({ appName, appCode, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0, ...(children ? { children } : {}) })
+export const firmwareMenuNodes = [{
+  appName: '固件管理', appCode: '#', appUrl: '#', grade: 4, isNav: 1, isRefresh: 0,
+  children: [
+    {
+      appName: '固件版本', appCode: 'Get_ProductVersion_GetProductVersionList', appUrl: 'productVersion', grade: 2, isNav: 1, isRefresh: 0,
+      children: [
+        action('详情', 'Get_ProductVersion_GetProductVersionDetail', [
+          action('添加固件版本', 'Post_ProductVersion_AddProductVersion'),
+          action('编辑固件版本', 'Post_ProductVersion_EditProductVersion')
+        ]),
+        action('启用/禁用', 'Post_ProductVersion_SetProductVersionVerify'),
+        action('删除', 'Post_ProductVersion_DeleteProductVersion')
+      ]
+    },
+    ...fpgaFirmwareMenuNodes
+  ]
+}]
+
 const menuScopes = {
+  firmware: { label: '固件管理（固件版本、优雅刷新管理）', parentCode: null, nodes: firmwareMenuNodes },
   intimg: { label: '内置图管理（槽位、设备状态、推送任务、设备锁）', parentCode: null, nodes: intimgMenuNodes },
   'iot-monitoring': { label: 'IoT管理（概览、设备管理、设备监控、日志）', parentCode: null, nodes: iotMonitoringMenuNodes },
   'product-device': {
@@ -299,7 +321,7 @@ const menuScopes = {
     nodes: productDeviceMenuNodes
   },
   'fpga-firmware': {
-    label: 'FPGA固件版本（仅新模块）',
+    label: '优雅刷新管理（原 FPGA固件版本；按固件版本定位父级，现为一级菜单「固件管理」）',
     parentOfCode: 'Get_ProductVersion_GetProductVersionList',
     nodes: fpgaFirmwareMenuNodes
   },
@@ -366,7 +388,7 @@ function printHelp() {
   BOLTFOX_MENU_SCOPE   可选，默认 commerce
 
 参数：
-  --scope=<scope>      同步范围：commerce、user-account、fpga-firmware、product-device、iot-monitoring 或 intimg
+  --scope=<scope>      同步范围：commerce、user-account、fpga-firmware、product-device、iot-monitoring、intimg 或 firmware
   --apply              实际新增缺失节点；省略时只预览
   --update             同时更新已存在但配置漂移的节点（必须搭配 --apply）
   --system-id=<id>     覆盖系统 ID

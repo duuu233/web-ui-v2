@@ -120,8 +120,8 @@ onBeforeUnmount(() => { active = false; generation++ })
     <el-alert v-if="loadError" :title="loadError" type="error" :closable="false" class="editor-error"><el-button type="primary" link @click="initialize">重新加载</el-button></el-alert>
     <el-card shadow="never" class="editor-card" v-loading="loading">
       <el-form ref="formRef" :model="form" :rules="readonly ? {} : rules" :disabled="disabled" label-width="125px" size="default" @submit.prevent="save">
-        <el-form-item v-if="mode !== 'add'" label="版本ID"><span>{{ recordId }}</span></el-form-item>
-        <el-alert v-if="productNotice" :title="productNotice" type="warning" :closable="false" class="editor-error" />
+        <el-form-item v-if="readonly" label="版本ID"><span>{{ recordId }}</span></el-form-item>
+        <el-alert v-if="productNotice" :title="productNotice" type="warning" :closable="false" class="product-notice" />
         <el-form-item label="产品" prop="productId"><el-select v-model="form.productId" filterable :placeholder="products.length ? '请选择产品（仅渲染模式 fpga16）' : '没有渲染模式为 fpga16 的产品'" class="field"><el-option v-for="item in products" :key="item.productId ?? item.id" :label="item.productName" :value="item.productId ?? item.id" /></el-select></el-form-item>
         <el-form-item label="版本号" prop="versionNumber"><el-input v-model="form.versionNumber" maxlength="200" show-word-limit placeholder="例如 v1.0.0" class="field" /></el-form-item>
         <el-form-item label="固件下载地址" prop="downloadPath"><div class="file-field">
@@ -141,6 +141,7 @@ onBeforeUnmount(() => { active = false; generation++ })
 <style scoped>
 .editor-card { margin-top: 16px; }
 .editor-error { margin-top: 16px; }
+.product-notice { margin-bottom: 18px; }
 .field { width: min(100%, 560px); }
 .file-field { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; width: 100%; }
 .field-note { margin-left: 12px; color: var(--el-text-color-secondary); font-size: 12px; }

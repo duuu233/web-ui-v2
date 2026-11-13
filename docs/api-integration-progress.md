@@ -342,6 +342,8 @@ Added UI routes:
 - `productVersion`
 - `productVersionDetail`
 
+升级类型 `compulsory`：1 强制升级，2 强提示升级，3 弱提示升级，4 不提示升级。2026-11-13 产品要求隐藏「强制升级」：新增 / 编辑与列表筛选只提供 2–4，编辑存量 1 时清空须重选；列表列仍按 1–4 显示（[记录](history/2026-11/2026-11-13-firmware-hide-force.md)）。
+
 Changed files:
 
 - `src/api/productVersion.js`

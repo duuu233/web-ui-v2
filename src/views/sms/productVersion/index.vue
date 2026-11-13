@@ -22,6 +22,8 @@ const compulsoryOptions = [
   { value: 3, label: '弱提示升级' },
   { value: 4, label: '不提示升级' }
 ]
+// 2026-11-13 产品要求：筛选隐藏「强制升级」（1）；列表列仍按全部取值显示存量数据
+const compulsoryFilterOptions = compulsoryOptions.filter((item) => item.value !== 1)
 
 const verifyOptions = [
   { value: 1, label: '启用' },
@@ -195,7 +197,7 @@ useListRefreshOnActivated('productVersion', init)
       </el-form-item>
       <el-form-item label="升级类型">
         <el-select v-model="listQuery.compulsory" clearable placeholder="请选择升级类型" style="width: 150px">
-          <el-option v-for="item in compulsoryOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in compulsoryFilterOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="状态">

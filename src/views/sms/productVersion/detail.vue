@@ -22,8 +22,8 @@ import { invalidateList } from '@/composables/useListRefresh'
 const route = useRoute()
 const router = useRouter()
 
+// 2026-11-13 产品要求：隐藏「强制升级」（1）选项，小程序 / APP 已去掉强制升级逻辑（存量 1 按强提示处理）
 const compulsoryOptions = [
-  { value: 1, label: '强制升级' },
   { value: 2, label: '强提示升级' },
   { value: 3, label: '弱提示升级' },
   { value: 4, label: '不提示升级' }
@@ -99,6 +99,8 @@ function getDetail() {
   getUserDeviceVersionDetail({ id: route.query.id }).then(response => {
     if (response.retCode === 200) {
       Object.assign(formData, defaultForm(), response.retData)
+      // 存量「强制升级」不再可选：清空让用户重新选择，保存时按必填校验提示
+      if (Number(formData.compulsory) === 1) formData.compulsory = null
     }
   })
 }

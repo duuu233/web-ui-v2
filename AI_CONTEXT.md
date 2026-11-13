@@ -106,7 +106,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - IoT管理（2026-11-12 由「IoT监控」改名；菜单顺序 概览 → 设备管理 → 设备监控 → 日志查询，其中「设备管理」即下条产品设备、「设备监控」即原 IoT 设备列表）：`/iot`下概览、设备列表、详情、日志四页，只读调用`iot.boltfox.cn/admin/**`，响应为`code/msg/data`，独立于ZoneAdmin鉴权。默认真实、可显式演示；60秒统计刷新、20/50/100分页、上海时区、完整影子和日志查询。当前契约与上线配置见[`docs/iot-admin.md`](docs/iot-admin.md)。
 - 内置图管理（2026-11-13）：`/intimg` 下槽位管理、设备内置图状态、新建推送任务、推送任务列表 / 详情、设备锁排查六页，调用 IoT 服务 13 项 `/admin/intimg/*`（独立客户端 `src/api/intimgClient.js`，鉴权与 IoT 模块相同，可 POST / 上传）。产品复用老后台产品列表（只要 WiFi 版）；上传图按产品旋转度数转好后须正好等于画布尺寸；下发清单必须从 FACTORY 开始连续，页面只提交目标槽位、实时展示实际清单。顶层菜单「内置图管理」范围 `intimg`。契约见 [`docs/intimg-admin.md`](docs/intimg-admin.md)。
 - 设备管理（原「产品设备」，2026-11-12 起菜单在 IoT管理 分组下，路由仍为 `/sms/productDevice*`）：列表、新增、编辑、详情及启禁用，接入 `/ProductDevice/*` 五项接口。产品选择强制WiFi版本（`versionType=2`），编辑主键为 `pDeviceId`、详情和启禁用使用 `id`；产品列表另有版本类型筛选。独立菜单范围 `product-device`，当前契约见 [`docs/product-device.md`](docs/product-device.md)。
-- FPGA版本（2026-11-13 由「FPGA固件版本」改名）：产品管理下的独立列表、新增、编辑和只读详情；接入 `/ProductVersionFpga/*` 六项接口，支持固件上传、权重、启禁用与删除；页面不显示升级类型，提交固定 `compulsory=4`（不提示升级）；产品只能选渲染模式 `fpga16` 的产品。菜单使用独立 `fpga-firmware` 范围，字段和权限见 [`docs/product-version-fpga.md`](docs/product-version-fpga.md)。
+- 优雅刷新管理（2026-11-13 由「FPGA固件版本」改名，接口仍为 FPGA 版本）：产品管理下的独立列表、新增、编辑和只读详情；接入 `/ProductVersionFpga/*` 六项接口，支持固件上传、权重、启禁用与删除；页面不显示升级类型，提交固定 `compulsory=4`（不提示升级）；产品只能选渲染模式 `fpga16` 的产品。菜单使用独立 `fpga-firmware` 范围，字段和权限见 [`docs/product-version-fpga.md`](docs/product-version-fpga.md)。
 - UMS/权限：员工、角色、菜单和授权关系。
 
 接口完成度以 [`docs/api-integration-progress.md`](docs/api-integration-progress.md) 为当前状态入口；接口清单以 [`docs/interface-list.md`](docs/interface-list.md) 为核对依据。

@@ -37,7 +37,7 @@ export function useFpgaVersionList() {
     const verify = Number(row.verify) === 1 ? 0 : 1
     const action = remove ? '删除' : verify === 1 ? '启用' : '禁用'
     try {
-      await ElMessageBox.confirm('确认' + action + ' FPGA版本“' + row.versionNumber + '”吗？' + (remove ? '删除后该版本将不再出现在列表中。' : ''), action + '确认', { type: 'warning', confirmButtonText: action, cancelButtonText: '取消' })
+      await ElMessageBox.confirm('确认' + action + '优雅刷新版本“' + row.versionNumber + '”吗？' + (remove ? '删除后该版本将不再出现在列表中。' : ''), action + '确认', { type: 'warning', confirmButtonText: action, cancelButtonText: '取消' })
       const response = remove ? await deleteProductVersionFpga({ id: row.id }) : await setProductVersionFpgaVerify({ id: row.id, verify })
       if (response.retData === false) throw new Error(action + '未成功')
       ElMessage.success(action + '成功')

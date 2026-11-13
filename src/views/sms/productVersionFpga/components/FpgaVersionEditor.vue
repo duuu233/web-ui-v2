@@ -13,7 +13,7 @@ import { defaultVersion, buildVersionPayload, fpgaProducts, parseVersionId, file
 const props = defineProps({ mode: { type: String, required: true }, recordId: { type: [String, Number], default: null } })
 const router = useRouter()
 const readonly = computed(() => props.mode === 'detail')
-const title = computed(() => ({ add: '新增 FPGA版本', edit: '编辑 FPGA版本', detail: 'FPGA版本详情' })[props.mode] || 'FPGA版本')
+const title = computed(() => ({ add: '新增优雅刷新版本', edit: '编辑优雅刷新版本', detail: '优雅刷新版本详情' })[props.mode] || '优雅刷新管理')
 const formRef = ref(null)
 const form = reactive(defaultVersion())
 const products = ref([])
@@ -42,7 +42,7 @@ async function initialize() {
   formRef.value?.clearValidate()
   if (!['add', 'edit', 'detail'].includes(props.mode)) { loadError.value = '页面模式无效'; return }
   const id = parseVersionId(props.recordId)
-  if (props.mode !== 'add' && id === null) { loadError.value = 'FPGA版本ID无效，请从列表重新进入'; return }
+  if (props.mode !== 'add' && id === null) { loadError.value = '版本ID无效，请从列表重新进入'; return }
   loading.value = true
   try {
     const [productResult, versionResult] = await Promise.all([

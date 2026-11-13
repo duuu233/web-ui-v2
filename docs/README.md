@@ -26,7 +26,7 @@
 | [`interface-list.md`](interface-list.md) | Active | 已核对的管理后台接口清单与来源。 |
 | [`iot-admin.md`](iot-admin.md) | Active | IoT四页只读监控、独立鉴权、演示数据、环境与菜单范围。 |
 | [`product-device.md`](product-device.md) | Active | 产品设备五项接口、WiFi产品约束、页面和独立菜单范围。 |
-| [`product-version-fpga.md`](product-version-fpga.md) | Active | FPGA版本（原 FPGA固件版本）页面、六项接口、字段与权限契约；只选 fpga16 产品、升级类型固定传 4。 |
+| [`product-version-fpga.md`](product-version-fpga.md) | Active | 优雅刷新管理（原 FPGA固件版本）页面、六项接口、字段与权限契约；只选 fpga16 产品、升级类型固定传 4。 |
 | [`intimg-admin.md`](intimg-admin.md) | Active | 内置图管理：槽位、设备状态、推送任务、设备锁六页，13 项 `/admin/intimg` 接口、连续前缀规则与菜单。 |
 | [`V2/`](V2/) | Reference | 产品提供的内置图需求：前端开发清单（定稿）、功能清单 v8、原型；当前实现口径以 `intimg-admin.md` 为准。 |
 | [`dynamic-menu-sync.md`](dynamic-menu-sync.md) | Active | 后端动态菜单同步、验证和回滚流程。 |

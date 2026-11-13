@@ -230,27 +230,27 @@ export const asyncRouterMap = [
         path: 'productVersionFpga',
         name: 'productVersionFpga',
         component: () => import('@/views/sms/productVersionFpga/index.vue'),
-        meta: { title: 'FPGA版本', icon: 'sms-flash' }
+        meta: { title: '优雅刷新管理', icon: 'sms-flash' }
       },
       {
         path: 'productVersionFpgaAdd',
         name: 'productVersionFpgaAdd',
         component: () => import('@/views/sms/productVersionFpga/add.vue'),
-        meta: { title: '新增 FPGA版本', icon: 'sms-flash' },
+        meta: { title: '新增优雅刷新版本', icon: 'sms-flash' },
         hidden: true
       },
       {
         path: 'productVersionFpgaEdit',
         name: 'productVersionFpgaEdit',
         component: () => import('@/views/sms/productVersionFpga/edit.vue'),
-        meta: { title: '编辑 FPGA版本', icon: 'sms-flash' },
+        meta: { title: '编辑优雅刷新版本', icon: 'sms-flash' },
         hidden: true
       },
       {
         path: 'productVersionFpgaDetail',
         name: 'productVersionFpgaDetail',
         component: () => import('@/views/sms/productVersionFpga/detail.vue'),
-        meta: { title: 'FPGA版本详情', icon: 'sms-flash' },
+        meta: { title: '优雅刷新版本详情', icon: 'sms-flash' },
         hidden: true
       },
       {

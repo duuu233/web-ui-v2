@@ -32,6 +32,10 @@ Rule: only integrate `管理后台-*` Swagger groups. Existing modules without m
 | Order | 管理后台-订单相关接口 | Completed | Added order list/detail pages and `/Order/*` API wrappers; detail displays the backend `currencyName` with a language-based compatibility fallback. |
 | AI configuration | 管理后台-AI费用配置相关接口 | Completed | Added AI configuration list/edit/status UI and `/AiConfig/*` API wrappers; list search supports content `language` values `1`–`4`. |
 
+## 内置图管理（2026-11-13）
+
+IoT 服务 13 项 `/admin/intimg/*` 接口已接入六个页面；线上任务 / 锁 / 槽位汇总 / 槽位 / 设备五个读接口只读核验字段与文档一致，写接口（上传、渲染、建任务、取消、重发、释放锁）未在线上调用。菜单 179–190 已创建。本机无 Node，构建与 `test:intimg` 未运行。见 [模块契约](intimg-admin.md)。
+
 ## IoT只读监控（2026-10-27）
 
 独立服务的四个`/admin/**`接口已接入；概览、设备、详情、日志四页与显式演示数据完成。9项专项回归、线上四接口和浏览器真实统计核验通过。菜单174–178已按单独授权创建。前端未部署，上线鉴权/CORS/访问限制由运维配置。见[模块契约](iot-admin.md)。

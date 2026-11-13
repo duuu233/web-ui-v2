@@ -33,9 +33,11 @@ npm run menu:sync:product-device -- --help
 npm run test:product-device
 npm run test:iot
 npm run menu:sync:iot -- --help
+npm run test:intimg
+npm run menu:sync:intimg -- --help
 ```
 
-仓库提供 FPGA、产品设备和IoT定向回归命令 `test:fpga`、`test:product-device`、`test:iot`，暂无全仓 `test`、`lint` 或 `type-check` 脚本。修改后的最低验证是运行与改动相关的静态检查，并执行 `npm run build`；菜单同步脚本先预览，确认后才允许带 `--apply`。
+仓库提供 FPGA、产品设备、IoT 和内置图定向回归命令 `test:fpga`、`test:product-device`、`test:iot`、`test:intimg`，暂无全仓 `test`、`lint` 或 `type-check` 脚本。修改后的最低验证是运行与改动相关的静态检查，并执行 `npm run build`；菜单同步脚本先预览，确认后才允许带 `--apply`。
 
 ## 3. 运行环境
 
@@ -102,6 +104,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - 基础配置：系统配置继续使用 `/Common/getConfigDataList` 与 `/Common/setConfigDataEdit`，平台设备 ID 不在表单中展示，也不进入保存负载。
 - 相框产品：新增/编辑必选 `versionType`（1=蓝牙版、2=wifi版），列表与详情显示类型名称；旧数据缺字段显示“未设置”，编辑后须明确选择。保存后的列表失效标记支持首次返回时才启用缓存的页面。新增/编辑/详情另有选填文本 `sizeModel`（尺寸型号，如“3.6寸”），清空时提交空串；用户端直接展示该值。wifi版另有必选下拉 `renderMode`（渲染模式，`esp32`/`fpga16`，原值提交），位于版本类型下方，蓝牙版隐藏且不提交；用户端原样透传给设备播放。
 - IoT管理（2026-11-12 由「IoT监控」改名；菜单顺序 概览 → 设备管理 → 设备监控 → 日志查询，其中「设备管理」即下条产品设备、「设备监控」即原 IoT 设备列表）：`/iot`下概览、设备列表、详情、日志四页，只读调用`iot.boltfox.cn/admin/**`，响应为`code/msg/data`，独立于ZoneAdmin鉴权。默认真实、可显式演示；60秒统计刷新、20/50/100分页、上海时区、完整影子和日志查询。当前契约与上线配置见[`docs/iot-admin.md`](docs/iot-admin.md)。
+- 内置图管理（2026-11-13）：`/intimg` 下槽位管理、设备内置图状态、新建推送任务、推送任务列表 / 详情、设备锁排查六页，调用 IoT 服务 13 项 `/admin/intimg/*`（独立客户端 `src/api/intimgClient.js`，鉴权与 IoT 模块相同，可 POST / 上传）。产品复用老后台产品列表（只要 WiFi 版）；上传图按产品旋转度数转好后须正好等于画布尺寸；下发清单必须从 FACTORY 开始连续，页面只提交目标槽位、实时展示实际清单。顶层菜单「内置图管理」范围 `intimg`。契约见 [`docs/intimg-admin.md`](docs/intimg-admin.md)。
 - 设备管理（原「产品设备」，2026-11-12 起菜单在 IoT管理 分组下，路由仍为 `/sms/productDevice*`）：列表、新增、编辑、详情及启禁用，接入 `/ProductDevice/*` 五项接口。产品选择强制WiFi版本（`versionType=2`），编辑主键为 `pDeviceId`、详情和启禁用使用 `id`；产品列表另有版本类型筛选。独立菜单范围 `product-device`，当前契约见 [`docs/product-device.md`](docs/product-device.md)。
 - FPGA 固件版本：产品管理下的独立列表、新增、编辑和只读详情；接入 `/ProductVersionFpga/*` 六项接口，支持固件上传、升级类型、权重、启禁用与删除。菜单使用独立 `fpga-firmware` 范围，字段和权限见 [`docs/product-version-fpga.md`](docs/product-version-fpga.md)。
 - UMS/权限：员工、角色、菜单和授权关系。
@@ -162,6 +165,7 @@ VITE_APP_API_PREFIX（通常为 /ZoneAdmin）
 - [`docs/iot-admin.md`](docs/iot-admin.md)：IoT只读接口、演示、环境和菜单。
 - [`docs/product-device.md`](docs/product-device.md)：产品设备接口、WiFi产品和菜单。
 - [`docs/product-version-fpga.md`](docs/product-version-fpga.md)：FPGA 固件页面、接口与权限。
+- [`docs/intimg-admin.md`](docs/intimg-admin.md)：内置图管理页面、接口、连续前缀规则与菜单。
 - [`docs/dynamic-menu-sync.md`](docs/dynamic-menu-sync.md)：动态菜单同步、验证和回滚。
 - [`docs/history/README.md`](docs/history/README.md)：本地操作更新记录规范与模板。
 

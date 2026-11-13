@@ -63,6 +63,18 @@ export const asyncRouterMap = [
       { path: 'logs', name: 'iotLogs', component: () => import('@/views/iot/logs.vue'), meta: { title: 'IoT日志查询', icon: 'sms-flash' } }
     ]
   },
+  // 内置图管理（2026-11-13，IoT 服务 /admin/intimg，见 docs/intimg-admin.md）
+  {
+    path: '/intimg', component: Layout, redirect: '/intimg/slots', name: 'intimg', meta: { title: '内置图管理' },
+    children: [
+      { path: 'slots', name: 'intimgSlots', component: () => import('@/views/intimg/slots.vue'), meta: { title: '槽位管理', icon: 'sms-flash' } },
+      { path: 'devices', name: 'intimgDevices', component: () => import('@/views/intimg/devices.vue'), meta: { title: '设备内置图状态', icon: 'sms-flash' } },
+      { path: 'tasks/create', name: 'intimgTaskCreate', component: () => import('@/views/intimg/taskCreate.vue'), meta: { title: '新建推送任务', icon: 'sms-flash' } },
+      { path: 'tasks', name: 'intimgTasks', component: () => import('@/views/intimg/tasks.vue'), meta: { title: '推送任务列表', icon: 'sms-flash' } },
+      { path: 'tasks/:taskNo', name: 'intimgTaskDetail', props: true, component: () => import('@/views/intimg/taskDetail.vue'), hidden: true, meta: { title: '推送任务详情', icon: 'sms-flash', activeMenu: 'intimgTasks' } },
+      { path: 'locks', name: 'intimgLocks', component: () => import('@/views/intimg/locks.vue'), meta: { title: '设备锁排查', icon: 'sms-flash' } }
+    ]
+  },
   {
     path: '/sms',
     component: Layout,

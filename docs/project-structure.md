@@ -151,6 +151,10 @@ src/views/
 
 `src/api/productDevice.js` 封装五项接口；`src/views/sms/productDevice/index.vue` 组合搜索、工具栏、表格和分页。`components/ProductDeviceFilters.vue` 管理筛选模型与搜索/重置事件，`ProductDeviceTable.vue` 接收行数据和加载状态并上报详情/编辑/启禁用事件，`ProductDeviceEditor.vue` 接收mode与recordId，复用新增/编辑/只读详情。`useProductDeviceList.js` 组合公共分页及状态变更，`model.js` 维护主键、提交字段和WiFi产品分页选择。模块契约见 [产品设备](product-device.md)。
 
+## 内置图管理（2026-11-13）
+
+`src/api/intimgClient.js` 为 13 条 `/admin/intimg/*` 接口提供独立协议 / 鉴权 / 超时（含 multipart 上传），路径白名单与参数编码；`src/views/intimg/` 下 `model.js` 是纯逻辑（槽位顺序、连续前缀、状态文案、查询与提交负载、上传尺寸校验），`image.js` 负责上传前读图与旋转，`service.js` 封装接口与 WiFi 产品缓存；六个路由页面组合 `components/`（页头子导航、产品卡片、设备筛选），复用 IoT 的样式、错误组件与 `useIotResource`。详见 [内置图契约](intimg-admin.md)。
+
 ## IoT只读监控（2026-10-27）
 
 `src/api/iotAdminClient.js`为四条GET端点提供独立协议/鉴权/超时处理；`src/views/iot/`包含四个路由页面、纯模型与合成数据、来源适配和可取消资源/列表逻辑。`components/`分别负责模块页头/环境、错误、筛选、状态、影子和日志表格，页面组合组件与业务状态；不改公共ZoneAdmin请求实例。详见[IoT契约](iot-admin.md)。

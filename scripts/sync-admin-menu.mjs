@@ -273,7 +273,24 @@ export const iotMonitoringMenuNodes = [{
   ]
 }]
 
+// 2026-11-13：内置图管理（IoT 服务 /admin/intimg），顶层分组，排在 IoT管理 之后；appUrl = 路由名
+const intimgNav = (appName, appCode, appUrl, grade, actions = []) => ({
+  appName, appCode, appUrl, grade, isNav: 1, isRefresh: 0,
+  children: actions.map(([name, code]) => ({ appName: name, appCode: code, appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }))
+})
+export const intimgMenuNodes = [{
+  appName: '内置图管理', appCode: '#', appUrl: '#', grade: 2, isNav: 1, isRefresh: 0,
+  children: [
+    intimgNav('槽位管理', 'Get_IotIntimg_SlotList', 'intimgSlots', 5, [['上传/替换', 'Post_IotIntimg_UploadSlotImage'], ['重新渲染', 'Post_IotIntimg_RenderSlot']]),
+    intimgNav('设备内置图状态', 'Get_IotIntimg_DeviceList', 'intimgDevices', 4),
+    intimgNav('新建推送任务', 'Post_IotIntimg_AddTask', 'intimgTaskCreate', 3),
+    intimgNav('推送任务列表', 'Get_IotIntimg_TaskList', 'intimgTasks', 2, [['任务详情', 'Get_IotIntimg_TaskDetail'], ['取消推送', 'Post_IotIntimg_CancelTaskItems'], ['重发失败', 'Post_IotIntimg_RetryTaskItems']]),
+    intimgNav('设备锁排查', 'Get_IotIntimg_LockList', 'intimgLocks', 1, [['强制释放锁', 'Post_IotIntimg_ReleaseLock']])
+  ]
+}]
+
 const menuScopes = {
+  intimg: { label: '内置图管理（槽位、设备状态、推送任务、设备锁）', parentCode: null, nodes: intimgMenuNodes },
   'iot-monitoring': { label: 'IoT管理（概览、设备管理、设备监控、日志）', parentCode: null, nodes: iotMonitoringMenuNodes },
   'product-device': {
     label: '设备管理（原产品设备，仅本模块，挂在 IoT管理 分组下）',
@@ -348,7 +365,7 @@ function printHelp() {
   BOLTFOX_MENU_SCOPE   可选，默认 commerce
 
 参数：
-  --scope=<scope>      同步范围：commerce、user-account、fpga-firmware、product-device 或 iot-monitoring
+  --scope=<scope>      同步范围：commerce、user-account、fpga-firmware、product-device、iot-monitoring 或 intimg
   --apply              实际新增缺失节点；省略时只预览
   --update             同时更新已存在但配置漂移的节点（必须搭配 --apply）
   --system-id=<id>     覆盖系统 ID

@@ -23,12 +23,14 @@ export function parseVersionId(value) {
   return Number.isInteger(id) && id > 0 && id <= 2147483647 ? id : null
 }
 export function defaultVersion() {
-  return { productId: null, versionNumber: '', downloadPath: '', grade: 0 }
+  return { productId: null, versionNumber: '', downloadPath: '', upgradeTips: '', grade: 0 }
 }
 export function buildVersionPayload(form, id) {
   const payload = {
     productId: Number(form.productId), versionNumber: form.versionNumber.trim(),
-    downloadPath: form.downloadPath.trim(), compulsory: DEFAULT_COMPULSORY, grade: Number(form.grade)
+    downloadPath: form.downloadPath.trim(), compulsory: DEFAULT_COMPULSORY, grade: Number(form.grade),
+    // 2026-11-13：版本说明（接口 upgradeTips，1–200 字符），用户端「优雅刷新升级」展示
+    upgradeTips: String(form.upgradeTips ?? '').trim()
   }
   if (id !== undefined) payload.id = parseVersionId(id)
   return payload

@@ -12,6 +12,7 @@ function date(value) { return value ? formatDate(new Date(value), 'yyyy-MM-dd hh
       <vxe-column field="id" title="ID" width="80" align="center" />
       <vxe-column title="产品" min-width="150" show-overflow><template #default="{ row }">{{ productName(row.productId) }}</template></vxe-column>
       <vxe-column field="versionNumber" title="版本号" min-width="150" show-overflow />
+      <vxe-column title="版本说明" min-width="200" show-overflow><template #default="{ row }">{{ row.upgradeTips || '—' }}</template></vxe-column>
       <vxe-column field="grade" title="权重" width="85" align="center" />
       <vxe-column title="下载地址" min-width="220" show-overflow><template #default="{ row }"><el-link v-if="safeDownloadUrl(row.downloadPath)" :href="safeDownloadUrl(row.downloadPath)" target="_blank" rel="noopener noreferrer" type="primary">{{ row.downloadPath }}</el-link><span v-else>{{ row.downloadPath || '—' }}</span></template></vxe-column>
       <vxe-column title="状态" width="100" align="center"><template #default="{ row }"><el-tag :type="Number(row.verify) === 1 ? 'success' : 'info'" size="small">{{ row.verifyMsg || (Number(row.verify) === 1 ? '启用' : Number(row.verify) === 0 ? '禁用' : '未知状态') }}</el-tag></template></vxe-column>

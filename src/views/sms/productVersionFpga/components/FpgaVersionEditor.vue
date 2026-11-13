@@ -31,6 +31,7 @@ const rules = {
   productId: [{ required: true, message: '请选择产品', trigger: 'change' }],
   versionNumber: [{ required: true, whitespace: true, message: '请输入版本号', trigger: 'blur' }, { max: 200, message: '版本号最多200个字符', trigger: 'blur' }],
   downloadPath: [{ required: true, whitespace: true, message: '请上传固件或填写下载地址', trigger: 'change' }],
+  upgradeTips: [{ required: true, whitespace: true, message: '请输入版本说明', trigger: 'blur' }, { max: 200, message: '版本说明最多200个字符', trigger: 'blur' }],
   grade: [{ required: true, message: '请输入权重', trigger: 'change' }]
 }
 async function initialize() {
@@ -128,6 +129,7 @@ onBeforeUnmount(() => { active = false; generation++ })
           <el-upload v-if="!readonly" action="" :show-file-list="false" :http-request="upload" :disabled="disabled || uploading"><el-button :loading="uploading" :disabled="disabled">{{ uploading ? '正在上传…' : '上传固件文件' }}</el-button></el-upload>
           <el-link v-if="safeDownloadUrl(form.downloadPath)" :href="safeDownloadUrl(form.downloadPath)" target="_blank" rel="noopener noreferrer" type="primary">{{ fileName(form.downloadPath) }}</el-link>
         </div></el-form-item>
+        <el-form-item label="版本说明" prop="upgradeTips"><el-input v-model="form.upgradeTips" type="textarea" :rows="3" maxlength="200" show-word-limit placeholder="升级提示语，展示给用户（例：修复刷新闪烁）" class="field" /></el-form-item>
         <el-form-item label="权重" prop="grade"><el-input-number v-model="form.grade" :min="0" :max="2147483647" :precision="0" controls-position="right" /><span class="field-note">数值越大，优先级越高</span></el-form-item>
         <template v-if="readonly"><el-form-item label="状态"><span>{{ detail.verifyMsg || (Number(detail.verify) === 1 ? '启用' : Number(detail.verify) === 0 ? '禁用' : '—') }}</span></el-form-item><el-form-item label="创建时间">{{ detail.joinTime || '—' }}</el-form-item><el-form-item label="更新时间">{{ detail.upTime || '—' }}</el-form-item></template>
       </el-form>

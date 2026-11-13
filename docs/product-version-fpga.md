@@ -8,10 +8,11 @@
 ## 2026-11-13 调整
 
 - 模块改名「优雅刷新管理」（原「FPGA固件版本」，同日中间一度改为「FPGA版本」）：路由与页面标题为优雅刷新管理 / 新增 · 编辑 · 详情「优雅刷新版本」，列表列「版本号」；菜单脚本节点名已改，后台节点 163 改名待执行（`npm run menu:sync:fpga -- --apply --update`，只改 appName）。
-- 「推送用户」按钮（`POST /internal/notification/send`）：用户要求暂停，等接口调整后再做。
+- 「推送用户」按钮（`POST /internal/notification/send`）：产品改为用户端红点提醒，不做后台消息推送（未实现过，无需删除）。
+- 版本说明（`upgradeTips`，2026-11-13 接口新增）：新增 / 编辑必填，1–200 字符，提交前修剪首尾空白；详情只读显示，列表新增「版本说明」列。用户端设备详情以 `upgradeTipsFpga` 下发，「优雅刷新升级」页展示。
 - 去掉「升级类型」：列表筛选、列表列、新增 / 编辑 / 详情表单都不再显示；接口 `compulsory` 仍必填，新增 / 编辑一律提交 `4`（不提示升级）。
 - 产品选择只列渲染模式 `renderMode = fpga16` 的产品（2026-11-13 线上只有 IJ_101 10.1寸）。列表筛选同样只列 fpga16 产品；列表「产品」列仍按全部产品显示名称。编辑时原产品不是 fpga16 会提示并要求重新选择，详情照常显示原产品。
-- 「版本简介」：Swagger 与线上返回目前都没有简介字段，本轮未做，待后端加字段后再接。
+- 「版本简介」：同日后端以 `upgradeTips` 提供，已接入（见下一条之后的「版本说明」）。
 
 以下为模块原有契约（「升级类型」相关描述以上一节为准）。
 
@@ -33,7 +34,7 @@
 | --- | --- | --- | --- |
 | 列表 | GET /ProductVersionFpga/getProductVersionFpgaList | pageIndex、pageSize；可选 keyword、productId、compulsory、verify、startDate、endDate | Get_ProductVersionFpga_GetProductVersionFpgaList |
 | 详情 | GET /ProductVersionFpga/getProductVersionFpgaDetail | id | Get_ProductVersionFpga_GetProductVersionFpgaDetail |
-| 添加 | POST /ProductVersionFpga/addProductVersionFpga | productId、versionNumber、downloadPath、compulsory、grade | Post_ProductVersionFpga_AddProductVersionFpga |
+| 添加 | POST /ProductVersionFpga/addProductVersionFpga | productId、versionNumber、downloadPath、upgradeTips、compulsory、grade | Post_ProductVersionFpga_AddProductVersionFpga |
 | 编辑 | POST /ProductVersionFpga/editProductVersionFpga | 添加字段加 id | Post_ProductVersionFpga_EditProductVersionFpga |
 | 删除 | POST /ProductVersionFpga/deleteProductVersionFpga | id | Post_ProductVersionFpga_DeleteProductVersionFpga |
 | 启禁用 | POST /ProductVersionFpga/setProductVersionFpgaVerify | id、verify | Post_ProductVersionFpga_SetProductVersionFpgaVerify |

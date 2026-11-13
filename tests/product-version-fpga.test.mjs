@@ -9,8 +9,9 @@ import { renderToString } from 'vue/server-renderer'
 import { parseVersionId, buildVersionPayload, safeDownloadUrl, isFpgaProduct, fpgaProducts, DEFAULT_COMPULSORY } from '../src/views/sms/productVersionFpga/model.js'
 
 test('FPGA contract keeps grade=0, omits output/auth fields and validates IDs', () => {
-  const form = { productId: '7', versionNumber: ' v1.2 ', downloadPath: ' https://example.com/fpga.bin ', compulsory: '4', grade: 0, verify: 1, adminId: 88, id: 99 }
-  const expected = { productId: 7, versionNumber: 'v1.2', downloadPath: 'https://example.com/fpga.bin', compulsory: 4, grade: 0 }
+  // 2026-11-13：新增 upgradeTips（版本说明），同样修剪首尾空白
+  const form = { productId: '7', versionNumber: ' v1.2 ', downloadPath: ' https://example.com/fpga.bin ', upgradeTips: ' 修复闪烁 ', compulsory: '4', grade: 0, verify: 1, adminId: 88, id: 99 }
+  const expected = { productId: 7, versionNumber: 'v1.2', downloadPath: 'https://example.com/fpga.bin', upgradeTips: '修复闪烁', compulsory: 4, grade: 0 }
   assert.deepEqual(buildVersionPayload(form), expected)
   assert.deepEqual(buildVersionPayload(form, '12'), { ...expected, id: 12 })
   for (const value of [null, undefined, [], ['1'], 0, -1, '1.2', '1e2', 'abc', 2147483648]) assert.equal(parseVersionId(value), null)

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>内置图管理 - 原型 v3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; font-size: 13px; color: #1f2329; background: #f5f6f7; }
+  .layout { display: flex; min-height: 100vh; }
+  .side { width: 208px; background: #001529; color: #c9d1d9; flex: 0 0 208px; }
+  .side h1 { font-size: 15px; padding: 18px 16px; color: #fff; font-weight: 600; border-bottom: 1px solid #1f2d3d; }
+  .side a { display: block; padding: 11px 16px; color: #c9d1d9; text-decoration: none; font-size: 13px; cursor: pointer; }
+  .side a:hover { background: #112a45; color: #fff; }
+  .side a.on { background: #1677ff; color: #fff; }
+  .main { flex: 1; padding: 20px 24px; overflow: auto; }
+  .page { display: none; }
+  .page.on { display: block; }
+  h2 { font-size: 18px; margin-bottom: 4px; }
+  .sub { color: #8a919f; font-size: 12px; margin-bottom: 16px; }
+  .card { background: #fff; border-radius: 6px; border: 1px solid #e5e6eb; padding: 16px; margin-bottom: 16px; }
+  .card h3 { font-size: 14px; margin-bottom: 12px; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .slot { border: 1px solid #e5e6eb; border-radius: 6px; overflow: hidden; background: #fff; }
+  .slot .thumb { height: 120px; background: #fafafa; display: flex; align-items: center; justify-content: center; color: #c0c4cc; font-size: 12px; border-bottom: 1px solid #e5e6eb; }
+  .slot .body { padding: 10px 12px; }
+  .slot .name { font-weight: 600; margin-bottom: 6px; }
+  .slot .meta { color: #8a919f; font-size: 12px; line-height: 1.7; }
+  .slot .ops { margin-top: 10px; display: flex; gap: 8px; }
+  .btn { border: 1px solid #d0d3d9; background: #fff; border-radius: 4px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+  .btn:hover { border-color: #1677ff; color: #1677ff; }
+  .btn.primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+  .btn.primary:hover { background: #4096ff; }
+  .btn.danger { border-color: #ffccc7; color: #cf1322; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #f0f0f0; }
+  th { background: #fafafa; color: #5a6472; font-weight: 500; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; }
+  .t-ok { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; }
+  .t-wait { background: #fff7e6; color: #d46b08; border: 1px solid #ffd591; }
+  .t-fail { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
+  .t-gray { background: #f5f5f5; color: #8a919f; border: 1px solid #e5e6eb; }
+  .t-busy { background: #f0f5ff; color: #1d39c4; border: 1px solid #adc6ff; }
+  .t-new { background: #fff0f6; color: #c41d7f; border: 1px solid #ffadd2; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid #e5e6eb; }
+  .tabs span { padding: 8px 14px; cursor: pointer; font-size: 13px; color: #5a6472; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tabs span.on { color: #1677ff; border-bottom-color: #1677ff; font-weight: 500; }
+  .stat { display: flex; gap: 24px; }
+  .stat div { font-size: 12px; color: #8a919f; }
+  .stat b { display: block; font-size: 20px; color: #1f2329; font-weight: 600; margin-top: 2px; }
+  .row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  input[type=text], select { border: 1px solid #d0d3d9; border-radius: 4px; padding: 5px 9px; font-size: 12px; }
+  .hint { color: #8a919f; font-size: 12px; }
+  .step { display: flex; gap: 10px; margin-bottom: 14px; }
+  .step div { flex: 1; border: 1px solid #e5e6eb; border-radius: 6px; padding: 10px 12px; background: #fafafa; font-size: 12px; color: #5a6472; }
+  .step div.on { border-color: #1677ff; background: #f0f5ff; color: #1f2329; }
+  .device-pick { max-height: 340px; overflow: auto; border: 1px solid #e5e6eb; border-radius: 6px; }
+  .muted { color: #c0c4cc; }
+  .warn { background: #fff7e6; border: 1px solid #ffd591; color: #ad4e00; padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 12px; }
+  .pager { display: flex; gap: 6px; align-items: center; justify-content: flex-end; margin-top: 12px; font-size: 12px; color: #5a6472; }
+  .pager span.pg { border: 1px solid #d0d3d9; border-radius: 4px; padding: 3px 9px; cursor: pointer; background: #fff; }
+  .pager span.pg.on { border-color: #1677ff; color: #1677ff; }
+  .models { display: flex; gap: 10px; margin-bottom: 14px; }
+  .models div { border: 1px solid #e5e6eb; border-radius: 6px; padding: 10px 14px; cursor: pointer; font-size: 12px; background: #fff; }
+  .models div.on { border-color: #1677ff; background: #f0f5ff; }
+  .models b { display: block; font-size: 13px; margin-bottom: 3px; }
+  .chain { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; margin: 10px 0 6px; }
+  .chain .arrow { color: #c0c4cc; font-size: 12px; align-self: center; }
+  .node { border: 1px solid #e5e6eb; border-radius: 6px; padding: 9px 11px; background: #fff; min-width: 118px; font-size: 12px; }
+  .node .k { font-weight: 600; }
+  .node .v { color: #8a919f; margin-top: 3px; }
+  .node .mark { font-size: 11px; margin-top: 5px; }
+  .node.sel { border-color: #1677ff; background: #f0f5ff; }
+  .node.auto { border-color: #91caff; background: #f7fbff; }
+  .node.off { background: #f5f5f5; color: #a8abb2; border-style: dashed; }
+  .manifest { border: 1px dashed #91caff; background: #f7fbff; border-radius: 6px; padding: 10px 12px; font-size: 12px; margin-top: 10px; }
+  .manifest b { color: #1677ff; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="side">
+    <h1>内置图管理</h1>
+    <a class="on" data-page="p1">槽位管理</a>
+    <a data-page="p2">设备内置图状态</a>
+    <a data-page="p3">新建推送任务</a>
+    <a data-page="p4">推送任务列表</a>
+    <a data-page="p5">任务详情（示例）</a>
+    <a data-page="p6">设备锁排查</a>
+  </div>
+
+  <div class="main">
+
+    <!-- ============ 1. 槽位管理 ============ -->
+    <div class="page on" id="p1">
+      <h2>槽位管理</h2>
+      <div class="sub">每个产品有<b>自己独立的 6 个槽位</b>。当前 3 款 WiFi 产品 = <b>18 张图</b>。</div>
+
+      <div class="models">
+        <div class="on"><b>7.09 全彩电子纸相框</b>1200 × 1600 · 竖 · esp32 · 6/6 已配置</div>
+        <div><b>13.3 全彩模块化相框</b>1200 × 1600 · 竖 · esp32 · 4/6 已配置</div>
+        <div><b>10.1 全彩电子纸内胆</b>1200 × 1600 · 横 · fpga16 · 0/6 已配置</div>
+      </div>
+      <div class="hint" style="margin-bottom:12px">产品信息全部复用老后台「产品列表」，这里只列 <b>版本类型 = wifi</b> 的产品；
+        画布尺寸取「尺寸(cm)」（值为像素，三款统一 1200*1600），「屏幕方向」决定服务端是否转 90°，
+        「渲染模式」决定屏幕类型（esp32 → 7.09/13.3，fpga16 → 10.1）。代码里不写死任何机型参数。<br>
+        <b>推送规则：</b>下发清单必须是「从 FACTORY 开始的连续前缀」，中间缺一个槽位，后面的都不能推。</div>
+
+      <div class="card">
+        <h3>7.09 全彩电子纸相框　1200 × 1600　竖　·　上传画布 1200 × 1600</h3>
+        <div class="grid">
+          <div class="slot"><div class="thumb">缩略图</div><div class="body">
+            <div class="name">FACTORY　出厂图</div>
+            <div class="meta">1200×1600　v3<br>更新 11-10 20:28　韩超</div>
+            <div class="ops"><button class="btn">上传/替换</button><button class="btn">预览</button></div>
+          </div></div>
+          <div class="slot"><div class="thumb">缩略图</div><div class="body">
+            <div class="name">SET　设置图</div>
+            <div class="meta">1200×1600　v2<br>更新 11-10 20:28　韩超</div>
+            <div class="ops"><button class="btn">上传/替换</button><button class="btn">预览</button></div>
+          </div></div>
+          <div class="slot"><div class="thumb">缩略图</div><div class="body">
+            <div class="name">NO_WIFI　无 WiFi 提示</div>
+            <div class="meta">1200×1600　v1<br>更新 11-10 17:30　韩超</div>
+            <div class="ops"><button class="btn">上传/替换</button><button class="btn">预览</button></div>
+          </div></div>
+          <div class="slot"><div class="thumb">缩略图</div><div class="body">
+            <div class="name">LOW_BATTERY　低电量提示</div>
+            <div class="meta">1200×1600　v1<br>更新 11-10 17:30　韩超</div>
+            <div class="ops"><button class="btn">上传/替换</button><button class="btn">预览</button></div>
+          </div></div>
+          <div class="slot"><div class="thumb">缩略图</div><div class="body">
+            <div class="name">LOW_POWER_OFF　低电量关机页</div>
+            <div class="meta">1200×1600　v1<br>更新 11-10 17:30　韩超</div>
+            <div class="ops"><button class="btn">上传/替换</button><button class="btn">预览</button></div>
+          </div></div>
+          <div class="slot"><div class="thumb">缩略图</div><div class="body">
+            <div class="name">CONNECTED　连接页</div>
+            <div class="meta">1200×1600　v1<br>更新 11-10 17:30　韩超</div>
+            <div class="ops"><button class="btn">上传/替换</button><button class="btn">预览</button></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 2. 设备内置图状态 ============ -->
+    <div class="page" id="p2">
+      <h2>设备内置图状态</h2>
+      <div class="sub">6 个槽位一起看；新增设备天然是「未推送」，这里可以直接筛出来批量推。</div>
+
+      <div class="card">
+        <div class="row">
+          <select><option>型号：7.09</option><option>13.3</option><option>10.1</option></select>
+          <select><option>版本状态：全部</option><option>最新</option><option>落后</option><option>未推送</option></select>
+          <select><option>在线：全部</option><option>仅在线</option><option>仅离线</option></select>
+          <input type="text" placeholder="搜索设备号 / 备注" style="width:200px">
+          <button class="btn">查询</button>
+          <span class="hint">共 <b>1,284</b> 台</span>
+        </div>
+        <table>
+          <thead><tr><th style="width:36px"><input type="checkbox"></th><th>设备号</th><th>备注</th><th>登记状态</th><th>在线</th><th>已推送</th><th>落后槽位</th><th>最后推送</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>3844BE2E5220</td><td>测试机 A</td><td><span class="tag t-ok">已激活</span></td><td><span class="tag t-ok">在线</span></td>
+                <td><span class="tag t-ok">6/6 最新</span></td><td>—</td><td>11-10 20:31</td></tr>
+            <tr><td><input type="checkbox"></td><td>D0CF13F02804</td><td>测试机 B</td><td><span class="tag t-ok">已激活</span></td><td><span class="tag t-ok">在线</span></td>
+                <td><span class="tag t-wait">5/6</span></td><td><span class="tag t-wait">SET v1 落后</span></td><td>11-10 20:30</td></tr>
+            <tr><td><input type="checkbox"></td><td>38A1C7D20E44</td><td>样机 3</td><td><span class="tag t-ok">已激活</span></td><td><span class="tag t-ok">在线</span></td>
+                <td><span class="tag t-fail">0/6 未推送</span></td><td>—</td><td>—</td></tr>
+            <tr><td><input type="checkbox"></td><td>38F0B2C9A117</td><td>新到货</td><td><span class="tag t-ok">已激活</span></td><td><span class="tag t-gray">离线</span></td>
+                <td><span class="tag t-new">新设备</span></td><td>—</td><td>—</td></tr>
+            <tr><td><input type="checkbox" disabled></td><td class="muted">38C7E1A0B335</td><td class="muted">库存机（未出库）</td><td><span class="tag t-gray">已登记未激活</span></td><td><span class="tag t-gray">从未上线</span></td>
+                <td colspan="2" class="muted" style="text-align:center">不计入「未推送」统计</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div class="pager"><span>共 1,284 条</span><span class="pg">上一页</span><span class="pg on">1</span><span class="pg">2</span><span class="pg">3</span><span class="pg">…</span><span class="pg">65</span><span class="pg">下一页</span>
+          <select><option>20 条/页</option><option>50 条/页</option><option>100 条/页</option></select></div>
+      </div>
+    </div>
+
+    <!-- ============ 3. 新建推送任务 ============ -->
+    <div class="page" id="p3">
+      <h2>新建推送任务</h2>
+      <div class="sub">下发清单必须是「从 FACTORY 开始连续的一段」：只更新 FACTORY 就只发 FACTORY；要更新 NO_WIFI，必须带上 FACTORY、SET。</div>
+
+      <div class="step">
+        <div class="on">① 选产品</div>
+        <div class="on">② 选目标槽位</div>
+        <div class="on">③ 选设备</div>
+        <div>④ 确认提交</div>
+      </div>
+
+      <div class="card">
+        <h3>① 选择产品</h3>
+        <div class="row">
+          <select><option>7.09 全彩电子纸相框　1200×1600 竖　esp32　6/6 已配置</option><option>13.3 全彩模块化相框　1200×1600 竖　esp32　4/6（SET 缺失）</option><option>10.1 全彩电子纸内胆　1200×1600 横　fpga16　0/6</option></select>
+          <span class="hint">不再要求 6/6；能推到哪一位，由下面的「连续前缀」决定</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>② 选择目标槽位　<span class="hint" style="font-weight:400">可更新上限：CONNECTED</span></h3>
+        <div class="hint" style="margin-bottom:8px">勾选本次要更新的槽位；服务端会自动把前面已配置的槽位一起下发。未勾选的灰色节点表示可选但本次不需要。</div>
+        <div class="chain">
+          <div class="node sel"><div class="k">☑ FACTORY</div><div class="v">出厂图 · v3</div><div class="mark">目标</div></div>
+          <div class="arrow">→</div>
+          <div class="node auto"><div class="k">☑ SET</div><div class="v">设置图 · v1</div><div class="mark">自动带上</div></div>
+          <div class="arrow">→</div>
+          <div class="node sel"><div class="k">☑ NO_WIFI</div><div class="v">无 WiFi · v1</div><div class="mark">目标</div></div>
+          <div class="arrow">→</div>
+          <div class="node"><div class="k">☐ LOW_BATTERY</div><div class="v">低电量 · v1</div><div class="mark">可选</div></div>
+          <div class="arrow">→</div>
+          <div class="node"><div class="k">☐ LOW_POWER_OFF</div><div class="v">低电关机 · v1</div><div class="mark">可选</div></div>
+          <div class="arrow">→</div>
+          <div class="node"><div class="k">☐ CONNECTED</div><div class="v">连接页 · v1</div><div class="mark">可选</div></div>
+        </div>
+        <div class="manifest">实际下发清单：<b>FACTORY v3</b> → <b>SET v1</b> → <b>NO_WIFI v1</b>（共 3 个槽位；SET 未勾选，但按链路规则自动带上）</div>
+      </div>
+
+      <div class="card">
+        <h3>③ 选择设备</h3>
+        <div class="row">
+          <input type="text" placeholder="搜索设备号 / 备注" style="width:200px">
+          <select><option>版本状态：全部</option><option>未推送</option><option>落后</option><option>最新</option></select>
+          <select><option>在线：全部</option><option>仅在线</option><option>仅离线</option></select>
+          <button class="btn">全选当前筛选结果</button>
+          <span class="hint">已选 <b>3</b> 台　·　推送中 1 台已置灰</span>
+        </div>
+        <div class="device-pick">
+          <table>
+            <thead><tr><th style="width:36px"><input type="checkbox" checked></th><th>设备号</th><th>备注</th><th>在线</th><th>已推送</th><th>可选性</th></tr></thead>
+            <tbody>
+              <tr><td><input type="checkbox" checked></td><td>3844BE2E5220</td><td>测试机 A</td><td><span class="tag t-ok">在线</span></td><td><span class="tag t-ok">6/6 最新</span></td><td>可推送</td></tr>
+              <tr><td><input type="checkbox" checked></td><td>D0CF13F02804</td><td>测试机 B</td><td><span class="tag t-ok">在线</span></td><td><span class="tag t-wait">5/6</span></td><td>可推送（重复推）</td></tr>
+              <tr><td><input type="checkbox" checked></td><td>38A1C7D20E44</td><td>样机 3</td><td><span class="tag t-ok">在线</span></td><td><span class="tag t-fail">0/6</span></td><td>可推送</td></tr>
+              <tr><td><input type="checkbox" disabled></td><td class="muted">D0CF13F02FF8</td><td class="muted">—</td><td><span class="tag t-ok">在线</span></td><td><span class="tag t-ok">6/6 最新</span></td><td><span class="tag t-busy">推送中：P20261110-005</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pager"><span>共 328 条</span><span class="pg">上一页</span><span class="pg on">1</span><span class="pg">2</span><span class="pg">…</span><span class="pg">17</span><span class="pg">下一页</span>
+          <select><option>20 条/页</option><option>50 条/页</option></select></div>
+      </div>
+
+      <div class="card">
+        <h3>④ 确认</h3>
+        <div class="warn">将覆盖 <b>3 台</b>设备的 <b>FACTORY / SET / NO_WIFI 共 3 个槽位</b>（在线 3 台，离线 0 台）。
+          离线设备进入待补发，7 天内上线自动补，超期失效。覆盖后无法自动恢复。</div>
+        <button class="btn primary">确认推送</button>
+        <button class="btn">取消</button>
+      </div>
+
+      <div class="card">
+        <h3>反例：链路中间缺槽位</h3>
+        <div class="hint" style="margin-bottom:8px">13.3 只配了 FACTORY 和 NO_WIFI，SET 未配置 → 可更新上限 = FACTORY，NO_WIFI 及之后全部不可选。</div>
+        <div class="chain">
+          <div class="node"><div class="k">☐ FACTORY</div><div class="v">出厂图 · v1</div><div class="mark">可更新</div></div>
+          <div class="arrow">→</div>
+          <div class="node off"><div class="k">SET</div><div class="v">未配置</div><div class="mark">链路在此断开</div></div>
+          <div class="arrow">→</div>
+          <div class="node off"><div class="k">NO_WIFI</div><div class="v">无 WiFi · v1</div><div class="mark">不可更新</div></div>
+          <div class="arrow">→</div>
+          <div class="node off"><div class="k">LOW_BATTERY</div><div class="v">未配置</div><div class="mark">不可更新</div></div>
+        </div>
+        <div class="warn">提示：请先上传 SET；配置完成前只能更新 FACTORY。</div>
+      </div>
+    </div>
+
+    <!-- ============ 4. 任务列表 ============ -->
+    <div class="page" id="p4">
+      <h2>推送任务列表</h2>
+      <div class="sub">异步任务，提交后可以离开页面，稍后回来查看进度。</div>
+      <div class="card">
+        <table>
+          <thead><tr><th>任务号</th><th>型号</th><th>目标槽位</th><th>实际下发清单</th><th>总数</th><th>成功</th><th>失败</th><th>待补发</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>P20261110-004</td><td>7.09</td><td>NO_WIFI</td><td>F:3 S:1 N:1</td><td>4</td><td>2</td><td>1</td><td>1</td>
+                <td><span class="tag t-wait">执行中</span></td><td>11-10 20:28</td><td><button class="btn">查看</button></td></tr>
+            <tr><td>P20261110-003</td><td>7.09</td><td>SET</td><td>F:3 S:1</td><td>120</td><td>117</td><td>3</td><td>0</td>
+                <td><span class="tag t-ok">已完成</span></td><td>11-10 18:10</td><td><button class="btn">查看</button></td></tr>
+            <tr><td>P20261110-002</td><td>13.3</td><td>FACTORY</td><td>F:1</td><td>46</td><td>46</td><td>0</td><td>0</td>
+                <td><span class="tag t-ok">已完成</span></td><td>11-10 17:30</td><td><button class="btn">查看</button></td></tr>
+          </tbody>
+        </table>
+        <div class="pager"><span>共 37 条</span><span class="pg">上一页</span><span class="pg on">1</span><span class="pg">2</span><span class="pg">下一页</span></div>
+      </div>
+    </div>
+
+    <!-- ============ 5. 任务详情 ============ -->
+    <div class="page" id="p5">
+      <h2>任务详情　P20261110-004</h2>
+      <div class="sub">7.09　·　目标：NO_WIFI　·　实际清单：F:3 S:1 N:1　·　创建于 2026-11-10 20:28　·　韩超</div>
+
+      <div class="card">
+        <div class="stat">
+          <div>总数<b>4</b></div>
+          <div>成功<b style="color:#389e0d">2</b></div>
+          <div>失败<b style="color:#cf1322">1</b></div>
+          <div>待补发<b style="color:#d46b08">1</b></div>
+          <div>已取消<b>0</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tabs">
+          <span class="on">全部 4</span><span>待补发 1</span><span>已下发 0</span><span>成功 2</span><span>失败 1</span><span>已取消 0</span>
+        </div>
+        <div class="row">
+          <button class="btn danger">移除所选设备（释放锁）</button>
+          <button class="btn">重发失败设备</button>
+          <span class="hint">取消后该设备可立即参与新任务</span>
+        </div>
+        <table>
+          <thead><tr><th style="width:36px"><input type="checkbox"></th><th>设备号</th><th>在线</th><th>推送状态</th><th>失败原因</th><th>锁到期</th><th>更新时间</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>3844BE2E5220</td><td><span class="tag t-ok">在线</span></td>
+                <td><span class="tag t-ok">成功</span></td><td>—</td><td>已释放</td><td>20:31</td><td>—</td></tr>
+            <tr><td><input type="checkbox"></td><td>D0CF13F02804</td><td><span class="tag t-ok">在线</span></td>
+                <td><span class="tag t-ok">成功</span></td><td>—</td><td>已释放</td><td>20:30</td><td>—</td></tr>
+            <tr><td><input type="checkbox" checked></td><td>3812A0B4C3D1</td><td><span class="tag t-gray">离线</span></td>
+                <td><span class="tag t-wait">待补发</span></td><td>离线</td><td>11-17 20:28</td><td>20:28</td>
+                <td><button class="btn danger">取消推送</button></td></tr>
+            <tr><td><input type="checkbox" checked></td><td>38A1C7D20E44</td><td><span class="tag t-ok">在线</span></td>
+                <td><span class="tag t-fail">失败</span></td><td>设备回报执行失败（112）</td><td>已释放</td><td>20:29</td>
+                <td><button class="btn">重发</button></td></tr>
+          </tbody>
+        </table>
+        <div class="pager"><span>共 4 条</span><span class="pg">上一页</span><span class="pg on">1</span><span class="pg">下一页</span></div>
+      </div>
+
+      <div class="warn">提示：对「已下发」的设备做取消，只是不再等待结果，设备仍可能生效。</div>
+    </div>
+
+    <!-- ============ 6. 设备锁排查 ============ -->
+    <div class="page" id="p6">
+      <h2>设备锁排查</h2>
+      <div class="sub">排查「这台设备为什么不能选」。</div>
+      <div class="card">
+        <table>
+          <thead><tr><th>设备号</th><th>型号</th><th>在线</th><th>锁持有者</th><th>槽位</th><th>到期时间</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>D0CF13F02FF8</td><td>7.09</td><td><span class="tag t-ok">在线</span></td><td>P20261110-005</td><td>SET v2</td><td>11-17 18:10</td><td><button class="btn danger">强制释放锁</button></td></tr>
+            <tr><td>3812A0B4C3D1</td><td>7.09</td><td><span class="tag t-gray">离线</span></td><td>P20261110-004</td><td>FACTORY v3</td><td>11-17 20:28</td><td><button class="btn danger">强制释放锁</button></td></tr>
+            <tr><td>3844BE2E5220</td><td>7.09</td><td><span class="tag t-ok">在线</span></td><td class="muted">无</td><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hint">「强制释放锁」用于脏锁：锁还在但对应任务明细已不存在时使用。</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.side a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      document.querySelectorAll('.side a').forEach(function (x) { x.classList.remove('on'); });
+      a.classList.add('on');
+      document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('on'); });
+      document.getElementById(a.dataset.page).classList.add('on');
+    });
+  });
+  document.querySelectorAll('.models div').forEach(function (d) {
+    d.addEventListener('click', function () {
+      document.querySelectorAll('.models div').forEach(function (x) { x.classList.remove('on'); });
+      d.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>

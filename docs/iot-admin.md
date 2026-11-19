@@ -2,8 +2,8 @@
 
 > 文档类型：模块与接口契约
 > 状态：Active
-> 最后核验：2026-10-27
-> 事实来源：产品提供的《管理后台需求文档》v1.0、四个线上只读接口、当前源码与自动化回归
+> 最后核验：2026-11-19
+> 事实来源：产品提供的《管理后台需求文档》v1.0 与《消息通知后台原型》v1、五个线上只读接口、当前源码与自动化回归
 
 ## 页面与范围
 
@@ -15,6 +15,7 @@
 | 设备列表 | iotDevices / /iot/devices | 设备号模糊查询、在线/离线、20/50/100分页；设备行进入详情，日志入口预填设备号 |
 | 设备详情 | iotDeviceDetail / /iot/devices/:deviceNo | 设备表/实时在线分别显示，差异提示；完整影子分组、未知字段保留、最近20条日志；返回列表、全部日志 |
 | 日志 | iotLogs / /iot/logs | 精确设备号、五分类、结果、起止时间；分页；全文展开、msgid复制、设备详情跳转 |
+| 消息通知查询 | iotNotifications / /iot/notifications | 设备号必填（精确）、文案语言四选一；分页；类别标签、消息类型、标题、内容、payload；点行开抽屉看完整 payload；设备详情页「消息通知」按钮预填设备号（2026-11-19） |
 
 列表条件修改后点击“查询”才生效，查询回第1页，切页保持已经应用的条件；重置清空全部条件。普通首次进入日志页默认近24小时，用户可清空；由设备进入则自动按该设备查询，由概览告警进入则使用ALARM及近24小时。
 
@@ -22,7 +23,7 @@
 
 ## 接口与鉴权
 
-独立GET客户端位于src/api/iotAdminClient.js，只允许以下四条路径；不使用现有ZoneAdmin请求实例，不发送userToken、randomString、sign或Cookie。
+独立GET客户端位于src/api/iotAdminClient.js，只允许以下五条路径；不使用现有ZoneAdmin请求实例，不发送userToken、randomString、sign或Cookie。
 
 | 方法 | 路径 | 查询参数 |
 | --- | --- | --- |
@@ -30,10 +31,19 @@
 | GET | /admin/device/list | page、size；可选keyword、online |
 | GET | /admin/device/detail | deviceNo |
 | GET | /admin/log/list | page、size；可选deviceNo、category、result、startTime、endTime |
+| GET | /admin/notification/list | deviceNo（必填）、page、size（最大100）、lang（zh-CN / zh-TW / en / ja） |
 
 响应为{code:0,msg,data}；分页为data.total/page/size/list。独立15秒超时，离开页面或后续查询会中止旧请求，迟到成功/错误不覆盖当前页面；概览定时器和页面时钟在离开/销毁后清理。加载和失败保留已显示的数据与列表总数，避免分页因暂时总数0退回第一页；切换真实/演示数据源会先清空旧来源的数据，防止混淆。
 
 401提示联系管理员配置Token，4000显示参数错误，4044明确设备不存在并可返回列表，5000提示服务异常；均显示接口code/msg和重试。错误与日志文本按普通文本渲染，不执行HTML。
+
+## 消息通知
+
+- 结构同 App 端 `/api/notification/list`：`data` 为 `total/page/size/unreadCount/list`，条目 `id/category/type/payload/title/content/read/createdAt`，按时间倒序。返回该设备**全部**记录，含 App 端已隐藏的 5 分钟上下线抖动（成对「设备已离线 / 设备已上线」），后台照常展示。
+- `read` 固定 false、`unreadCount` 固定 0，后台不展示；不传 `unreadOnly`。接口只支持上述四个参数，不能按类别或时间筛选。
+- 类别：DEVICE 设备、ALARM 告警、EXCEPTION 异常、BUSINESS 业务，未知值原样显示。payload 为对象或 null，列表单行 JSON、抽屉内格式化；null 列表显示「—」。
+- 设备号去冒号转大写后提交：线上带冒号的设备号查不到数据。缺设备号返回 4000、size>100 返回 4000、未知设备返回 total 0；非法 lang 后端回落简中，前端只允许四个选项。
+- 进入页面或重置后没有设备号不发请求；点查询才提示「设备编号必填」。换设备或语言时清空旧结果。
 
 ## 数据展示与演示
 
@@ -56,6 +66,8 @@
 
 2026-11-12：174 改名 IoT管理、176 改名设备监控、概览 grade 4，产品设备 169 改名设备管理移入 174（grade 3），见[菜单改名记录](history/2026-11/2026-11-12-iot-menu-rename.md)。
 
+2026-11-19：IoT管理 174 下新增「消息通知查询」192（`Get_IotAdmin_NotificationList` / `iotNotifications`，grade 0，排在日志查询之后），见[本轮记录](history/2026-11/2026-11-19-iot-notifications.md)。
+
 npm run menu:sync:iot默认只预览，显式追加-- --apply才写入，范围为iot-monitoring。用户本轮单独授权后，在后台系统1新增分组174、概览175、设备管理176、非导航详情177、日志178。已有菜单和角色绑定不改；普通角色需管理员绑定新增节点并重新登录。菜单已创建不等于前端已发布。
 
-npm run test:iot覆盖查询/状态/时区、只读鉴权隔离、错误码、迟到请求/中止、加载保留总数、来源切换、Mock分页边界及菜单幂等。实际结果见[本轮记录](history/2026-10/2026-10-27-iot-admin.md)。
+npm run test:iot覆盖查询/状态/时区、消息通知查询参数与演示数据、只读鉴权隔离、错误码、迟到请求/中止、加载保留总数、来源切换、Mock分页边界及菜单幂等。实际结果见[本轮记录](history/2026-10/2026-10-27-iot-admin.md)。

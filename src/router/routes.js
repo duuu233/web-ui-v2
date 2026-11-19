@@ -60,7 +60,8 @@ export const asyncRouterMap = [
       { path: 'dashboard', name: 'iotDashboard', component: () => import('@/views/iot/dashboard.vue'), meta: { title: 'IoT概览', icon: 'home' } },
       { path: 'devices', name: 'iotDevices', component: () => import('@/views/iot/devices.vue'), meta: { title: '设备监控', icon: 'sms-flash' } },
       { path: 'devices/:deviceNo', name: 'iotDeviceDetail', props: true, component: () => import('@/views/iot/detail.vue'), hidden: true, meta: { title: '设备监控详情', icon: 'sms-flash', activeMenu: 'iotDevices' } },
-      { path: 'logs', name: 'iotLogs', component: () => import('@/views/iot/logs.vue'), meta: { title: 'IoT日志查询', icon: 'sms-flash' } }
+      { path: 'logs', name: 'iotLogs', component: () => import('@/views/iot/logs.vue'), meta: { title: 'IoT日志查询', icon: 'sms-flash' } },
+      { path: 'notifications', name: 'iotNotifications', component: () => import('@/views/iot/notifications.vue'), meta: { title: '消息通知查询', icon: 'sms-flash' } }
     ]
   },
   // 内置图管理（2026-11-13，IoT 服务 /admin/intimg，见 docs/intimg-admin.md）

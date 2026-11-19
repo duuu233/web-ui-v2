@@ -54,10 +54,15 @@
   .iot-shadow-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .iot-shadow-group { background: #f8f8f5; padding: 18px; border-radius: 8px; }
   .iot-shadow-group dl { grid-template-columns: 105px minmax(0, 1fr); margin: 0; gap: 12px; }
+  .iot-notification-note { margin: 12px 0 0; font-size: 12px; color: #99948e; line-height: 1.7; }
   .iot-shadow-other { border-top: 1px solid #eee; margin-top: 20px; padding-top: 20px; }
   @media (max-width: 1150px) { .iot-stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .iot-shadow-groups { grid-template-columns: 1fr; } .iot-header-actions { flex-direction: column; align-items: flex-end; gap: 8px; } }
   @media (max-width: 700px) { .iot-heading, .iot-subnav, .iot-summary, .iot-overview-band { flex-direction: column; align-items: flex-start; } .iot-stat-grid, .iot-detail-grid { grid-template-columns: 1fr; } .iot-data-note { flex-wrap: wrap; } .iot-filter-device { width: 220px; } }
 }
+.iot-notification-kv { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; font-size: 13px; line-height: 1.7; margin: 0 0 20px; }
+.iot-notification-kv dt { color: #8b8781; }
+.iot-notification-kv dd { margin: 0; overflow-wrap: anywhere; }
+.iot-notification-label { margin: 0 0 8px; font-size: 12px; color: #8b8781; }
 .iot-log-full { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.8; padding: 18px; background: #f6f6f3; border-radius: 8px; }
 
 // Only the active IoT view uses the requested 220px rail; the existing mobile shell stays collapsed.

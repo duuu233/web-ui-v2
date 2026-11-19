@@ -3,6 +3,22 @@ export const categories = [
   { value: 'OTA', label: '升级' }, { value: 'ALARM', label: '告警' }, { value: 'EXCEPTION', label: '异常' }
 ]
 export const results = ['SUCCESS', 'FAILED', 'TIMEOUT', 'DOWNLOADING', 'FLASHING']
+// 消息通知（/admin/notification/list）：类别与文案语言；未知类别原样展示
+export const notificationCategories = [
+  { value: 'DEVICE', label: '设备', tone: 'primary' }, { value: 'ALARM', label: '告警', tone: 'warning' },
+  { value: 'EXCEPTION', label: '异常', tone: 'danger' }, { value: 'BUSINESS', label: '业务', tone: 'success' }
+]
+export const notificationLangs = [
+  { value: 'zh-CN', label: '简体中文' }, { value: 'zh-TW', label: '繁體中文' }, { value: 'en', label: 'English' }, { value: 'ja', label: '日本語' }
+]
+export function notificationCategory(value) {
+  const item = notificationCategories.find(x => x.value === value)
+  return item || { value, label: value === null || value === undefined || value === '' ? '—' : String(value), tone: 'info' }
+}
+export function payloadText(payload, pretty = false) {
+  if (payload === null || payload === undefined) return pretty ? 'null' : '—'
+  return typeof payload === 'object' ? JSON.stringify(payload, null, pretty ? 2 : 0) : String(payload)
+}
 export function normalizeDeviceNo(value, exact = false) {
   const result = String(value ?? '').trim().replaceAll(':', '').toUpperCase()
   if (exact && !/^[0-9A-F]{12}$/.test(result)) throw new Error('设备号须为12位十六进制字符，可带冒号')
@@ -35,6 +51,12 @@ export function buildListQuery(kind, draft, page = 1, size = 20) {
     const keyword = normalizeDeviceNo(draft.keyword)
     if (keyword) query.keyword = keyword
     if (draft.online === true || draft.online === false) query.online = draft.online
+  } else if (kind === 'notifications') {
+    // 设备号必填由列表层在用户点查询时提示；这里空值不报错，只是不带 deviceNo（不发请求）
+    if (String(draft.deviceNo ?? '').trim()) query.deviceNo = normalizeDeviceNo(draft.deviceNo, true)
+    const lang = draft.lang || 'zh-CN'
+    if (!notificationLangs.some(x => x.value === lang)) throw new Error('文案语言无效')
+    query.lang = lang
   } else {
     if (String(draft.deviceNo ?? '').trim()) query.deviceNo = normalizeDeviceNo(draft.deviceNo, true)
     if (draft.category) { if (!categories.some(x => x.value === draft.category)) throw new Error('日志分类无效'); query.category = draft.category }
@@ -46,6 +68,7 @@ export function buildListQuery(kind, draft, page = 1, size = 20) {
 }
 export function fromRoute(kind, query, initial = false) {
   const one = value => typeof value === 'string' ? value : ''
+  if (kind === 'notifications') return { deviceNo: one(query.deviceNo), lang: notificationLangs.some(x => x.value === query.lang) ? query.lang : 'zh-CN' }
   return kind === 'devices'
     ? { keyword: one(query.keyword), online: query.online === 'true' ? true : query.online === 'false' ? false : null }
     : { deviceNo: one(query.deviceNo), category: one(query.category), result: one(query.result), ...(initial ? recent24Hours() : { startTime: '', endTime: '' }), ...(query.startTime ? { startTime: one(query.startTime) } : {}), ...(query.endTime ? { endTime: one(query.endTime) } : {}) }

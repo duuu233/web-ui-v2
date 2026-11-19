@@ -262,7 +262,7 @@ export const productDeviceMenuNodes = [{
 }]
 
 // 2026-11-12：分组「IoT监控」改名「IoT管理」（aliases 认旧名）；原「设备管理」（IoT 设备只读列表）改名「设备监控」；
-// 产品设备并入本组改名「设备管理」。顺序：概览 → 设备管理 → 设备监控 → 日志查询
+// 产品设备并入本组改名「设备管理」。顺序：概览 → 设备管理 → 设备监控 → 日志查询 → 消息通知查询（2026-11-19 新增）
 export const iotMonitoringMenuNodes = [{
   appName: 'IoT管理', aliases: ['IoT监控'], appCode: '#', appUrl: '#', grade: 2, isNav: 1, isRefresh: 0,
   children: [
@@ -270,7 +270,8 @@ export const iotMonitoringMenuNodes = [{
     ...productDeviceMenuNodes,
     { appName: '设备监控', appCode: 'Get_IotAdmin_DeviceList', appUrl: 'iotDevices', grade: 2, isNav: 1, isRefresh: 0,
       children: [{ appName: '设备详情', appCode: 'Get_IotAdmin_DeviceDetail', appUrl: '#', grade: 0, isNav: 0, isRefresh: 0 }] },
-    { appName: '日志查询', appCode: 'Get_IotAdmin_LogList', appUrl: 'iotLogs', grade: 1, isNav: 1, isRefresh: 0 }
+    { appName: '日志查询', appCode: 'Get_IotAdmin_LogList', appUrl: 'iotLogs', grade: 1, isNav: 1, isRefresh: 0 },
+    { appName: '消息通知查询', appCode: 'Get_IotAdmin_NotificationList', appUrl: 'iotNotifications', grade: 0, isNav: 1, isRefresh: 0 }
   ]
 }]
 
@@ -314,7 +315,7 @@ export const firmwareMenuNodes = [{
 const menuScopes = {
   firmware: { label: 'OTA管理（固件版本、优雅刷新管理）', parentCode: null, nodes: firmwareMenuNodes },
   intimg: { label: '内置图管理（槽位、设备状态、推送任务、设备锁）', parentCode: null, nodes: intimgMenuNodes },
-  'iot-monitoring': { label: 'IoT管理（概览、设备管理、设备监控、日志）', parentCode: null, nodes: iotMonitoringMenuNodes },
+  'iot-monitoring': { label: 'IoT管理（概览、设备管理、设备监控、日志、消息通知）', parentCode: null, nodes: iotMonitoringMenuNodes },
   'product-device': {
     label: '设备管理（原产品设备，仅本模块，挂在 IoT管理 分组下）',
     parentOfCode: 'Get_IotAdmin_Stats',

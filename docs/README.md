@@ -24,11 +24,11 @@
 | --- | --- | --- |
 | [`project-structure.md`](project-structure.md) | Active | 当前目录、分层和模块组织。 |
 | [`interface-list.md`](interface-list.md) | Active | 已核对的管理后台接口清单与来源。 |
-| [`iot-admin.md`](iot-admin.md) | Active | IoT四页只读监控、独立鉴权、演示数据、环境与菜单范围。 |
+| [`iot-admin.md`](iot-admin.md) | Active | IoT五页只读监控（含消息通知查询）、独立鉴权、演示数据、环境与菜单范围。 |
 | [`product-device.md`](product-device.md) | Active | 产品设备五项接口、WiFi产品约束、页面和独立菜单范围。 |
 | [`product-version-fpga.md`](product-version-fpga.md) | Active | 优雅刷新管理（原 FPGA固件版本）页面、六项接口、字段与权限契约；只选 fpga16 产品、升级类型固定传 4。 |
 | [`intimg-admin.md`](intimg-admin.md) | Active | 内置图管理：槽位、设备状态、推送任务、设备锁六页，13 项 `/admin/intimg` 接口、连续前缀规则与菜单。 |
-| [`V2/`](V2/) | Reference | 产品提供的内置图需求：前端开发清单（定稿）、功能清单 v8、原型；当前实现口径以 `intimg-admin.md` 为准。 |
+| [`V2/`](V2/) | Reference | 产品提供的内置图需求（前端开发清单定稿、功能清单 v8、原型）与消息通知后台原型；当前实现口径分别以 `intimg-admin.md`、`iot-admin.md` 为准。 |
 | [`dynamic-menu-sync.md`](dynamic-menu-sync.md) | Active | 后端动态菜单同步、验证和回滚流程。 |
 | [`api-integration-progress.md`](api-integration-progress.md) | Tracking | 当前接口接入进度与未完成项。 |
 | [`history/README.md`](history/README.md) | Active | 本地操作更新记录规则、模板与历史索引。 |
@@ -63,7 +63,9 @@ codegraph sync .
 
 历史记录使用 `history/YYYY-MM/YYYY-MM-DD-topic.md`。一项集中修改对应一份记录，不建立无限增长的单文件流水账。记录完成后保持冻结；若产生长期有效的结论，还要同步更新 AI_CONTEXT 或对应 Active 文档。
 
-最新记录：[2026-11-13 FPGA版本调整](history/2026-11/2026-11-13-fpga-version-adjust.md)（改名、去升级类型默认传 4、只选 fpga16 产品；后台菜单改名待执行）。
+最新记录：[2026-11-19 IoT 消息通知查询](history/2026-11/2026-11-19-iot-notifications.md)（IoT管理下新增按设备查消息通知页；后台菜单 192 已写入）。
+
+此前记录：[2026-11-13 FPGA版本调整](history/2026-11/2026-11-13-fpga-version-adjust.md)（改名、去升级类型默认传 4、只选 fpga16 产品；后台菜单改名待执行）。
 
 此前记录：[2026-11-13 内置图管理](history/2026-11/2026-11-13-intimg-admin.md)（六页、13 项接口、FACTORY 连续前缀下发；后台菜单 179–190 已写入）。
 

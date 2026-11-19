@@ -75,6 +75,8 @@ Currency presentation (frontend display rules, last confirmed by the project own
 
 ## IoT只读管理端（2026-10-27）
 
+2026-11-19 新增 GET `/admin/notification/list`（deviceNo 必填、page、size ≤ 100、lang），接入消息通知查询页，线上只读核验字段与原型一致。见[IoT契约](iot-admin.md)。
+
 独立源站`https://iot.boltfox.cn`，GET `/admin/stats`、`/admin/device/list`、`/admin/device/detail`、`/admin/log/list` 已接入四个页面，线上只读核验通过。响应为`code/msg/data`；不使用ZoneAdmin userToken或签名，启用鉴权后使用X-Internal-Token。列表用page/size，offline=false有效。字段、界面与环境配置见[IoT契约](iot-admin.md)。
 
 ## PC Admin Backend

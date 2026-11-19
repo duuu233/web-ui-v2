@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { createServer as createViteServer } from 'vite'
 import { createRenderer, h, shallowRef, nextTick } from 'vue'
 import { createIotAdminClient } from '../src/api/iotAdminClient.js'
-import { normalizeDeviceNo, displayDeviceNo, buildListQuery, shanghaiTime, timeValue, statusValue, otherShadowEntries, recent24Hours } from '../src/views/iot/model.js'
+import { normalizeDeviceNo, displayDeviceNo, buildListQuery, fromRoute, shanghaiTime, timeValue, statusValue, otherShadowEntries, recent24Hours, notificationCategory, payloadText } from '../src/views/iot/model.js'
 
 test('device query normalizes colons while preserving offline=false and page boundaries', () => {
   assert.equal(normalizeDeviceNo(' a0:b1:c2:00:00:01 ', true), 'A0B1C2000001')
@@ -32,6 +32,18 @@ test('log queries validate device/category/results and Shanghai time without loc
   assert.equal(params.deviceNo, 'A0B1C2000001')
   for (const draft of [{ category: 'bad' }, { result: 'bad' }, { deviceNo: 'bad' }, { startTime: dates.endTime, endTime: dates.startTime }]) assert.throws(() => buildListQuery('logs', draft))
   assert.deepEqual(buildListQuery('logs', {}), { page: 1, size: 20 })
+})
+
+test('notification queries strip colons, keep lang within four options and leave empty device unrequested', () => {
+  assert.deepEqual(buildListQuery('notifications', { deviceNo: ' 38:44:be:2e:52:20 ', lang: 'ja' }, 1, 100), { page: 1, size: 100, deviceNo: '3844BE2E5220', lang: 'ja' })
+  assert.deepEqual(buildListQuery('notifications', { deviceNo: '' }), { page: 1, size: 20, lang: 'zh-CN' })
+  for (const draft of [{ deviceNo: 'bad' }, { deviceNo: '3844BE2E5220', lang: 'fr' }]) assert.throws(() => buildListQuery('notifications', draft))
+  assert.throws(() => buildListQuery('notifications', { deviceNo: '3844BE2E5220' }, 1, 500))
+  assert.deepEqual(fromRoute('notifications', { deviceNo: '3844BE2E5220', lang: 'xx' }), { deviceNo: '3844BE2E5220', lang: 'zh-CN' })
+  assert.deepEqual(notificationCategory('ALARM'), { value: 'ALARM', label: '告警', tone: 'warning' })
+  assert.deepEqual(notificationCategory('FUTURE'), { value: 'FUTURE', label: 'FUTURE', tone: 'info' })
+  assert.equal(payloadText(null), '—'); assert.equal(payloadText(null, true), 'null')
+  assert.equal(payloadText({ result: 113, corrected: false }), '{"result":113,"corrected":false}')
 })
 
 test('status thresholds preserve zero, missing data and unknown shadow entries', () => {
@@ -104,11 +116,17 @@ test('mock covers all categories, paginates logs, includes time boundaries and s
     const boundary = await get('/admin/log/list', { startTime: '2026-10-27 08:00:00', endTime: '2026-10-27 08:00:00' }); assert.equal(boundary.total, 1)
     const detail = await get('/admin/device/detail', { deviceNo: 'A0B1C2000001' }); assert.deepEqual(detail.shadow, {}); assert.notEqual(detail.online, detail.onlineRealtime)
     await assert.rejects(get('/admin/device/detail', { deviceNo: 'FFFFFFFFFFFF' }), error => error.code === 4044)
+    await assert.rejects(get('/admin/notification/list', { page: 1, size: 20 }), error => error.code === 4000)
+    const notices = await get('/admin/notification/list', { deviceNo: 'A0B1C2000001', page: 3, size: 20, lang: 'en' }); assert.equal(notices.total, 45); assert.equal(notices.list.length, 5); assert.equal(notices.unreadCount, 0)
+    assert.deepEqual(new Set((await get('/admin/notification/list', { deviceNo: 'A0B1C2000001', size: 100 })).list.map(x => x.category)), new Set(['DEVICE', 'BUSINESS', 'ALARM', 'EXCEPTION']))
+    const ja = await get('/admin/notification/list', { deviceNo: 'A0B1C2000001', lang: 'ja' }); assert.equal(ja.list[0].title, 'デバイスがオフライン'); assert.equal(ja.list[0].payload, null); assert.ok(!('texts' in ja.list[0]) && !('deviceNo' in ja.list[0]))
+    assert.equal((await get('/admin/notification/list', { deviceNo: 'FFFFFFFFFFFF' })).total, 0)
   } finally { await vite.close() }
 })
 
 // 2026-11-12 有意改动：分组改名 IoT管理，产品设备并入本组（设备管理 + 4 个操作），原设备管理改名设备监控 → 新建共 10 个节点
-test('IoT menu scope previews and idempotently creates only its own ten nodes', async () => {
+// 2026-11-19 有意改动：新增「消息通知查询」→ 共 11 个节点
+test('IoT menu scope previews and idempotently creates only its own eleven nodes', async () => {
   const tree = [{ id: 0, childs: [{ id: 108, appName: '产品管理', appCode: '#', childs: [] }] }], writes = []
   const baseline = structuredClone(tree[0].childs[0]); let nextId = 900
   const find = (nodes, id) => { for (const node of nodes) { if (node.id === id) return node; const match = find(node.childs || [], id); if (match) return match } }
@@ -119,7 +137,7 @@ test('IoT menu scope previews and idempotently creates only its own ten nodes', 
   })
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
   async function run(...flags) { const child = spawn(process.execPath, [fileURLToPath(new URL('../scripts/sync-admin-menu.mjs', import.meta.url)), '--scope=iot-monitoring', '--api-base=http://127.0.0.1:' + server.address().port, ...flags], { windowsHide: true, env: { ...process.env, BOLTFOX_USER_TOKEN: 'local-test-only' } }); let output = ''; child.stdout.on('data', x => { output += x }); child.stderr.on('data', x => { output += x }); const code = await new Promise((resolve, reject) => { child.on('error', reject); child.on('close', resolve) }); return { code, output } }
-  try { assert.equal((await run()).code, 0); assert.equal(writes.length, 0); const first = await run('--apply'); assert.equal(first.code, 0, first.output); assert.equal(writes.length, 10); assert.equal(writes[0].appName, 'IoT管理'); assert.equal(writes[0].parentId, 0); assert.deepEqual(writes.filter(x => x.isNav === 1).map(x => x.appUrl), ['#', 'iotDashboard', 'productDevice', 'iotDevices', 'iotLogs']); assert.deepEqual(writes.filter(x => x.isNav === 1).map(x => x.appName), ['IoT管理', '概览', '设备管理', '设备监控', '日志查询']); assert.equal((await run('--apply')).code, 0); assert.equal(writes.length, 10); assert.deepEqual(tree[0].childs[0], baseline) }
+  try { assert.equal((await run()).code, 0); assert.equal(writes.length, 0); const first = await run('--apply'); assert.equal(first.code, 0, first.output); assert.equal(writes.length, 11); assert.equal(writes[0].appName, 'IoT管理'); assert.equal(writes[0].parentId, 0); assert.deepEqual(writes.filter(x => x.isNav === 1).map(x => x.appUrl), ['#', 'iotDashboard', 'productDevice', 'iotDevices', 'iotLogs', 'iotNotifications']); assert.deepEqual(writes.filter(x => x.isNav === 1).map(x => x.appName), ['IoT管理', '概览', '设备管理', '设备监控', '日志查询', '消息通知查询']); assert.equal((await run('--apply')).code, 0); assert.equal(writes.length, 11); assert.deepEqual(tree[0].childs[0], baseline) }
   finally { await new Promise(resolve => server.close(resolve)) }
 })
 

@@ -1,7 +1,7 @@
 export class IotAdminError extends Error {
   constructor(code, message, status = 0) { super(message); this.name = 'IotAdminError'; this.code = code; this.status = status }
 }
-const paths = new Set(['/admin/stats', '/admin/device/list', '/admin/device/detail', '/admin/log/list'])
+const paths = new Set(['/admin/stats', '/admin/device/list', '/admin/device/detail', '/admin/log/list', '/admin/notification/list'])
 export function createIotAdminClient({ baseURL = 'https://iot.boltfox.cn', internalToken = () => '', transport = globalThis.fetch, timeoutMs = 15000 } = {}) {
   return async function get(path, params = {}, signal) {
     if (!paths.has(path)) throw new IotAdminError('PATH', '不支持的只读接口')

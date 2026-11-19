@@ -157,4 +157,4 @@ src/views/
 
 ## IoT只读监控（2026-10-27）
 
-`src/api/iotAdminClient.js`为四条GET端点提供独立协议/鉴权/超时处理；`src/views/iot/`包含四个路由页面、纯模型与合成数据、来源适配和可取消资源/列表逻辑。`components/`分别负责模块页头/环境、错误、筛选、状态、影子和日志表格，页面组合组件与业务状态；不改公共ZoneAdmin请求实例。详见[IoT契约](iot-admin.md)。
+`src/api/iotAdminClient.js`为五条GET端点提供独立协议/鉴权/超时处理；`src/views/iot/`包含五个路由页面（含消息通知查询）、纯模型与合成数据、来源适配和可取消资源/列表逻辑。`components/`分别负责模块页头/环境、错误、筛选、状态、影子和日志表格，页面组合组件与业务状态；不改公共ZoneAdmin请求实例。详见[IoT契约](iot-admin.md)。

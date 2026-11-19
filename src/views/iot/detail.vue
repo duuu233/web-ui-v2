@@ -19,10 +19,11 @@ const { data, loading, error, updatedAt, load } = useIotResource(async signal =>
 const mismatch = computed(() => typeof data.value?.online === 'boolean' && typeof data.value?.onlineRealtime === 'boolean' && data.value.online !== data.value.onlineRealtime)
 const recent = computed(() => [...(data.value?.recentLogs || [])].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')) || Number(b.id) - Number(a.id)).slice(0, 20))
 function logs() { router.push({ name: 'iotLogs', query: { deviceNo: normalizeDeviceNo(props.deviceNo, true) } }) }
+function notifications() { router.push({ name: 'iotNotifications', query: { deviceNo: normalizeDeviceNo(props.deviceNo, true) } }) }
 </script>
 <template>
   <IotPage :title="'设备 ' + displayDeviceNo(deviceNo)" subtitle="设备表状态、实时连接、影子数据与最近活动" :loading="loading" :updated-at="updatedAt" @refresh="load">
-    <div class="iot-detail-actions"><el-button icon="ArrowLeft" @click="router.push({ name: 'iotDevices' })">返回设备列表</el-button><el-button type="primary" :disabled="!data" @click="logs">查看全部日志</el-button></div>
+    <div class="iot-detail-actions"><el-button icon="ArrowLeft" @click="router.push({ name: 'iotDevices' })">返回设备列表</el-button><div><el-button :disabled="!data" @click="notifications">消息通知</el-button><el-button type="primary" :disabled="!data" @click="logs">查看全部日志</el-button></div></div>
     <IotError :error="error" @retry="load" />
     <el-skeleton v-if="loading && !data" :rows="9" animated class="iot-data-card" />
     <template v-if="data">

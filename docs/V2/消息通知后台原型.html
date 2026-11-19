@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>消息通知查询 - 后台原型 v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; font-size: 13px; color: #1f2329; background: #f5f6f7; }
+  .layout { display: flex; min-height: 100vh; }
+  .side { width: 208px; background: #001529; color: #c9d1d9; flex: 0 0 208px; }
+  .side h1 { font-size: 15px; padding: 18px 16px; color: #fff; font-weight: 600; border-bottom: 1px solid #1f2d3d; }
+  .side a { display: block; padding: 11px 16px; color: #c9d1d9; text-decoration: none; font-size: 13px; cursor: pointer; }
+  .side a:hover { background: #112a45; color: #fff; }
+  .side a.on { background: #1677ff; color: #fff; }
+  .main { flex: 1; padding: 20px 24px; overflow: auto; }
+  h2 { font-size: 18px; margin-bottom: 4px; }
+  .sub { color: #8a919f; font-size: 12px; margin-bottom: 16px; line-height: 1.8; }
+  .card { background: #fff; border-radius: 6px; border: 1px solid #e5e6eb; padding: 16px; margin-bottom: 16px; }
+  .card h3 { font-size: 14px; margin-bottom: 12px; font-weight: 600; }
+  .row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .row label { color: #5a6472; font-size: 12px; }
+  input[type=text], select { border: 1px solid #d0d3d9; border-radius: 4px; padding: 5px 9px; font-size: 12px; height: 30px; }
+  input[type=text] { width: 220px; }
+  input[type=text].err { border-color: #cf1322; background: #fff1f0; }
+  .btn { border: 1px solid #d0d3d9; background: #fff; border-radius: 4px; padding: 4px 12px; height: 30px; font-size: 12px; cursor: pointer; }
+  .btn:hover { border-color: #1677ff; color: #1677ff; }
+  .btn.primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+  .btn.primary:hover { background: #4096ff; color: #fff; }
+  .btn.link { border: none; background: none; color: #1677ff; padding: 0 2px; height: auto; }
+  .hint { color: #8a919f; font-size: 12px; line-height: 1.8; }
+  .warn { background: #fff7e6; border: 1px solid #ffd591; color: #ad4e00; padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 12px; line-height: 1.8; }
+  .error-tip { color: #cf1322; font-size: 12px; margin-left: 4px; display: none; }
+  .error-tip.on { display: inline; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  th { background: #fafafa; color: #5a6472; font-weight: 500; white-space: nowrap; }
+  tbody tr:hover { background: #f7fbff; cursor: pointer; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; white-space: nowrap; }
+  .t-device { background: #f0f5ff; color: #1d39c4; border: 1px solid #adc6ff; }
+  .t-alarm { background: #fff7e6; color: #d46b08; border: 1px solid #ffd591; }
+  .t-exception { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
+  .t-business { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; }
+  .mono { font-family: Consolas, Monaco, monospace; font-size: 11px; color: #5a6472; }
+  .title-cell { font-weight: 500; }
+  .content-cell { color: #5a6472; max-width: 340px; }
+  .payload-cell { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pager { display: flex; gap: 6px; align-items: center; justify-content: flex-end; margin-top: 12px; font-size: 12px; color: #5a6472; }
+  .pager span.pg { border: 1px solid #d0d3d9; border-radius: 4px; padding: 3px 9px; cursor: pointer; background: #fff; }
+  .pager span.pg.on { border-color: #1677ff; color: #1677ff; }
+  .pager span.pg.dis { color: #c0c4cc; cursor: not-allowed; }
+  .empty { padding: 40px 0; text-align: center; color: #c0c4cc; font-size: 12px; }
+  .stat { display: flex; gap: 28px; margin-bottom: 14px; }
+  .stat div { font-size: 12px; color: #8a919f; }
+  .stat b { display: block; font-size: 20px; color: #1f2329; font-weight: 600; margin-top: 2px; }
+  .drawer-mask { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; z-index: 20; }
+  .drawer-mask.on { display: block; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 460px; background: #fff; z-index: 21; transform: translateX(100%); transition: transform .2s; display: flex; flex-direction: column; }
+  .drawer.on { transform: translateX(0); }
+  .drawer .hd { padding: 14px 16px; border-bottom: 1px solid #e5e6eb; display: flex; justify-content: space-between; align-items: center; }
+  .drawer .hd b { font-size: 14px; }
+  .drawer .bd { padding: 16px; overflow: auto; }
+  .drawer .kv { display: grid; grid-template-columns: 88px 1fr; gap: 8px 12px; font-size: 12px; margin-bottom: 16px; }
+  .drawer .kv .k { color: #8a919f; }
+  pre { background: #f7f8fa; border: 1px solid #e5e6eb; border-radius: 4px; padding: 10px 12px; font-size: 11px; line-height: 1.7; overflow: auto; font-family: Consolas, Monaco, monospace; }
+  .note li { margin-left: 18px; line-height: 2; color: #5a6472; font-size: 12px; }
+  code { background: #f2f3f5; padding: 1px 5px; border-radius: 3px; font-family: Consolas, Monaco, monospace; font-size: 11px; }
+  .scope { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .scope div { border: 1px solid #e5e6eb; border-radius: 6px; padding: 8px 12px; background: #fafafa; font-size: 12px; color: #5a6472; }
+  .scope div b { color: #1f2329; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="side">
+    <h1>设备管理后台</h1>
+    <a class="on">消息通知查询</a>
+  </div>
+
+  <div class="main">
+    <h2>消息通知查询</h2>
+    <div class="sub">
+      按设备查看服务端产生的全部消息通知。数据来源 <code>GET /admin/notification/list</code>，域名与 App 接口一致（<code>https://iot.boltfox.cn</code>）。
+    </div>
+
+    <div class="scope">
+      <div><b>数据范围</b>　该设备全部消息</div>
+      <div><b>排序</b>　按时间倒序</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <label>设备编号 <span style="color:#cf1322">*</span></label>
+        <input type="text" id="deviceNo" value="3844BE2E5220" placeholder="例如 3844BE2E5220">
+        <span class="error-tip" id="deviceErr">设备编号必填</span>
+
+        <label>每页条数</label>
+        <select id="size">
+          <option>20</option>
+          <option>50</option>
+          <option>100</option>
+        </select>
+
+        <label>文案语言</label>
+        <select id="lang">
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+        </select>
+
+        <button class="btn primary" onclick="query()">查询</button>
+        <button class="btn" onclick="resetFilter()">重置</button>
+      </div>
+      <div class="hint">
+        接口仅支持 <code>deviceNo</code> / <code>page</code> / <code>size</code>（最大 100）/ <code>lang</code>；
+        设备编号缺失时接口返回 <code>4000</code>。如需按消息类型或时间范围筛选，需要后端扩展参数。
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stat">
+        <div>本设备消息总数<b id="total">227</b></div>
+        <div>当前页<b id="pageInfo">1 / 12</b></div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:70px">ID</th>
+            <th style="width:150px">时间</th>
+            <th style="width:90px">类别</th>
+            <th style="width:170px">消息类型</th>
+            <th>标题</th>
+            <th>内容</th>
+            <th style="width:220px">payload</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+
+      <div class="empty" id="empty" style="display:none">没有查询到消息</div>
+
+      <div class="pager">
+        <span>共 <b id="total2">227</b> 条</span>
+        <span class="pg dis">上一页</span>
+        <span class="pg on">1</span>
+        <span class="pg">2</span>
+        <span class="pg">3</span>
+        <span class="pg">…</span>
+        <span class="pg">12</span>
+        <span class="pg">下一页</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>接口约定（供后端参考）</h3>
+      <pre>GET /admin/notification/list?deviceNo=3844BE2E5220&amp;page=1&amp;size=20&amp;lang=zh-CN
+Header: X-Internal-Token: &lt;可选，服务端当前不校验&gt;
+
+{
+  "code": 0, "msg": "ok",
+  "data": {
+    "total": 227, "page": 1, "size": 20,
+    "unreadCount": 0,          // 后台无用户态，固定 0，不使用
+    "list": [
+      {
+        "id": 764,
+        "category": "BUSINESS",
+        "type": "PLAY_SUCCESS",
+        "payload": { "msgid": "1795059586341460", "result": 113 },
+        "title": "投屏成功",
+        "content": "图片已显示在设备上。",
+        "read": false,          // 后台不使用
+        "createdAt": "2026-11-19 11:40:04"
+      }
+    ]
+  }
+}</pre>
+      <ul class="note">
+        <li>参数与返回结构同 App 端 <code>/api/notification/list</code>，后台只需换路径。</li>
+        <li>返回<b>全部记录</b>，包括 <code>visible=0</code> 的上下线抖动记录；返回里<b>没有 visible 字段</b>，后台不区分。</li>
+        <li><code>read</code> 固定 <code>false</code>、<code>unreadCount</code> 固定 <code>0</code>、<code>unreadOnly</code> 不生效。</li>
+        <li>设备离线又快速上线会产生成对的「设备已离线 / 设备已上线」记录，这是 5 分钟抖动抑制的原始数据，App 端已隐藏，后台正常展示即可。</li>
+        <li>跨域：<code>/admin/**</code> 仅允许 <code>https://badmin.boltfox.cn</code>。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-mask" id="mask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="hd">
+    <b>消息详情</b>
+    <button class="btn" onclick="closeDrawer()">关闭</button>
+  </div>
+  <div class="bd">
+    <div class="kv" id="detailKv"></div>
+    <div style="font-size:12px;color:#8a919f;margin-bottom:6px">payload</div>
+    <pre id="detailPayload"></pre>
+  </div>
+</div>
+
+<script>
+  const CATEGORY_NAME = { DEVICE: '设备', ALARM: '告警', EXCEPTION: '异常', BUSINESS: '业务' };
+  const CATEGORY_CLASS = { DEVICE: 't-device', ALARM: 't-alarm', EXCEPTION: 't-exception', BUSINESS: 't-business' };
+
+  const MESSAGES = [
+    { id: 764, createdAt: '2026-11-19 11:40:04', category: 'BUSINESS', type: 'PLAY_SUCCESS',
+      title: '投屏成功', content: '图片已显示在设备上。',
+      payload: { msgid: '1795059586341460', result: 113, userNo: 'GA6473224', corrected: false, reason: '投屏成功' } },
+    { id: 761, createdAt: '2026-11-19 03:27:17', category: 'DEVICE', type: 'DEVICE_ONLINE',
+      title: '设备已上线', content: '设备已连接网络，可以正常使用。', payload: null },
+    { id: 760, createdAt: '2026-11-19 03:27:05', category: 'DEVICE', type: 'DEVICE_OFFLINE',
+      title: '设备已离线', content: '设备已断开连接，请检查电源和网络。', payload: null },
+    { id: 758, createdAt: '2026-11-19 02:10:31', category: 'DEVICE', type: 'DEVICE_ONLINE',
+      title: '设备已上线', content: '设备已连接网络，可以正常使用。', payload: null },
+    { id: 757, createdAt: '2026-11-19 02:10:12', category: 'DEVICE', type: 'DEVICE_OFFLINE',
+      title: '设备已离线', content: '设备已断开连接，请检查电源和网络。', payload: null },
+    { id: 752, createdAt: '2026-11-18 22:04:47', category: 'ALARM', type: 'LOW_BATTERY',
+      title: '电量低', content: '设备电量仅剩 15%，请及时充电。', payload: { level: 2, battery: 15 } },
+    { id: 749, createdAt: '2026-11-18 18:32:10', category: 'DEVICE', type: 'OTA_SUCCESS',
+      title: '升级成功', content: '设备固件已升级到 0.6.1。', payload: { version: '0.6.1', baseVersion: '0.5.7' } },
+    { id: 744, createdAt: '2026-11-18 09:15:02', category: 'EXCEPTION', type: 'EXCEPTION_UP_PARSE',
+      title: '上报解析失败', content: '设备上报数据解析失败。', payload: { reason: 'unexpected token' } }
+  ];
+
+  const PAGE_SIZE = 20;
+
+  function render(rows) {
+    const tbody = document.getElementById('tbody');
+    const empty = document.getElementById('empty');
+    tbody.innerHTML = '';
+    if (!rows.length) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    rows.forEach(m => {
+      const tr = document.createElement('tr');
+      tr.onclick = () => openDrawer(m);
+      const payloadText = m.payload ? JSON.stringify(m.payload) : '—';
+      tr.innerHTML =
+        '<td class="mono">' + m.id + '</td>' +
+        '<td class="mono">' + m.createdAt + '</td>' +
+        '<td><span class="tag ' + (CATEGORY_CLASS[m.category] || 't-device') + '">' + (CATEGORY_NAME[m.category] || m.category) + '</span></td>' +
+        '<td class="mono">' + m.type + '</td>' +
+        '<td class="title-cell">' + m.title + '</td>' +
+        '<td class="content-cell">' + m.content + '</td>' +
+        '<td class="payload-cell"><span class="mono">' + escapeHtml(payloadText) + '</span></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function openDrawer(m) {
+    document.getElementById('detailKv').innerHTML =
+      '<div class="k">ID</div><div class="mono">' + m.id + '</div>' +
+      '<div class="k">时间</div><div class="mono">' + m.createdAt + '</div>' +
+      '<div class="k">类别</div><div>' + (CATEGORY_NAME[m.category] || m.category) + '（' + m.category + '）</div>' +
+      '<div class="k">类型</div><div class="mono">' + m.type + '</div>' +
+      '<div class="k">标题</div><div>' + m.title + '</div>' +
+      '<div class="k">内容</div><div>' + m.content + '</div>';
+    document.getElementById('detailPayload').textContent =
+      m.payload ? JSON.stringify(m.payload, null, 2) : 'null';
+    document.getElementById('mask').classList.add('on');
+    document.getElementById('drawer').classList.add('on');
+  }
+
+  function closeDrawer() {
+    document.getElementById('mask').classList.remove('on');
+    document.getElementById('drawer').classList.remove('on');
+  }
+
+  function query() {
+    const input = document.getElementById('deviceNo');
+    const err = document.getElementById('deviceErr');
+    if (!input.value.trim()) {
+      input.classList.add('err');
+      err.classList.add('on');
+      document.getElementById('tbody').innerHTML = '';
+      document.getElementById('empty').style.display = 'block';
+      return;
+    }
+    input.classList.remove('err');
+    err.classList.remove('on');
+    // 原型：固定展示示例数据；真实由后端接口返回
+    const size = parseInt(document.getElementById('size').value, 10);
+    document.getElementById('total').textContent = '227';
+    document.getElementById('total2').textContent = '227';
+    document.getElementById('pageInfo').textContent = '1 / ' + Math.max(1, Math.ceil(227 / size));
+    render(MESSAGES.slice(0, Math.min(size, MESSAGES.length)));
+  }
+
+  function resetFilter() {
+    const input = document.getElementById('deviceNo');
+    input.value = '';
+    input.classList.remove('err');
+    document.getElementById('deviceErr').classList.remove('on');
+    document.getElementById('tbody').innerHTML = '';
+    document.getElementById('empty').style.display = 'block';
+    document.getElementById('total').textContent = '0';
+    document.getElementById('total2').textContent = '0';
+    document.getElementById('pageInfo').textContent = '1 / 1';
+  }
+
+  // 初始渲染示例
+  render(MESSAGES);
+</script>
+</body>
+</html>

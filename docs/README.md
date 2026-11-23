@@ -63,7 +63,7 @@ codegraph sync .
 
 历史记录使用 `history/YYYY-MM/YYYY-MM-DD-topic.md`。一项集中修改对应一份记录，不建立无限增长的单文件流水账。记录完成后保持冻结；若产生长期有效的结论，还要同步更新 AI_CONTEXT 或对应 Active 文档。
 
-最新记录：[2026-11-19 IoT 消息通知查询](history/2026-11/2026-11-19-iot-notifications.md)（IoT管理下新增按设备查消息通知页；后台菜单 192 已写入）。
+最新记录：[2026-11-23 左侧菜单可纵向滚动](history/2026-11/2026-11-23-sidebar-scroll.md)（全局 `.sidebar-container` 的 `overflow: hidden` 盖掉了侧栏自身的滚动，改为纵向可滚、高度由 top / bottom 决定）。上一条：[2026-11-19 IoT 消息通知查询](history/2026-11/2026-11-19-iot-notifications.md)（IoT管理下新增按设备查消息通知页；后台菜单 192 已写入）。
 
 此前记录：[2026-11-13 FPGA版本调整](history/2026-11/2026-11-13-fpga-version-adjust.md)（改名、去升级类型默认传 4、只选 fpga16 产品；后台菜单改名待执行）。
 

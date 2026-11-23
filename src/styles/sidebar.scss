@@ -11,8 +11,16 @@
     left: 0;
     z-index: 1001;
     width: var(--shell-sidebar-width) !important;
+    // 高度由 top / bottom 决定，菜单超出时在侧栏内纵向滚动。
+    // 这个类和 Sidebar.vue 的 .sidebar-inner 在同一个元素上，且本规则优先级更高：
+    // 原来的 overflow: hidden 把菜单超出部分直接裁掉、无法滚动；
+    // height: auto 盖掉 .sidebar-inner 的 height: 100%，否则元素比可视区高出顶栏的高度，
+    // 最底下一截滚不出来。
+    height: auto;
     padding: 8px 0 20px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     border-right: 1px solid var(--app-border);
     border-radius: 0 16px 0 0;
     background: #fcfbfa;
